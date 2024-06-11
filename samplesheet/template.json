@@ -1,0 +1,14 @@
+[
+  {
+    "file": "PAM63974_pass_58881fec_0",
+    "path": "/u/area/jenkins_onpexp/scratch/10G_dataset_POD5/PAM63974_pass_58881fec_0.pod5",
+    "size(GB)": 0.398,
+    "basecalled": false
+  },
+  {
+    "file": "PAM63974_pass_58881fec_1",
+    "path": "/u/area/jenkins_onpexp/scratch/10G_dataset_POD5/PAM63974_pass_58881fec_1.pod5",
+    "size(GB)": 0.515,
+    "basecalled": false
+  }
+]
