@@ -1,0 +1,38 @@
+pipeline {
+    agent { 
+        node {
+            label 'docker'
+            }
+    }
+    parameters {
+        string(name: 'pathToSamplesheet', defaultValue: '', description: 'Path to the samplesheet of the work batch')
+    }
+    stages {
+        stage('Pull project repository on the Cluster') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
+                    sh '''
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            echo "**********Running ''git pull'' in BC-pipelines directory**********"
+                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline && git pull
+                        '
+                    '''
+                }    
+            }
+        }
+        stage('Cleanup software dir') {
+            steps {    
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
+                    /*BC_software dir cleanup*/
+                    sh '''
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline
+                            rm -rf server_node_*
+                            rm -rf __pycache__
+                        '
+                    '''
+                }
+            }
+        }
+    }
+}
