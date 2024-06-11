@@ -13,7 +13,6 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
-                            echo "**********Running ''git pull'' in BC-pipelines directory**********"
                             cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline && git pull
                         '
                     '''
@@ -23,16 +22,41 @@ pipeline {
         stage('Cleanup software dir') {
             steps {    
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
-                    /*BC_software dir cleanup*/
+                    /*Check if all the trash is removed in the correct way*/
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
-                            /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline
-                            rm -rf server_node_*
+                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline
                             rm -rf __pycache__
                         '
                     '''
                 }
             }
         }
+        stage('Read and check the samplesheet') {
+            steps {    
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
+                    /*Check if the samplesheet is correct*/
+                    sh '''
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/samplesheet_check
+                            python3 main.py
+                        '
+                    '''
+                }
+            }
+        }   
+        stage('Subset the samplesheet') {
+            steps {    
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
+                    /*Create the batch of work for this pipeline*/
+                    sh '''
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/subset_creation
+                            python3 main.py
+                        '
+                    '''
+                }
+            }
+        }               
     }
 }
