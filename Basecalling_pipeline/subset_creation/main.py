@@ -20,8 +20,10 @@ if __name__ == "__main__":
     #Create subset
     input_file = sys.argv[1]
     subsetter = Subsetter(input_file)
-    run_samplesheet = subsetter.create_subset()
+    run_samplesheet = subsetter.create_subset(run_id)
 
     print(run_id)
     #Create batch personal directories for input, output and logs
 
+
+    #Create config file

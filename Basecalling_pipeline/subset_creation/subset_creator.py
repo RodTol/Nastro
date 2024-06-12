@@ -16,7 +16,7 @@ class Subsetter:
         self.samplesheet = samplesheet
         self.dataframe = pd.DataFrame(samplesheet.data)
 
-    def create_subset(self, target_size=0.8):
+    def create_subset(self, target_size=0.8, run_id):
         '''
         This function will take the files that needs to be processed
         and create a list of maximum the size.
@@ -45,7 +45,7 @@ class Subsetter:
                 #Add
                 subset.append(row.to_dict())
                 #Update
-                self.dataframe.loc[i, 'basecalled'] = 'In progress'
+                self.dataframe.loc[i, 'basecalled'] = run_id
                 cumulative_size += file_size
             else: 
                 # Here we can modify the handling of this situation
