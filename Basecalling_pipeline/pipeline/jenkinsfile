@@ -5,7 +5,7 @@ pipeline {
             }
     }
     parameters {
-        string(name: 'pathToSamplesheet', defaultValue: '', description: 'Path to the samplesheet of the work batch')
+        string(name: 'pathToSamplesheet', defaultValue: '/u/area/jenkins_onpexp/Pipeline_long_reads/samplesheet/orfeo_template.json', description: 'Path to the samplesheet of the work batch')
         string(name: 'pathToOutputDir', defaultValue: '/u/area/jenkins_onpexp/scratch/TEST/output', description: 'Path to where the output of the batch will be stored. Root for each run')
         string(name: 'pathToLogsDir', defaultValue: '/u/area/jenkins_onpexp/scratch/TEST/logs', description: 'Path to where the logs of the batch will be stored. Root for each run')
         string(name: 'basecallingModel', defaultValue: 'dna_r10.4.1_e8.2_400bps_hac.cfg', description: 'Basecalling model selected for this batch')
