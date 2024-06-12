@@ -33,8 +33,6 @@ class Subsetter:
             print("THERE ARE NO FILE TO BE PROCESSED") #also here decide how to handle
             sys.exit(0)
 
-
-
         cumulative_size = 0
         subset = []
 
