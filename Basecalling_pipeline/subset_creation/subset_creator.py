@@ -16,28 +16,34 @@ class Subsetter:
         self.samplesheet = samplesheet
         self.dataframe = pd.DataFrame(samplesheet.data)
 
-    def create_batch(self, target_size=0.8):
+    def create_subset(self, target_size=0.8):
         '''
         This function will take the files that needs to be processed
         and create a list of maximum the size.
         Files will be appended until the target size is reached, or the list
         of "to-be-processed" files is ended.
-        Every time a file is added to the batch, its basecalled status
+        Every time a file is added to the subset, its basecalled status
         changes to 'in progress'. This update will be processed to the
         json file only if everything went right 
 
         It will return a list of dict. 
         '''
         all_non_basecalled_files = self.dataframe[self.dataframe['basecalled'] == False]
+        if len(all_non_basecalled_files) == 0:
+            print("THERE ARE NO FILE TO BE PROCESSED") #also here decide how to handle
+            sys.exit(0)
+
+
+
         cumulative_size = 0
-        batch = []
+        subset = []
 
         for i, row in all_non_basecalled_files.iterrows():
             file_size = row['size(GB)']
             #Check
             if self._check_file_exist(row):
                 #Add
-                batch.append(row.to_dict())
+                subset.append(row.to_dict())
                 #Update
                 self.dataframe.loc[i, 'basecalled'] = 'In progress'
                 cumulative_size += file_size
@@ -52,11 +58,11 @@ class Subsetter:
         self.samplesheet.data = self.dataframe.to_dict(orient='records')
         self.samplesheet.update_json_file()
 
-        return batch
+        return subset
     
     def _check_file_exist(self, samplesheet_entry):
         '''
-        Check if the file actually exist
+        Check if the file for a given path actually exist
         '''
         path = samplesheet_entry['path']
         if os.path.exists(path):
@@ -65,3 +71,4 @@ class Subsetter:
         else:
             print("File %s does not exist in %s " % (samplesheet_entry['name'], path))
             return False
+
