@@ -16,7 +16,7 @@ class Subsetter:
         self.samplesheet = samplesheet
         self.dataframe = pd.DataFrame(samplesheet.data)
 
-    def create_subset(self, target_size=0.8, run_id):
+    def create_subset(self, run_id, target_size=0.8):
         '''
         This function will take the files that needs to be processed
         and create a list of maximum the size.
