@@ -23,6 +23,23 @@ pipeline {
                 }    
             }
         }
+        stage('TESTING CLEANUP') {
+            steps {    
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
+                    /*TO BE REMOVED*/
+                    sh '''
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/samplesheet/
+                            cp orfeo_template_copy.json orfeo_template.json
+                            cd /u/area/jenkins_onpexp/scratch/TEST
+                            rm -rf input/*
+                            rm -rf output/*
+                            rm -rf logs/*
+                        '
+                    '''
+                }
+            }
+        }        
         stage('Cleanup software dir') {
             steps {    
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
