@@ -4,6 +4,10 @@ import hashlib
 import datetime
 from config_file_api import *
 from subset_creator import Subsetter
+from resource_profiler import FAST_IDEAL_SIZE_GB
+from resource_profiler import HAC_IDEAL_SIZE_GB
+from resource_profiler import SUP_IDEAL_SIZE_GB
+from resource_profiler import choose_ideal_size
 
 class mainParameters:
     def __init__(self, samplesheet, input_dir, output_dir, logs_dir, basecalling_model):
@@ -22,12 +26,13 @@ class mainParameters:
                 f"  Basecalling Model: {self.basecalling_model}")
 
 class runParameters:
-    def __init__(self, id, input_dir, output_dir, logs_dir, basecalling_model, run_config_path=None):
+    def __init__(self, id, input_dir, output_dir, logs_dir, basecalling_model, ideal_size=None, run_config_path=None):
         self.id = id
         self.input_dir = input_dir
         self.output_dir = output_dir
         self.logs_dir = logs_dir
         self.basecalling_model = basecalling_model
+        self.ideal_size = ideal_size
         self.config_path = run_config_path
 
     def __str__(self):
@@ -37,6 +42,7 @@ class runParameters:
                 f"  Output Directory: {self.output_dir}\n"
                 f"  Logs Directory: {self.logs_dir}\n"
                 f"  Basecalling Model: {self.basecalling_model}\n"
+                f"  Ideal size: {self.ideal_size}\n"
                 f"  Config file: {self.config_path}")
 
     def create_run_input_symlinks(self, files_list):
@@ -98,9 +104,15 @@ if __name__ == "__main__":
     run_params.input_dir = os.path.join(main_params.input_dir, run_params.id,)
     create_dir(run_params.input_dir)
 
+    #Set basecalling model
+    run_params.basecalling_model = main_params.basecalling_model
+
+    #Set ideal size
+    run_params.ideal_size = choose_ideal_size(run_params.basecalling_model)
+
     #Create the actual subset inside the input dir
     subsetter = Subsetter(main_params.samplesheet)
-    run_subset = subsetter.create_subset(run_params.id)
+    run_subset = subsetter.create_subset(run_params.id, target_size=run_params.ideal_size)
     run_params.create_run_input_symlinks(run_subset)
 
     #Create output dir for the run
@@ -110,9 +122,6 @@ if __name__ == "__main__":
     #Create logs dir for the run
     run_params.logs_dir = os.path.join(main_params.logs_dir, run_params.id)
     create_dir(run_params.logs_dir)
-
-    #Set basecalling model
-    run_params.basecalling_model = main_params.basecalling_model
 
     #Create config file in run logs dir
     run_params.config_path = os.path.join(run_params.logs_dir, "config_" + run_params.id + ".json")
