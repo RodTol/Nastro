@@ -74,4 +74,5 @@ if __name__ == "__main__":
                                          run_params.output_dir, run_params.logs_dir, "supervisor.sh")
     #Resources
     #Calculate resources and then update the config file
+    print(type(ResourceTuning(run_params, run_config).compute_resources()))
     run_config.computing_resources = ResourceTuning(run_params, run_config).compute_resources()

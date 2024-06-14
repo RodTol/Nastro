@@ -1,3 +1,4 @@
+import os
 from runParameters import runParameters
 from config_file_api import ComputingResources
 from config_file_api import ConfigFile
@@ -13,10 +14,11 @@ fast_v100_speed_GB = float('1.18e-02')*conversion_rate_Gbases_to_GB
 hac_v100_speed_GB = float('2.01e-03')*conversion_rate_Gbases_to_GB
 sup_v100_speed_GB = float('3.79e-04')*conversion_rate_Gbases_to_GB
 
-#For 2 nodes with 2 dgx that will take 30 mins
-FAST_IDEAL_SIZE_GB = 4*fast_a100_speed_GB*30*60
-HAC_IDEAL_SIZE_GB = 4*hac_a100_speed_GB*30*60
-SUP_IDEAL_SIZE_GB = 4*sup_a100_speed_GB*30*60
+IDEAL_RUN_TIME = 10 #maybe input ?
+#For 2 nodes with 2 dgx that will take IDEAL_RUN_TIME mins
+FAST_IDEAL_SIZE_GB = 4*fast_a100_speed_GB*IDEAL_RUN_TIME*60
+HAC_IDEAL_SIZE_GB = 4*hac_a100_speed_GB*IDEAL_RUN_TIME*60
+SUP_IDEAL_SIZE_GB = 4*sup_a100_speed_GB*IDEAL_RUN_TIME*60
 
 
 def choose_ideal_size(model):
@@ -36,6 +38,18 @@ def choose_ideal_size(model):
     else:
         print(f"Using default size! {model} was not recognized\n Using HAC SIZE")
         return HAC_IDEAL_SIZE_GB  
+
+def count_pod5_files(directory):
+    count = 0
+    for filename in os.listdir(directory):
+        if filename.endswith(".pod5") and os.path.isfile(os.path.join(directory, filename)):
+            count += 1
+    return count
+
+def split_number(n):
+    part1 = n // 2
+    part2 = n - part1
+    return part1, part2
 
 class ResourceTuning:
     '''
@@ -57,13 +71,36 @@ class ResourceTuning:
             raise TypeError("run_config must be an instance of ConfigFile")
         self.run_config = run_config
 
+    def _length_of_subset(self):
+        '''
+        Read the length of the subset (maybe this function does not belong here
+        but for now it does)
+        '''
+        dir = self.run_params.input_dir
+        return count_pod5_files(dir)
+
     def compute_resources(self):
         '''
         For the given run_params return a ComputingResourcees object
         '''
+        subset_length = self._length_of_subset()
+        #sprint("Subset Length: ", subset_length)
         #Standard set of resources
         if self.run_params.actual_size >= self.run_params.ideal_size:
+            size1, size2 = split_number(subset_length)
             return ComputingResources(self.run_config, "0", ["DGX","DGX"], ["dgx001", "dgx002"],
                                                         ["10.128.2.161", "10.128.2.162"], ["64, 64"], 
                                                         ["200GB", "200GB"], ["2", "2"], ["cuda:all", "cuda:all"],
-                                                        ["5", "5"])
+                                                        [size1, size2])
+        #half the ideal size --> one node 2 dgx (half the resources)
+        elif self.run_params.actual_size >= self.run_params.ideal_size/2:
+            return ComputingResources(self.run_config, "0", ["DGX"], ["dgx001"],
+                                                        ["10.128.2.161"], ["64"], 
+                                                        ["200GB"], ["2"], ["cuda:all"],
+                                                        [subset_length])        
+        #for now less than a quarter will use one a100. Maybe for very very less use v100
+        else: 
+            return ComputingResources(self.run_config, "0", ["DGX"], ["dgx001"],
+                                                                    ["10.128.2.161"], ["32"], 
+                                                                    ["100GB"], ["1"], ["cuda:all"],
+                                                                    [subset_length])               
