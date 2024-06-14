@@ -238,23 +238,45 @@ class ConfigFile:
 
     If the file does not exist, a new json file will be created
     with an empty dict (in order to be compliant to json format)
+
+    Maybe do getter and setter also for him
     '''
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, general=None, slurm=None, basecalling=None, computing_resources=None):
         self.path_to_json = file_path
-        try: 
-            #Create file if does not exist
-            json_file = open(file_path, "x")
-            self.data = {} #empty dict
-            self.update_json_file() #synchronize
-        except FileExistsError: 
-            print(f"The file '{file_path}' already exists.")      
-            self.data = self.read_file() #load the data
-            self.general = General(self, **self.data['General'])
-            self.slurm = Slurm(self, **self.data['Slurm'])
-            self.basecalling = Basecalling(**self.data['Basecalling'])
-            self.computing_resources = ComputingResources(**self.data['ComputingResources'])
+        if self.file_exists():
+            print(f"The file '{file_path}' already exists.")
+            self.data = self.read_file()  # load the data
+            self._general = General(self, **self.data['General'])
+            self._slurm = Slurm(self, **self.data['Slurm'])
+            self._basecalling = Basecalling(**self.data['Basecalling'])
+            self._computing_resources = ComputingResources(**self.data['ComputingResources'])
+        else:
+            self.data = {}  # empty dict
+            self._general = general
+            self._slurm = slurm
+            self._basecalling = basecalling
+            self._computing_resources = computing_resources
+            self.update_json_file()  # synchronize
 
+
+    @property
+    def general(self):
+        return self._general
+    
+    @general.setter
+    def general(self, value):
+        self._general = value
+        self.data['General'] = value.__dict__  # Update with the dictionary representation of the General object
+        print(self.data)
+        self.update_json_file #synchronize
+
+    def file_exists(self):
+        try:
+            with open(self.path_to_json, 'r'):
+                return True
+        except FileNotFoundError:
+            return False
 
     def read_file(self):
         '''

@@ -2,7 +2,7 @@ import sys
 import os
 import hashlib
 import datetime
-
+from config_file_api import *
 from subset_creator import Subsetter
 
 class mainParameters:
@@ -22,12 +22,13 @@ class mainParameters:
                 f"  Basecalling Model: {self.basecalling_model}")
 
 class runParameters:
-    def __init__(self, id, input_dir, output_dir, logs_dir, basecalling_model):
+    def __init__(self, id, input_dir, output_dir, logs_dir, basecalling_model, run_config_path=None):
         self.id = id
         self.input_dir = input_dir
         self.output_dir = output_dir
         self.logs_dir = logs_dir
         self.basecalling_model = basecalling_model
+        self.config_path = run_config_path
 
     def __str__(self):
         return (f"runParameters:\n"
@@ -35,7 +36,8 @@ class runParameters:
                 f"  Input: {self.input_dir}\n"
                 f"  Output Directory: {self.output_dir}\n"
                 f"  Logs Directory: {self.logs_dir}\n"
-                f"  Basecalling Model: {self.basecalling_model}")
+                f"  Basecalling Model: {self.basecalling_model}\n"
+                f"  Config file: {self.config_path}")
 
     def create_run_input_symlinks(self, files_list):
         '''
@@ -68,6 +70,12 @@ def create_symlink(target_path, link_directory, link_name=None):
     
     return symlink_path
 
+def create_dir(path):
+    try: 
+        os.makedirs(path, exist_ok = True) 
+        #print("Directory '%s' created successfully" % path) 
+    except OSError as error: 
+        print("Directory '%s' can not be created" % path)
 
 def generate_short_hash(input_str):
     return hashlib.sha256(input_str.encode()).hexdigest()[:8]
@@ -81,21 +89,40 @@ if __name__ == "__main__":
     print(main_params)
 
     run_params = runParameters('','','','','')
+
     #Create batch hash identifier
     time = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     run_params.id = generate_short_hash(time)
+
     #Create input dir for the run
-    run_params.input_dir = os.path.join(run_params.id, main_params.input_dir)
+    run_params.input_dir = os.path.join(main_params.input_dir, run_params.id,)
+    create_dir(run_params.input_dir)
+
     #Create the actual subset inside the input dir
     subsetter = Subsetter(main_params.samplesheet)
     run_subset = subsetter.create_subset(run_params.id)
     run_params.create_run_input_symlinks(run_subset)
+
     #Create output dir for the run
-    run_params.output_dir = os.path.join(run_params.id, main_params.output_dir)
+    run_params.output_dir = os.path.join(main_params.output_dir, run_params.id)
+    create_dir(run_params.output_dir)
+
     #Create logs dir for the run
-    run_params.logs_dir = os.path.join(run_params.id, main_params.logs_dir)
+    run_params.logs_dir = os.path.join(main_params.logs_dir, run_params.id)
+    create_dir(run_params.logs_dir)
+
     #Set basecalling model
     run_params.basecalling_model = main_params.basecalling_model
     print(run_params)
+
+    #Calculate resources
+
+    #Create config file in run logs dir
+    run_params.config_path = os.path.join(run_params.logs_dir, "run_" + run_params.id + ".json")
+    run_config = ConfigFile(run_params.config_path)
+
+    #Configure run_config
+    run_config.general = General(run_config, "Run_" + run_params.id, "3:0:0 ")
+    run_config._slurm = Slurm(run_config, run_params.logs_dir, run_params.logs_dir, "script.sh")
     
-    #Create config file
+    

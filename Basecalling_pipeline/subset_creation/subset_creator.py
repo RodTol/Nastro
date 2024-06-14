@@ -42,8 +42,11 @@ class Subsetter:
             if self._check_file_exist(row):
                 #Add
                 subset.append(row.to_dict())
-                #Update
-                self.dataframe.loc[i, 'basecalled'] = run_id
+                #Update (need to cast for pandas)
+                if isinstance(run_id, bool):
+                    self.dataframe.loc[i, 'basecalled'] = bool(run_id)
+                else:
+                    self.dataframe.loc[i, 'basecalled'] = str(run_id)
                 cumulative_size += file_size
             else: 
                 # Here we can modify the handling of this situation
