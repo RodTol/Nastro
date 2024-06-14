@@ -1,3 +1,7 @@
+from runParameters import runParameters
+from config_file_api import ComputingResources
+from config_file_api import ConfigFile
+
 # https://community.nanoporetech.com/requirements_documents/promethion-it-reqs.pdf?from=support
 conversion_rate_Gbases_to_GB = 7 
 #https://aws.amazon.com/blogs/hpc/benchmarking-the-oxford-nanopore-technologies-basecallers-on-aws/
@@ -40,5 +44,26 @@ class ResourceTuning:
     and a actual size. Based on the difference of this, it will recalculate the
     resources
     '''
-    def __init__ (self, model):
-        self.model = model
+    def __init__ (self, run_params, run_config):
+        '''
+        I need the params, and the config file in order to update
+        immediatly the json file of the config
+        '''
+        if not isinstance(run_params, runParameters):
+            raise TypeError("run_params must be an instance of runParameters")
+        self.run_params = run_params
+        
+        if not isinstance(run_config, ConfigFile):
+            raise TypeError("run_config must be an instance of ConfigFile")
+        self.run_config = run_config
+
+    def compute_resources(self):
+        '''
+        For the given run_params return a ComputingResourcees object
+        '''
+        #Standard set of resources
+        if self.run_params.actual_size >= self.run_params.ideal_size:
+            return ComputingResources(self.run_config, "0", ["DGX","DGX"], ["dgx001", "dgx002"],
+                                                        ["10.128.2.161", "10.128.2.162"], ["64, 64"], 
+                                                        ["200GB", "200GB"], ["2", "2"], ["cuda:all", "cuda:all"],
+                                                        ["5", "5"])
