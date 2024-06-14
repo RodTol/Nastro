@@ -29,6 +29,9 @@ class Subsetter:
         It will return a list of dict. 
         '''
         all_non_basecalled_files = self.dataframe[self.dataframe['basecalled'] == False]
+        #cast to object type beacuse I will have both booleans and strings
+        all_non_basecalled_files['basecalled'] = all_non_basecalled_files['basecalled'].astype(object)
+
         if len(all_non_basecalled_files) == 0:
             print("THERE ARE NO FILE TO BE PROCESSED") #also here decide how to handle
             sys.exit(0)
@@ -42,11 +45,8 @@ class Subsetter:
             if self._check_file_exist(row):
                 #Add
                 subset.append(row.to_dict())
-                #Update (need to cast for pandas)
-                if isinstance(run_id, bool):
-                    self.dataframe.loc[i, 'basecalled'] = bool(run_id)
-                else:
-                    self.dataframe.loc[i, 'basecalled'] = str(run_id)
+                #Update 
+                self.dataframe.loc[i, 'basecalled'] = run_id
                 cumulative_size += file_size
             else: 
                 # Here we can modify the handling of this situation

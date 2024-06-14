@@ -32,6 +32,16 @@ class General:
         self._run_time = value
         self.config.data['General']['run_time'] = value
 
+    def to_dict(self):
+        '''
+        Returna dict without the config object field of 
+        the class
+        '''
+        return {
+            'name': self._name,
+            'run_time': self._run_time
+        }        
+
 class Slurm:
     '''
     Class containing the slurm options for the run. It 
@@ -70,6 +80,17 @@ class Slurm:
     def main_script(self, value):
         self._main_script = value
         self.config.data['Slurm']['main_script'] = value
+
+    def to_dict(self):
+        '''
+        Returna dict without the config object field of 
+        the class
+        '''
+        return {
+        "output_path":  self._output_path ,
+        "error_path":   self._error_path,
+        "main_script":  self._main_script
+        }          
 
 class Basecalling:
     '''
@@ -129,6 +150,19 @@ class Basecalling:
     def supervisor_script_path(self, value):
         self._supervisor_script_path = value
         self.config.data['Basecalling']['supervisor_script_path'] = value
+
+    def to_dict(self):
+        '''
+        Returna dict without the config object field of 
+        the class
+        '''
+        return {
+            "model": self._model,
+            "input_dir": self._input_dir,
+            "output_dir": self._output_dir,
+            "logs_dir": self._logs_dir,
+            "supervisor_script_path": self._supervisor_script_path
+        }            
 
 class ComputingResources:
     '''
@@ -231,6 +265,25 @@ class ComputingResources:
         self._batch_size_list = value
         self.config.data['ComputingResources']['batch_size_list'] = value
 
+    def to_dict(self):
+        '''
+        Returna dict without the config object field of 
+        the class
+        '''
+        return {
+            "ComputingResources": {
+                "index_host": self._index_host,
+                "nodes_queue": self._nodes_queue,
+                "nodes_list": self._nodes_list,
+                "nodes_ip": self._nodes_ip,
+                "nodes_cpus": self._nodes_cpus,
+                "nodes_mem": self._nodes_mem,
+                "nodes_gpus": self._nodes_gpus,
+                "gpus": self._gpus,
+                "batch_size_list": self._batch_size_list
+            }
+        }    
+
 class ConfigFile:
     '''
     This class represents and interact with a config file
@@ -267,9 +320,46 @@ class ConfigFile:
     @general.setter
     def general(self, value):
         self._general = value
-        self.data['General'] = value.__dict__  # Update with the dictionary representation of the General object
-        print(self.data)
-        self.update_json_file #synchronize
+        # Update with the dictionary representation of the object
+        # but we need to remove the general.config
+        self.data['General'] = value.to_dict()
+        self.update_json_file() #synchronize
+
+    @property
+    def slurm(self):
+        return self._slurm
+    
+    @slurm.setter
+    def slurm(self, value):
+        self._slurm = value
+        # Update with the dictionary representation of the object
+        # but we need to remove the general.config
+        self.data['Slurm'] = value.to_dict()
+        self.update_json_file() #synchronize      
+
+    @property
+    def basecalling(self):
+        return self._basecalling
+    
+    @basecalling.setter
+    def basecalling(self, value):
+        self._basecalling = value
+        # Update with the dictionary representation of the object
+        # but we need to remove the general.config
+        self.data['Basecalling'] = value.to_dict()
+        self.update_json_file() #synchronize       
+
+    @property
+    def computing_resources(self):
+        return self._computing_resources
+    
+    @computing_resources.setter
+    def computing_resources(self, value):
+        self._computing_resources = value
+        # Update with the dictionary representation of the object
+        # but we need to remove the general.config
+        self.data['ComputingResources'] = value.to_dict()
+        self.update_json_file() #synchronize                  
 
     def file_exists(self):
         try:

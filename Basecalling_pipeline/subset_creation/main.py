@@ -113,16 +113,27 @@ if __name__ == "__main__":
 
     #Set basecalling model
     run_params.basecalling_model = main_params.basecalling_model
-    print(run_params)
-
-    #Calculate resources
 
     #Create config file in run logs dir
-    run_params.config_path = os.path.join(run_params.logs_dir, "run_" + run_params.id + ".json")
+    run_params.config_path = os.path.join(run_params.logs_dir, "config_" + run_params.id + ".json")
     run_config = ConfigFile(run_params.config_path)
+    
+    print(run_params)
+
+    #Calculate resources and then update the config file
 
     #Configure run_config
+    #General
     run_config.general = General(run_config, "Run_" + run_params.id, "3:0:0 ")
-    run_config._slurm = Slurm(run_config, run_params.logs_dir, run_params.logs_dir, "script.sh")
-    
-    
+    #Slurm
+    run_slurm_output = os.path.join(run_params.logs_dir, "%x-%j.out")
+    run_slurm_error = os.path.join(run_params.logs_dir, "%x-%j.err")
+    run_config.slurm = Slurm(run_config, run_slurm_output , run_slurm_output, "script.sh")
+    #Basecalling
+    run_config.basecalling = Basecalling(run_config, run_params.basecalling_model, run_params.input_dir,
+                                         run_params.output_dir, run_params.logs_dir, "supervisor.sh")
+    #Resources
+    run_config.computing_resources = ComputingResources(run_config, "0", ["DGX","DGX"], ["dgx001", "dgx002"],
+                                                        ["10.128.2.161", "10.128.2.162"], ["64, 64"], 
+                                                        ["200GB", "200GB"], ["2", "2"], ["cuda:all", "cuda:all"],
+                                                        ["cuda:all", "cuda:all"])
