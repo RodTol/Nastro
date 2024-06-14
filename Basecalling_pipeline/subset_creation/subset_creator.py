@@ -59,7 +59,7 @@ class Subsetter:
         self.samplesheet.data = self.dataframe.to_dict(orient='records')
         self.samplesheet.update_json_file()
 
-        return subset
+        return subset, cumulative_size
     
     def _check_file_exist(self, samplesheet_entry):
         '''

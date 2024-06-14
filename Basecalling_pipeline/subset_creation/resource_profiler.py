@@ -33,6 +33,12 @@ def choose_ideal_size(model):
         print(f"Using default size! {model} was not recognized\n Using HAC SIZE")
         return HAC_IDEAL_SIZE_GB  
 
-class ResourceProfiler:
+class ResourceTuning:
+    '''
+    This object will check if the paramters for a run are configured
+    in optimal way. By default each model will arrive with a given ideal_size
+    and a actual size. Based on the difference of this, it will recalculate the
+    resources
+    '''
     def __init__ (self, model):
         self.model = model
