@@ -29,7 +29,7 @@ if __name__ == "__main__":
     run_params = runParameters('','','','','')
 
     #Create batch hash identifier
-    time = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    time = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
     run_params.id = generate_short_hash(time) + "_" + time
 
     #Create input dir for the run
@@ -74,5 +74,4 @@ if __name__ == "__main__":
                                          run_params.output_dir, run_params.logs_dir, "supervisor.sh")
     #Resources
     #Calculate resources and then update the config file
-    print(type(ResourceTuning(run_params, run_config).compute_resources()))
     run_config.computing_resources = ResourceTuning(run_params, run_config).compute_resources()

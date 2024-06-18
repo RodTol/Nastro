@@ -391,6 +391,6 @@ class ConfigFile:
         try:
             with open(self.path_to_json, 'w') as file:
                 json.dump(self.data, file, indent=4)
-            print("JSON file updated successfully.")
+            print("Config JSON file updated successfully.")
         except Exception as e:
             print(f"An error occurred while updating the JSON file: {e}")    
