@@ -62,7 +62,7 @@ class Samplesheet:
         try:
             with open(self.file_path, 'w') as file:
                 json.dump(self.data, file, indent=4)
-            print("JSON file updated successfully.")
+            print("Samplesheet JSON file updated successfully.")
         except Exception as e:
             print(f"An error occurred while updating the JSON file: {e}")    
 
