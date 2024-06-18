@@ -82,6 +82,8 @@ class ResourceTuning:
     def compute_resources(self):
         '''
         For the given run_params return a ComputingResourcees object
+
+        TODO: create config file with computing profiles. Do not leave it hardcoded inside the code
         '''
         subset_length = self._length_of_subset()
         #sprint("Subset Length: ", subset_length)

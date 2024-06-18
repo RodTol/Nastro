@@ -33,7 +33,7 @@ if __name__ == "__main__":
     run_params.id = generate_short_hash(time)
 
     #Create input dir for the run
-    run_params.input_dir = os.path.join(main_params.input_dir, run_params.id,)
+    run_params.input_dir = os.path.join(main_params.input_dir, run_params.id)
     create_dir(run_params.input_dir)
 
     #Set basecalling model
