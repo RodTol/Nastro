@@ -29,7 +29,7 @@ if __name__ == "__main__":
     run_params = runParameters('','','','','')
 
     #Create batch hash identifier
-    time = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+    time = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     run_params.id = generate_short_hash(time) + "_" + time
 
     #Create input dir for the run
