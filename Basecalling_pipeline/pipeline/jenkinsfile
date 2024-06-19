@@ -4,6 +4,9 @@ pipeline {
             label 'docker'
             }
     }
+    environment {
+        RUN_PARAMS_PATH = "None"
+    }
     parameters {
         string(name: 'pathToSamplesheet', defaultValue: '/u/area/jenkins_onpexp/Pipeline_long_reads/samplesheet/orfeo_template.json', description: 'Path to the samplesheet of the work batch')
         string(name: 'pathToInputDir', defaultValue: '/u/area/jenkins_onpexp/scratch/TEST/input', description: 'Path to where the dir with symlinks will be stored. Root for each run input dir')
@@ -76,7 +79,7 @@ pipeline {
                             source ${HOME}/python_venvs/login_venv_jenkins/bin/activate
                             cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/subset_creation
                             python3 main.py '${pathToSamplesheet}' '${pathToInputDir}' '${pathToOutputDir}' '${pathToLogsDir}' '${basecallingModel}'
-                            echo $RUN_PARAMS_PATH
+                            echo '${RUN_PARAMS_PATH}'
                             deactivate
                         '
                     '''
