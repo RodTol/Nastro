@@ -1,4 +1,5 @@
 import os
+import json 
 
 class runParameters:
     def __init__(self, id, input_dir, output_dir, logs_dir, basecalling_model, ideal_size=None, actual_size=None, run_config_path=None):
@@ -31,9 +32,61 @@ class runParameters:
         for file in files_list:
             create_symlink(file["path"], self.input_dir)
     
-    def print_to_file(self, path):
-        with open(path, "w") as file:
-            file.write(str(self))
+    def to_dict(self):
+        '''
+        Conversion of the class to JSON format in order to
+        simplify the printing and reading of a object of this class
+        '''
+        return {
+            'id': self.id,
+            'input_dir': self.input_dir,
+            'output_dir': self.output_dir,
+            'logs_dir': self.logs_dir,
+            'basecalling_model': self.basecalling_model,
+            'ideal_size': self.ideal_size,
+            'actual_size': self.actual_size,
+            'config_path': self.config_path
+        }
+
+    def write_to_file(self, file_path):
+        '''
+        Write down the object
+        '''
+        with open(file_path, 'w') as file:
+            json.dump(self.to_dict(), file, indent=4)
+
+    @classmethod
+    def from_file(cls, file_path):
+        '''
+        Create an instance by reading a file
+        '''
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+            return cls(
+                id=data.get('id'),
+                input_dir=data.get('input_dir'),
+                output_dir=data.get('output_dir'),
+                logs_dir=data.get('logs_dir'),
+                basecalling_model=data.get('basecalling_model'),
+                ideal_size=data.get('ideal_size'),
+                actual_size=data.get('actual_size'),
+                run_config_path=data.get('config_path')
+            )
+
+    def update_from_file(self, file_path):
+        '''
+        Update an instance by reading a file
+        '''
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+            self.id = data.get('id', self.id)
+            self.input_dir = data.get('input_dir', self.input_dir)
+            self.output_dir = data.get('output_dir', self.output_dir)
+            self.logs_dir = data.get('logs_dir', self.logs_dir)
+            self.basecalling_model = data.get('basecalling_model', self.basecalling_model)
+            self.ideal_size = data.get('ideal_size', self.ideal_size)
+            self.actual_size = data.get('actual_size', self.actual_size)
+            self.config_path = data.get('config_path', self.config_path)            
 
 
 def create_symlink(target_path, link_directory, link_name=None):
