@@ -62,6 +62,9 @@ if __name__ == "__main__":
     #Ready
     print(run_params)
 
+    #Save the run_params
+    run_params.print_to_file(os.path.join(run_params.logs_dir, "runParams.txt"))
+
     #Configure run_config
     #General
     run_config.general = General(run_config, "Run_" + run_params.id, "3:0:0 ")

@@ -30,6 +30,10 @@ class runParameters:
         '''
         for file in files_list:
             create_symlink(file["path"], self.input_dir)
+    
+    def print_to_file(self, path):
+        with open(path, "w") as file:
+            file.write(str(self))
 
 
 def create_symlink(target_path, link_directory, link_name=None):
