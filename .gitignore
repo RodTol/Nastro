@@ -166,4 +166,3 @@ cython_debug/
 .vscode/settings.json
 samplesheet/orfeo_template_copy.json
 samplesheet/orfeo_template.json
-samplesheet/orfeo_template_copy.json
