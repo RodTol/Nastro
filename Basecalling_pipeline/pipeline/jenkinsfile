@@ -78,13 +78,11 @@ pipeline {
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
                             source ${HOME}/python_venvs/login_venv_jenkins/bin/activate
                             cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/subset_creation
-                            
-                            echo ${LOCAL_RUN_PARAMS_PATH}
-                            python3 main.py '${pathToSamplesheet}' '${pathToInputDir}' '${pathToOutputDir}' '${pathToLogsDir}' '${basecallingModel}'
-                            echo ${LOCAL_RUN_PARAMS_PATH}
-                            
+
                             echo '${RUN_PARAMS_PATH}'
-                            RUN_PARAMS_PATH=${LOCAL_RUN_PARAMS_PATH}
+                            PYTHON_OUTPUT=$(python3 main.py '${pathToSamplesheet}' '${pathToInputDir}' '${pathToOutputDir}' '${pathToLogsDir}' '${basecallingModel}')
+                            echo "${PYTHON_OUTPUT}"
+                            RUN_PARAMS_PATH=$(echo "${PYTHON_OUTPUT}" | grep "RUN_PARAMS_PATH=" | cut -d '=' -f 2)
                             echo '${RUN_PARAMS_PATH}'
                             deactivate
                         '
