@@ -1,0 +1,35 @@
+{
+        "index_host": "0",
+        "nodes_queue": [
+            "DGX",
+            "DGX"
+        ],
+        "nodes_list": [
+            "dgx002",
+            "dgx001"
+        ],
+        "nodes_ip": [
+            "10.128.2.162",
+            "10.128.2.161"
+        ],
+        "nodes_cpus": [
+            "64",
+            "64"
+        ],
+        "nodes_mem": [
+            "200GB",
+            "200GB"
+        ],
+        "nodes_gpus": [
+            "8",
+            "8"
+        ],
+        "gpus": [
+            "cuda:all",
+            "cuda:all"
+        ],
+        "batch_size_list": [
+            "50",
+            "50"
+        ]
+    }
