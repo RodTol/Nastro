@@ -54,6 +54,7 @@ class runParameters:
         '''
         with open(file_path, 'w') as file:
             json.dump(self.to_dict(), file, indent=4)
+        print("Run params written at ", file_path)            
 
     @classmethod
     def from_file(cls, file_path):
