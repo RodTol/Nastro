@@ -79,6 +79,9 @@ pipeline {
                             source ${HOME}/python_venvs/login_venv_jenkins/bin/activate
                             cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/subset_creation
                             python3 main.py '${pathToSamplesheet}' '${pathToInputDir}' '${pathToOutputDir}' '${pathToLogsDir}' '${basecallingModel}'
+                            echo ${LOCAL_RUN_PARAMS_PATH}
+                            echo '${RUN_PARAMS_PATH}'
+                            RUN_PARAMS_PATH=${LOCAL_RUN_PARAMS_PATH}
                             echo '${RUN_PARAMS_PATH}'
                             deactivate
                         '
