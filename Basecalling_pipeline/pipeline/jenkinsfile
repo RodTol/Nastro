@@ -75,7 +75,10 @@ pipeline {
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
                             source ${HOME}/python_venvs/login_venv_jenkins/bin/activate
                             cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/subset_creation
-                            echo '${BUILD_NUMBER}'
+
+                            export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
+                            echo ${BUILD_NUMBER_LOCAL}
+
                             python3 main.py '${pathToSamplesheet}' '${pathToInputDir}' '${pathToOutputDir}' '${pathToLogsDir}' '${basecallingModel}'
                             deactivate
                         ' 
@@ -90,8 +93,12 @@ pipeline {
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
                             cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/launch_run
-                            export RUN_PARAMS_PATH='${pathToLogsDir}'/runParams_build_${BUILD_NUMBER}.txt'
+
+                            export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
+
+                            export RUN_PARAMS_PATH='${pathToLogsDir}'/runParams_build_${BUILD_NUMBER_LOCAL}.txt'
                             echo ${RUN_PARAMS_PATH}
+                            
                             python3 main.py ${RUN_PARAMS_PATH}
                         '
                     '''
