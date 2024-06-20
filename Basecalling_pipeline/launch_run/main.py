@@ -5,3 +5,4 @@ from runParameters import runParameters
 
 if __name__ == "__main__":
     run_params = runParameters.from_file(sys.argv[1])
+    print(run_params)
