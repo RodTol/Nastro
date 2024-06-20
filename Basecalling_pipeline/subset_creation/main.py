@@ -62,11 +62,10 @@ if __name__ == "__main__":
     #Ready
     print(run_params)
 
-    #Save the run_params and print it
-    run_params_file_path = os.path.join(run_params.logs_dir, "runParams.txt")
+    #Save the run_params and print it to file
+    jenkins_build_id = os.environ.get('BUILD_ID')
+    run_params_file_path = os.path.join(main_params.logs_dir, f"runParams_build_{jenkins_build_id}.txt")
     run_params.write_to_file(run_params_file_path)
-    os.environ['RUN_PARAMS_PATH'] = run_params_file_path
-    #print  ("RUN_PARAMS_PATH=", run_params_file_path)
 
     #Configure run_config
     #General

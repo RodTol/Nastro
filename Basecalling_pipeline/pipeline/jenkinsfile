@@ -4,9 +4,6 @@ pipeline {
             label 'docker'
             }
     }
-    environment {
-        RUN_PARAMS_PATH = "None"
-    }
     parameters {
         string(name: 'pathToSamplesheet', defaultValue: '/u/area/jenkins_onpexp/Pipeline_long_reads/samplesheet/orfeo_template.json', description: 'Path to the samplesheet of the work batch')
         string(name: 'pathToInputDir', defaultValue: '/u/area/jenkins_onpexp/scratch/TEST/input', description: 'Path to where the dir with symlinks will be stored. Root for each run input dir')
@@ -80,11 +77,8 @@ pipeline {
                             cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/subset_creation
 
                             python3 main.py '${pathToSamplesheet}' '${pathToInputDir}' '${pathToOutputDir}' '${pathToLogsDir}' '${basecallingModel}'
-                            echo "${RUN_PARAMS_PATH}"
-
                             deactivate
                         ' 
-                        echo RUN_PARAMS_PATH
                     '''
                 }
             }
@@ -94,10 +88,11 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
                     /*Use the run config to create a sbatch script and launch it*/
                     sh '''
-                        echo RUN_PARAMS_PATH
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
                             cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/launch_run
-                            python3 main.py '${RUN_PARAMS_PATH}'
+                            export RUN_PARAMS_PATH='${pathToLogsDir}'/runParams_build_${BUILD_ID}.txt'
+                            echo ${RUN_PARAMS_PATH}
+                            python3 main.py ${RUN_PARAMS_PATH}
                         '
                     '''
                 }
