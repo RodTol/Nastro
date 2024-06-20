@@ -65,7 +65,8 @@ if __name__ == "__main__":
     #Save the run_params and print it
     run_params_file_path = os.path.join(run_params.logs_dir, "runParams.txt")
     run_params.write_to_file(run_params_file_path)
-    print("RUN_PARAMS_PATH=", run_params_file_path)
+    os.environ['RUN_PARAMS_PATH'] = run_params_file_path
+    #print  ("RUN_PARAMS_PATH=", run_params_file_path)
 
     #Configure run_config
     #General
