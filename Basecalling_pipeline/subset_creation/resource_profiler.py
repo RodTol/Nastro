@@ -1,7 +1,7 @@
 import os
-from runParameters import runParameters
-from config_file_api import ComputingResources
-from config_file_api import ConfigFile
+from Basecalling_pipeline.subset_creation.runParameters import runParameters
+from Basecalling_pipeline.subset_creation.config_file_api import ComputingResources
+from Basecalling_pipeline.subset_creation.config_file_api import ConfigFile
 
 # https://community.nanoporetech.com/requirements_documents/promethion-it-reqs.pdf?from=support
 conversion_rate_Gbases_to_GB = 7 

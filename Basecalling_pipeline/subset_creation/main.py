@@ -73,7 +73,7 @@ if __name__ == "__main__":
     #Slurm
     run_slurm_output = os.path.join(run_params.logs_dir, "%x-%j.out")
     run_slurm_error = os.path.join(run_params.logs_dir, "%x-%j.err")
-    run_config.slurm = Slurm(run_config, run_slurm_output , run_slurm_output, "script.sh")
+    run_config.slurm = Slurm(run_config, run_slurm_output , run_slurm_error, "script.sh")
     #Basecalling
     run_config.basecalling = Basecalling(run_config, run_params.basecalling_model, run_params.input_dir,
                                          run_params.output_dir, run_params.logs_dir, "supervisor.sh")

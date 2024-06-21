@@ -299,7 +299,8 @@ class ConfigFile:
         self.path_to_json = file_path
         if self.file_exists():
             print(f"The file '{file_path}' already exists.")
-            self.data = self.read_file()  # load the data
+            # Load the data
+            self.data = self.read_file()  
             self._general = General(self, **self.data['General'])
             self._slurm = Slurm(self, **self.data['Slurm'])
             self._basecalling = Basecalling(**self.data['Basecalling'])
@@ -394,3 +395,77 @@ class ConfigFile:
             print("Config JSON file updated successfully.")
         except Exception as e:
             print(f"An error occurred while updating the JSON file: {e}")    
+
+    def check_config_json_structure(path_to_json):
+        '''
+        This function checks if the config.json file is correct
+        '''
+        # Define the expected structure
+        expected_structure = {
+            "General": {
+                "name": str,
+                "run_time": str,
+            },
+            "Slurm": {
+                "output_path": str,
+                "error_path": str,
+                "main_script": str,
+            },
+            "Basecalling": {
+                "model": str,
+                "input_dir": str,
+                "output_dir": str,
+                "logs_dir": str,
+                "supervisor_script_path": str,
+            },
+            "ComputingResources": {
+                "index_host": str,
+                "nodes_queue": list,
+                "nodes_list": list,
+                "nodes_ip": list,
+                "nodes_cpus": list,
+                "nodes_mem": list,
+                "nodes_gpus": list,
+                "gpus": list,
+                "batch_size_list": list,
+            }
+        }   
+
+        # Check the structure function
+        def check_structure(expected, actual):
+            if isinstance(expected, dict):
+                if not isinstance(actual, dict):
+                    return False
+                for key, value_type in expected.items():
+                    if key not in actual:
+                        print(f"Missing key: {key}")
+                        return False
+                    if not check_structure(value_type, actual[key]):
+                        print(f"Incorrect structure for key: {key}")
+                        return False
+            elif isinstance(expected, type):
+                if not isinstance(actual, expected):
+                    print(f"Incorrect type for value, expected {expected.__name__}, got {type(actual).__name__}")
+                    return False
+            return True
+
+        print("Testing ", path_to_json)
+        # Code duplication forced because otherwise I cannot use this function
+        # without a complete instance of config_file
+        try:
+            with open(path_to_json, 'r') as file:
+                data = json.load(file)
+        except FileNotFoundError: #Does it exist ?
+            print(f"File not found: {path_to_json}") 
+            sys.exit(1)
+        except json.JSONDecodeError: #Is it a json ?
+            print(f"Error decoding JSON from file: {path_to_json}")
+            sys.exit(1)
+        
+        # Check the structure of the loaded JSON against the expected structure
+        if check_structure(expected_structure, data):
+            print("JSON structure is correct")
+            return True
+        else:
+            print("JSON structure is incorrect")
+            return False             
