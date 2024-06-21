@@ -100,6 +100,7 @@ pipeline {
                             export RUN_PARAMS_PATH="${LOG_PATH}/runParams_build_${BUILD_NUMBER_LOCAL}.txt"
                             echo ${RUN_PARAMS_PATH}
 
+                            export PYTHONPATH=/u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline:$PYTHONPATH
                             python3 main.py ${RUN_PARAMS_PATH}
                         '
                     '''
