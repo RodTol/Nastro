@@ -7,11 +7,11 @@ def test_correct_reading() -> None:
     '''
     path = "test_files/config_correct.json"
     
-    assert ConfigFile.check_config_json_structure(path) == True
+    assert check_config_json_structure(path) == True
 
 def test_error_detection() -> None:
     '''
     Testing if a incorrect file is detected
     '''
     path = "test_files/config_missing_field.json"
-    assert ConfigFile.check_config_json_structure(path) == False
+    assert check_config_json_structure(path) == False

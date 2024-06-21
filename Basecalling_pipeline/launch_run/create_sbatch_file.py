@@ -7,98 +7,40 @@ def load_json(path):
         data = json.load(file)
         return data
 
-def check_json_structure(path):
-    # Define the expected structure
-    expected_structure = {
-        "General": {
-            "name": str,
-            "run_time": str,
-        },
-        "Slurm": {
-            "output_path": str,
-            "error_path": str,
-            "main_script": str,
-        },
-        "Basecalling": {
-            "model": str,
-            "input_dir": str,
-            "output_dir": str,
-            "logs_dir": str,
-            "supervisor_script_path": str,
-        },
-        "ComputingResources": {
-            "index_host": str,
-            "nodes_queue": list,
-            "nodes_list": list,
-            "nodes_ip": list,
-            "nodes_cpus": list,
-            "nodes_mem": list,
-            "nodes_gpus": list,
-            "gpus": list,
-            "batch_size_list": list,
-        }
-    }   
-
-    data = load_json(path)
-    # Check the structure
-    def check_structure(expected, actual):
-        if isinstance(expected, dict):
-            if not isinstance(actual, dict):
-                return False
-            for key, value_type in expected.items():
-                if key not in actual:
-                    print(f"Missing key: {key}")
-                    return False
-                if not check_structure(value_type, actual[key]):
-                    print(f"Incorrect structure for key: {key}")
-                    return False
-        elif isinstance(expected, type):
-            if not isinstance(actual, expected):
-                print(f"Incorrect type for value, expected {expected.__name__}, got {type(actual).__name__}")
-                return False
-        return True
-
-    # Check the structure of the loaded JSON against the expected structure
-    if check_structure(expected_structure, data):
-        print("JSON structure is correct")
-        return True
-    else:
-        print("JSON structure is incorrect")
-        return False 
-
-def create_sbatch_file(config):
+def create_sbatch_file(path_to_config, path_to_sbatch):
     '''
     Function to create a Slurm sbatch script based on a configuration
     file (config.json). See the documentation to understand what each 
     parameter represents
     '''
     # Get the number of nodes that will be used for the basecalling
-    how_many_nodes = len(config['Resources']['nodes_list'])
+    data = load_json(path_to_config)
+    how_many_nodes = len(data['Resources']['nodes_list'])
 
     # Open the sbatch file for writing
-    with open("script_resources.sh", "w") as sbatch_file:
+    with open(path_to_sbatch, "w") as sbatch_file:
         # Write the basic sbatch directives
         sbatch_file.write('#!/bin/bash\n')
-        sbatch_file.write(f"#SBATCH --job-name={config['General']['run_name']}\n")
-        sbatch_file.write(f"#SBATCH --time={config['General']['run_time']}\n")
-        sbatch_file.write(f"#SBATCH --output={config['Slurm']['output']}\n")
-        sbatch_file.write(f"#SBATCH --error={config['Slurm']['error']}\n")
+        sbatch_file.write(f"#SBATCH --job-name={data['General']['run_name']}\n")
+        sbatch_file.write(f"#SBATCH --time={data['General']['run_time']}\n")
+        sbatch_file.write(f"#SBATCH --output={data['Slurm']['output']}\n")
+        sbatch_file.write(f"#SBATCH --error={data['Slurm']['error']}\n")
         
         sbatch_file.write("\n")
 
         # Loop through each node and write its directives
         for i in range(how_many_nodes):
-            sbatch_file.write(f"#SBATCH -A lage -p {config['Resources']['nodes_queue'][i]}")
+            sbatch_file.write(f"#SBATCH -A lage -p {data['Resources']['nodes_queue'][i]}")
             # If a specific node is not specified let slurm decide
-            if config['Resources']['nodes_list'][i] != "":
-                sbatch_file.write(f" --nodelist={config['Resources']['nodes_list'][i]}")
+            if data['Resources']['nodes_list'][i] != "":
+                sbatch_file.write(f" --nodelist={data['Resources']['nodes_list'][i]}")
             
             sbatch_file.write(f" --nodes=1 --ntasks-per-node=1")
-            sbatch_file.write(f" --cpus-per-task={config['Resources']['nodes_cpus'][i]}")
-            sbatch_file.write(f" --mem={config['Resources']['nodes_mem'][i]}")
+            sbatch_file.write(f" --cpus-per-task={data['Resources']['nodes_cpus'][i]}")
+            sbatch_file.write(f" --mem={data['Resources']['nodes_mem'][i]}")
 
-            if config['Resources']['nodes_gpus'][i] != "None":
-                sbatch_file.write(f" --gpus {config['Resources']['nodes_gpus'][i]}\n")
+            if data['Resources']['nodes_gpus'][i] != "None":
+                sbatch_file.write(f" --gpus {data['Resources']['nodes_gpus'][i]}\n")
             else:
                 sbatch_file.write("\n")
 
@@ -126,7 +68,7 @@ def create_sbatch_file(config):
             else:
                 sbatch_file.write(f"srun --het-group={i} ")
 
-            sbatch_file.write(f"{config['Slurm']['instructions']} $json_file $((index_host + {i})) &\n")
+            sbatch_file.write(f"{data['Slurm']['instructions']} $json_file $((index_host + {i})) &\n")
 
             # Add a sleep command after each srun command except the last one
             if i != how_many_nodes-1:
