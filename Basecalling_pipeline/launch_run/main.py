@@ -1,4 +1,7 @@
 import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from create_sbatch_file import *
 from Basecalling_pipeline.subset_creation.config_file_api import *
 

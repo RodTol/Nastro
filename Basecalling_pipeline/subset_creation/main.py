@@ -2,6 +2,8 @@ import sys
 import os
 import hashlib
 import datetime
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from runParameters import runParameters
 from mainParameters import mainParameters
 from config_file_api import *

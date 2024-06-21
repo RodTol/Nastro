@@ -1,4 +1,7 @@
 import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from Basecalling_pipeline.subset_creation.runParameters import runParameters
 from Basecalling_pipeline.subset_creation.config_file_api import ComputingResources
 from Basecalling_pipeline.subset_creation.config_file_api import ConfigFile

@@ -15,7 +15,7 @@ def create_sbatch_file(path_to_config, path_to_sbatch):
     '''
     # Get the number of nodes that will be used for the basecalling
     data = load_json(path_to_config)
-    how_many_nodes = len(data['Resources']['nodes_list'])
+    how_many_nodes = len(data['ComputingResources']['nodes_list'])
 
     # Open the sbatch file for writing
     with open(path_to_sbatch, "w") as sbatch_file:
@@ -30,17 +30,17 @@ def create_sbatch_file(path_to_config, path_to_sbatch):
 
         # Loop through each node and write its directives
         for i in range(how_many_nodes):
-            sbatch_file.write(f"#SBATCH -A lage -p {data['Resources']['nodes_queue'][i]}")
+            sbatch_file.write(f"#SBATCH -A lage -p {data['ComputingResources']['nodes_queue'][i]}")
             # If a specific node is not specified let slurm decide
-            if data['Resources']['nodes_list'][i] != "":
-                sbatch_file.write(f" --nodelist={data['Resources']['nodes_list'][i]}")
+            if data['ComputingResources']['nodes_list'][i] != "":
+                sbatch_file.write(f" --nodelist={data['ComputingResources']['nodes_list'][i]}")
             
             sbatch_file.write(f" --nodes=1 --ntasks-per-node=1")
-            sbatch_file.write(f" --cpus-per-task={data['Resources']['nodes_cpus'][i]}")
-            sbatch_file.write(f" --mem={data['Resources']['nodes_mem'][i]}")
+            sbatch_file.write(f" --cpus-per-task={data['ComputingResources']['nodes_cpus'][i]}")
+            sbatch_file.write(f" --mem={data['ComputingResources']['nodes_mem'][i]}")
 
-            if data['Resources']['nodes_gpus'][i] != "None":
-                sbatch_file.write(f" --gpus {data['Resources']['nodes_gpus'][i]}\n")
+            if data['ComputingResources']['nodes_gpus'][i] != "None":
+                sbatch_file.write(f" --gpus {data['ComputingResources']['nodes_gpus'][i]}\n")
             else:
                 sbatch_file.write("\n")
 
@@ -54,7 +54,7 @@ def create_sbatch_file(path_to_config, path_to_sbatch):
         
         # Write additional sbatch directives for script execution
         sbatch_file.write('json_file=$1\n')
-        sbatch_file.write("index_host=$(jq -r '.Resources.index_host' ")
+        sbatch_file.write("index_host=$(jq -r '.ComputingResources.index_host' ")
         sbatch_file.write('"$json_file")\n')
         sbatch_file.write("echo 'INDEX_HOST' $index_host\n")
 
