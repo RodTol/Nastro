@@ -191,7 +191,7 @@ class ComputingResources:
     @index_host.setter
     def index_host(self, value):
         self._index_host = value
-        self.config.data['ComputingResources']['index_host'] = value
+        self.config.data['index_host'] = value
 
     @property
     def nodes_queue(self):
@@ -200,7 +200,7 @@ class ComputingResources:
     @nodes_queue.setter
     def nodes_queue(self, value):
         self._nodes_queue = value
-        self.config.data['ComputingResources']['nodes_queue'] = value
+        self.config.data['nodes_queue'] = value
 
     @property
     def nodes_list(self):
@@ -209,7 +209,7 @@ class ComputingResources:
     @nodes_list.setter
     def nodes_list(self, value):
         self._nodes_list = value
-        self.config.data['ComputingResources']['nodes_list'] = value
+        self.config.data['nodes_list'] = value
 
     @property
     def nodes_ip(self):
@@ -218,7 +218,7 @@ class ComputingResources:
     @nodes_ip.setter
     def nodes_ip(self, value):
         self._nodes_ip = value
-        self.config.data['ComputingResources']['nodes_ip'] = value
+        self.config.data['nodes_ip'] = value
 
     @property
     def nodes_cpus(self):
@@ -227,7 +227,7 @@ class ComputingResources:
     @nodes_cpus.setter
     def nodes_cpus(self, value):
         self._nodes_cpus = value
-        self.config.data['ComputingResources']['nodes_cpus'] = value
+        self.config.data['nodes_cpus'] = value
 
     @property
     def nodes_mem(self):
@@ -236,7 +236,7 @@ class ComputingResources:
     @nodes_mem.setter
     def nodes_mem(self, value):
         self._nodes_mem = value
-        self.config.data['ComputingResources']['nodes_mem'] = value
+        self.config.data['nodes_mem'] = value
 
     @property
     def nodes_gpus(self):
@@ -245,7 +245,7 @@ class ComputingResources:
     @nodes_gpus.setter
     def nodes_gpus(self, value):
         self._nodes_gpus = value
-        self.config.data['ComputingResources']['nodes_gpus'] = value
+        self.config.data['nodes_gpus'] = value
 
     @property
     def gpus(self):
@@ -254,7 +254,7 @@ class ComputingResources:
     @gpus.setter
     def gpus(self, value):
         self._gpus = value
-        self.config.data['ComputingResources']['gpus'] = value
+        self.config.data['gpus'] = value
 
     @property
     def batch_size_list(self):
@@ -263,7 +263,7 @@ class ComputingResources:
     @batch_size_list.setter
     def batch_size_list(self, value):
         self._batch_size_list = value
-        self.config.data['ComputingResources']['batch_size_list'] = value
+        self.config.data['batch_size_list'] = value
 
     def to_dict(self):
         '''
@@ -271,18 +271,16 @@ class ComputingResources:
         the class
         '''
         return {
-            "ComputingResources": {
-                "index_host": self._index_host,
-                "nodes_queue": self._nodes_queue,
-                "nodes_list": self._nodes_list,
-                "nodes_ip": self._nodes_ip,
-                "nodes_cpus": self._nodes_cpus,
-                "nodes_mem": self._nodes_mem,
-                "nodes_gpus": self._nodes_gpus,
-                "gpus": self._gpus,
-                "batch_size_list": self._batch_size_list
-            }
-        }    
+            "index_host": self._index_host,
+            "nodes_queue": self._nodes_queue,
+            "nodes_list": self._nodes_list,
+            "nodes_ip": self._nodes_ip,
+            "nodes_cpus": self._nodes_cpus,
+            "nodes_mem": self._nodes_mem,
+            "nodes_gpus": self._nodes_gpus,
+            "gpus": self._gpus,
+            "batch_size_list": self._batch_size_list
+        }
 
 class ConfigFile:
     '''
