@@ -301,8 +301,8 @@ class ConfigFile:
             self.data = self.read_file()  
             self._general = General(self, **self.data['General'])
             self._slurm = Slurm(self, **self.data['Slurm'])
-            self._basecalling = Basecalling(**self.data['Basecalling'])
-            self._computing_resources = ComputingResources(**self.data['ComputingResources'])           
+            self._basecalling = Basecalling(self, **self.data['Basecalling'])
+            self._computing_resources = ComputingResources(self, **self.data['ComputingResources'])           
         else:
             print(f"The file '{file_path}' does not exist or has incomplete json structure. Creating empty file.")
             self.data = {}  # empty dict
