@@ -15,6 +15,7 @@ if __name__ == "__main__":
         print(f"Json file for run {run_params.id} is not correct")
         sys.exit(1)
     
-    create_sbatch_file(run_params.config_path, run_params.logs_dir)
+    sbatch_file = os.path.join(run_params.logs_dir, "script_" + run_params.id + ".sh")
+    create_sbatch_file(run_params.config_path, sbatch_file)
     
     

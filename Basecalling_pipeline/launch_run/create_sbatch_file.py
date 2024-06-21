@@ -21,10 +21,10 @@ def create_sbatch_file(path_to_config, path_to_sbatch):
     with open(path_to_sbatch, "w") as sbatch_file:
         # Write the basic sbatch directives
         sbatch_file.write('#!/bin/bash\n')
-        sbatch_file.write(f"#SBATCH --job-name={data['General']['run_name']}\n")
+        sbatch_file.write(f"#SBATCH --job-name={data['General']['name']}\n")
         sbatch_file.write(f"#SBATCH --time={data['General']['run_time']}\n")
-        sbatch_file.write(f"#SBATCH --output={data['Slurm']['output']}\n")
-        sbatch_file.write(f"#SBATCH --error={data['Slurm']['error']}\n")
+        sbatch_file.write(f"#SBATCH --output={data['Slurm']['output_path']}\n")
+        sbatch_file.write(f"#SBATCH --error={data['Slurm']['error_path']}\n")
         
         sbatch_file.write("\n")
 
@@ -68,7 +68,7 @@ def create_sbatch_file(path_to_config, path_to_sbatch):
             else:
                 sbatch_file.write(f"srun --het-group={i} ")
 
-            sbatch_file.write(f"{data['Slurm']['instructions']} $json_file $((index_host + {i})) &\n")
+            sbatch_file.write(f"{data['Slurm']['main_script']} $json_file $((index_host + {i})) &\n")
 
             # Add a sleep command after each srun command except the last one
             if i != how_many_nodes-1:
