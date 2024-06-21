@@ -42,5 +42,18 @@ def test_structure(correct_structure):
     # Check if the structures match
     assert compare_structures(correct_structure, run_config.data), "The structure of the test JSON file does not match the reference structure."
 
-# To run the test, use the following command in your terminal:
-# pytest test_json_structure.py
+def test_correct_reading() -> None:
+    '''
+    Testing if a correct file is correctly read XD
+    '''
+    path = "test_files/config_correct.json"
+    
+    assert check_config_json_structure(path) == True
+
+def test_error_detection() -> None:
+    '''
+    Testing if a incorrect file is detected
+    '''
+    path = "test_files/config_missing_field.json"
+    assert check_config_json_structure(path) == False
+
