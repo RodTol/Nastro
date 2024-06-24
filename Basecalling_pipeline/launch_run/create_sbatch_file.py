@@ -53,9 +53,9 @@ def create_sbatch_file(path_to_config, path_to_sbatch):
         sbatch_file.write("\n")
         
         # Write additional sbatch directives for script execution
-        sbatch_file.write('json_file=$1\n')
+        sbatch_file.write('config_file=$1\n')
         sbatch_file.write("index_host=$(jq -r '.ComputingResources.index_host' ")
-        sbatch_file.write('"$json_file")\n')
+        sbatch_file.write('"$config_file")\n')
         sbatch_file.write("echo 'INDEX_HOST' $index_host\n")
 
         sbatch_file.write("\n")
@@ -68,7 +68,7 @@ def create_sbatch_file(path_to_config, path_to_sbatch):
             else:
                 sbatch_file.write(f"srun --het-group={i} ")
 
-            sbatch_file.write(f"{data['Slurm']['main_script']} $json_file $((index_host + {i})) &\n")
+            sbatch_file.write(f"{data['Slurm']['main_script']} $config_file $((index_host + {i})) &\n")
 
             # Add a sleep command after each srun command except the last one
             if i != how_many_nodes-1:

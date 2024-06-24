@@ -105,11 +105,12 @@ pipeline {
                             #Make executable the sbatch file and launch it
                             id=$(jq -r '.id' $RUN_PARAMS_PATH)
                             logs_dir=$(jq -r '.logs_dir' $RUN_PARAMS_PATH)
+                            config_path=$(jq -r '.config_path' $RUN_PARAMS_PATH)
+                            
                             sbatch_script="${logs_dir}/script_${id}.sh"
 
                             chmod +x ${sbatch_script}
-                            sbatch ${sbatch_script}
-
+                            sbatch ${sbatch_script} ${config_path}
                         '
                     '''
                 }
