@@ -16,6 +16,5 @@ if __name__ == "__main__":
         sys.exit(1)
     
     sbatch_file = os.path.join(run_params.logs_dir, "script_" + run_params.id + ".sh")
-    create_sbatch_file(run_params.config_path, sbatch_file)
-    
+    create_sbatch_file(run_params.config_path, sbatch_file) 
     
