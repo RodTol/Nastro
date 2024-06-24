@@ -19,7 +19,7 @@ cat << "EOF"
     \/___/  \/___/  \/_/\/_/\/___L\ \         \/_/\/ /\/____/\/__/\/_/\/__,_ /\/___/ 
                               /\____/                                                
                               \_/__/                                                 
-
+------------------------------------------------------------------------------------
 EOF
 
 # Color for bash echo
@@ -33,25 +33,26 @@ json_file=$1
 my_index=$2
 
 # Read from config.json file (necessary)
-host_index=$(jq -r '.Resources.index_host' "$json_file")
-node_name=$(jq -r --argjson my_index "$my_index" '.Resources.nodes_list[$my_index]' "$json_file")
 model=$(jq -r '.Basecalling.model' "$json_file")
+input_dir=$(jq -r '.Basecalling.input_dir' "$json_file")
+output_dir=$(jq -r '.Basecalling.output_dir' "$json_file") 
 logs_dir=$(jq -r '.Basecalling.logs_dir' "$json_file")
-node_queue=$(jq -r --argjson my_index "$my_index" '.Resources.nodes_queue[$my_index]' "$json_file")
 
-input_dir=$(jq -r '.Basecalling.input_dir' "$json_file") #debug
-output_dir=$(jq -r '.Basecalling.output_dir' "$json_file") #debug
-gpus_settings=$(jq -r --argjson my_index "$my_index" '.Resources.gpus[$my_index]' "$json_file") #debug
+
+host_index=$(jq -r '.ComputingResources.index_host' "$json_file")
+node_queue=$(jq -r --argjson my_index "$my_index" '.ComputingResources.nodes_queue[$my_index]' "$json_file")
+node_name=$(jq -r --argjson my_index "$my_index" '.ComputingResources.nodes_list[$my_index]' "$json_file")
+gpus_settings=$(jq -r --argjson my_index "$my_index" '.ComputingResources.gpus[$my_index]' "$json_file")
 
 echo -e "${RED}I am this node_name: $node_name${RESET}, and for Slurm: $SLURM_NODELIST"
 
 # Update config.json file
 if  [ "$node_name" == "" ]; then
-  echo -e "${RED}|||Update node_name from $node_name to $SLURM_NODELIST|||${RESET}"
+  echo -e "${CYAN}||| Update node_name from ${RESET} $node_name ${CYAN} to ${RESET} $SLURM_NODELIST ${CYAN} |||${RESET}"
   node_name=$SLURM_NODELIST
 fi
 # Brief output for checking everything it's correct
-echo $CUDA_VISIBLE_DEVICES
+echo -e "${RED}Cuda visible devices:${RESET} $CUDA_VISIBLE_DEVICES" 
 echo -e "${RED}GPUs selected: $gpus_settings${RESET}"
 echo -e "${RED}-----------------------${RESET}"
 echo "Model: $model"
@@ -60,3 +61,29 @@ echo "Logs Directory: $logs_dir"
 echo "Input Directory: $input_dir"
 echo "Output Directory: $output_dir"
 echo -e "${RED}-----------------------${RESET}"
+
+# Each node has its own dir with the port file for the connection
+mkdir $logs_dir/server_node_$node_name
+cd $logs_dir/server_node_$node_name
+
+port=42837
+
+echo -e "${RED} $(date +"%Y-%m-%d %H:%M:%S") Launching the server ${RESET}"
+${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/server.sh $model $logs_dir/server_node_$node_name $gpus_settings $port &
+
+port_file=$(grep "Starting server on port:" <your_log_file> | sed 's/.*Starting server on port: \(.*\) This is.*/\1/')
+echo $port_file
+
+while true; do
+    output=$(python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/check_icp_port.py ${port_file})
+    if [[ "$output" == *"True"* ]]; then
+        echo "Connection is up!"
+    else
+        echo "Connection is down."
+    fi
+    sleep 1
+done
+
+echo "${RED} $(date +"%Y-%m-%d %H:%M:%S") Server is up and running. ${RESET}"
+
+wait
