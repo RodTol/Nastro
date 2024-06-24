@@ -17,10 +17,11 @@ def check_connection(ipc_file_path):
         socket.close()
         context.term()
 
-file_path = sys.argv[1]
-connection_up = check_connection(file_path)
+if __name__ == "__main__":
+    file_path = sys.argv[1]
+    connection_up = check_connection(file_path)
 
-if connection_up:
-    print("True")
-else:
-    print("False")
+    if connection_up:
+        print("True")
+    else:
+        print("False")

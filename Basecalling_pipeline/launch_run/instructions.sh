@@ -62,28 +62,47 @@ echo "Input Directory: $input_dir"
 echo "Output Directory: $output_dir"
 echo -e "${RED}-----------------------${RESET}"
 
+#Load virtualenv
+#TODO: hardcoded path to virtualenv
+if [ "$node_queue" == "DGX" ]; then
+  source /u/area/jenkins_onpexp/python_venvs/DGX_dorado_venv/bin/activate
+  echo -e "${CYAN}$node_name is loading DGX venv, given ${node_queue}${RESET}"
+elif [ "$node_queue" == "GPU" ]; then
+  source /u/area/jenkins_onpexp/python_venvs/GPU_dorado_venv/bin/activate
+  echo -e "${CYAN}$node_name is loading GPU venv, given ${node_queue}${RESET}"
+else
+  echo -e "${RED}SOMETHING WRONG IN THE VIRTUALENV FOR BC SOFTWARE${RESET}"
+fi
+
 # Each node has its own dir with the port file for the connection
+# and the logs from the server
 mkdir $logs_dir/server_node_$node_name
 cd $logs_dir/server_node_$node_name
 
 port=42837
 
-echo -e "${RED} $(date +"%Y-%m-%d %H:%M:%S") Launching the server ${RESET}"
+echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") Launching the server ${RESET}"
 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/server.sh $model $logs_dir/server_node_$node_name $gpus_settings $port &
 
-port_file=$(grep "Starting server on port:" <your_log_file> | sed 's/.*Starting server on port: \(.*\) This is.*/\1/')
-echo $port_file
-
 while true; do
+    port_file=$(grep "Starting server on port:" $logs_dir/Run_* | sed 's/.*Starting server on port: //')
+    # Handle empty response
+    if [ -z "$port_file" ]; then
+        port_file="not found"
+    fi
+    echo $port_file
     output=$(python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/check_icp_port.py ${port_file})
     if [[ "$output" == *"True"* ]]; then
         echo "Connection is up!"
+        break
     else
-        echo "Connection is down."
+        #echo "Connection is down."
+        sleep 1
     fi
-    sleep 1
 done
 
-echo "${RED} $(date +"%Y-%m-%d %H:%M:%S") Server is up and running. ${RESET}"
+echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") Server is up and running. ${RESET}"
+
+
 
 wait
