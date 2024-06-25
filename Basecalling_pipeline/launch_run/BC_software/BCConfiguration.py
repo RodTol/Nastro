@@ -11,6 +11,7 @@ class Conf:
 
     request_work_url = 'http://127.0.0.1:40765/assignwork'
     
+    port = ''
     engine_external_script = ''
     engine_outputdir = ''
     engine_inputdir = ''
@@ -40,7 +41,8 @@ class Conf:
             config = json.load(json_file)
         
         conf_instance = cls()
-
+        
+        conf_instance.port = config["ComputingResources"]["port"]
         index_host = int(config["ComputingResources"]["index_host"])
         host_address = config["ComputingResources"]["nodes_ip"][index_host]
         

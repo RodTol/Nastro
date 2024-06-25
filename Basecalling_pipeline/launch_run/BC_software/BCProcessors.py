@@ -145,6 +145,7 @@ class BCEngine:
     - optimal_request_size  ideal number of pod5 files to process per request
     - engine_id             unique ID of engine
     - polling_interval      minimum time in minutes between successive requests
+    - port                  Port for ICP communication
     - INPUTDIR              ROOT of the inputdir where pod5 files are stored
     - OUTPUTDIR             path to the dir where the basecalling should direct its
                             output for this job.
@@ -171,6 +172,7 @@ class BCEngine:
         self.optimal_request_size = self.conf.engine_optimal_request_size
         self.engine_id = self.conf.engine_id
         self.polling_interval = self.conf.engine_polling_interval
+        self.port = self.conf.port
         self.INPUTDIR = self.conf.engine_inputdir
         self.OUTPUTDIR = self.conf.engine_outputdir 
         self.bc_script = self.conf.engine_external_script
@@ -216,12 +218,13 @@ class BCEngine:
                 input_dir = os.path.join(self.INPUTDIR, answer['job_input_dir'])
                 output_dir = os.path.join(self.OUTPUTDIR, answer['job_output_dir'])
                 model = self.bc_model
+                port = self.port
                 # Check how the BCManager is doing
                 keep_alive_manager.shutdown_if_broken_keepalive()
                 
                 # invoke the external script passing the input dir as parameter
                 # it will block until complete
-                self._basecalling_work(input_dir, output_dir, model)
+                self._basecalling_work(input_dir, output_dir, model, port)
 
                 # Check how the BCManager is doing
                 keep_alive_manager.shutdown_if_broken_keepalive()
@@ -266,7 +269,7 @@ class BCEngine:
             print("BC CONTROLLER PROBLEM! AS PER PROTOCOL, ABORTING PROCESSING AND SHUTTING DOWN! " + str(e))
             sys.exit(1)
 
-    def _basecalling_work(self, input_dir, output_dir, model):
+    def _basecalling_work(self, input_dir, output_dir, model, port):
         """
         This private method handles the basecall processing by invoking an external script that interacts
         with dorado_server.
@@ -281,7 +284,7 @@ class BCEngine:
         @return None
         """
         try:
-            completed_process = subprocess.run([self.bc_script, input_dir, output_dir, model])
+            completed_process = subprocess.run([self.bc_script, input_dir, output_dir, model, port])
             return_code = completed_process.returncode
             if return_code == 0:
                 self.PROCESSING_STATE = bc_status.DONE #'DONE'
