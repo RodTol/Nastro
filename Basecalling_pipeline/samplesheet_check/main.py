@@ -8,4 +8,5 @@ if __name__ == "__main__":
         sys.exit(1)
     
     input_file = sys.argv[1]
+    #TODO how to handle what to do if it fails
     samplesheet = Samplesheet(input_file)

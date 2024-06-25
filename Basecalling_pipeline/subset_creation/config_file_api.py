@@ -170,11 +170,12 @@ class ComputingResources:
     needs a ConfigFile object, whose data field will be 
     immediatly updated
     '''
-    def __init__(self, config, index_host: str, nodes_queue: List[str], nodes_list: List[str], nodes_ip: List[str], 
+    def __init__(self, config, index_host: str, port: str, nodes_queue: List[str], nodes_list: List[str], nodes_ip: List[str], 
                  nodes_cpus: List[str], nodes_mem: List[str], nodes_gpus: List[str], gpus: List[str], 
                  batch_size_list: List[str]):
         self.config = config
         self._index_host = index_host
+        self._port = port
         self._nodes_queue = nodes_queue
         self._nodes_list = nodes_list
         self._nodes_ip = nodes_ip
@@ -192,6 +193,15 @@ class ComputingResources:
     def index_host(self, value):
         self._index_host = value
         self.config.data['index_host'] = value
+
+    @property
+    def port(self):
+        return self._port
+
+    @port.setter
+    def port(self, value):
+        self._port = value
+        self.config.data['port'] = value        
 
     @property
     def nodes_queue(self):
@@ -272,6 +282,7 @@ class ComputingResources:
         '''
         return {
             "index_host": self._index_host,
+            "port": self._port,
             "nodes_queue": self._nodes_queue,
             "nodes_list": self._nodes_list,
             "nodes_ip": self._nodes_ip,
@@ -418,6 +429,7 @@ def check_config_json_structure(path_to_json):
         },
         "ComputingResources": {
             "index_host": str,
+            "port": str,
             "nodes_queue": list,
             "nodes_list": list,
             "nodes_ip": list,

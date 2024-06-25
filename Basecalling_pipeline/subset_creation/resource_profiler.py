@@ -95,21 +95,21 @@ class ResourceTuning:
         if self.run_params.actual_size >= self.run_params.ideal_size:
             print("Using profile 1")
             size1, size2 = split_number(subset_length)
-            return ComputingResources(self.run_config, "0", ["DGX","DGX"], ["dgx001", "dgx002"],
+            return ComputingResources(self.run_config, "0", "42837", ["DGX","DGX"], ["dgx001", "dgx002"],
                                                         ["10.128.2.161", "10.128.2.162"], ["64", "64"], 
                                                         ["200GB", "200GB"], ["2", "2"], ["cuda:all", "cuda:all"],
                                                         [size1, size2])
         #half the ideal size --> one node 2 dgx (half the resources)
         elif self.run_params.actual_size >= self.run_params.ideal_size/2:
             print("Using profile 2")
-            return ComputingResources(self.run_config, "0", ["DGX"], [""],
+            return ComputingResources(self.run_config, "0", "42837", ["DGX"], [""],
                                                         ["10.128.2.161"], ["64"], 
                                                         ["200GB"], ["2"], ["cuda:all"],
                                                         [subset_length])        
         #for now less than a quarter will use one a100. Maybe for very very less use v100
         else: 
             print("Using profile 3")            
-            return ComputingResources(self.run_config, "0", ["DGX"], [""],
+            return ComputingResources(self.run_config, "0", "42837", ["DGX"], [""],
                                                                     ["10.128.2.161"], ["32"], 
                                                                     ["100GB"], ["1"], ["cuda:all"],
                                                                     [subset_length])               

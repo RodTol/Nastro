@@ -22,7 +22,7 @@ echo -e "${GREEN}GPUs selected: ${gpus_settings} ${RESET}"
 
 #Local Unix socket file 
 port="$4"
-echo -e "${GREEN}Port: $port ${RESET}  "
+echo -e "${GREEN}Port: $port ${RESET}"
 
 #In case dorado is not added to PATH
 #dorado_server_path=

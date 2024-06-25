@@ -7,7 +7,7 @@ from Basecalling_pipeline.subset_creation.resource_profiler import *
 
 @pytest.fixture
 def correct_structure():
-    with open('test_files/config_correct.json', 'r') as file:
+    with open('tests/test_files/config_correct.json', 'r') as file:
         return json.load(file)
 
 def compare_structures(correct, to_check):
@@ -21,8 +21,8 @@ def compare_structures(correct, to_check):
     return True
 
 def test_structure(correct_structure):
-    run_params = runParameters.from_file('test_files/test_run_params.json')
-    run_config = ConfigFile('test_files/config_tmp.json')
+    run_params = runParameters.from_file('tests/test_files/test_run_params.json')
+    run_config = ConfigFile('tests/test_files/config_tmp.json')
     #General
     run_config.general = General(run_config, "Run_" + run_params.id, "3:0:0 ")
     #Slurm
@@ -34,7 +34,7 @@ def test_structure(correct_structure):
                                          run_params.output_dir, run_params.logs_dir, "supervisor.sh")
     #Resources
     #Calculate resources and then update the config file
-    run_config.computing_resources = ComputingResources(run_config, "0", ["DGX","DGX"], ["dgx001", "dgx002"],
+    run_config.computing_resources = ComputingResources(run_config, "0", "42837", ["DGX","DGX"], ["dgx001", "dgx002"],
                                                         ["10.128.2.161", "10.128.2.162"], ["64, 64"], 
                                                         ["200GB", "200GB"], ["2", "2"], ["cuda:all", "cuda:all"],
                                                         ["10", "10"])
@@ -46,7 +46,7 @@ def test_correct_reading() -> None:
     '''
     Testing if a correct file is correctly read XD
     '''
-    path = "test_files/config_correct.json"
+    path = "tests/test_files/config_correct.json"
     
     assert check_config_json_structure(path) == True
 
@@ -54,6 +54,6 @@ def test_error_detection() -> None:
     '''
     Testing if a incorrect file is detected
     '''
-    path = "test_files/config_missing_field.json"
+    path = "tests/test_files/config_missing_field.json"
     assert check_config_json_structure(path) == False
 
