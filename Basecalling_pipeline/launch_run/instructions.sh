@@ -105,7 +105,7 @@ echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") Server is up and running. ${RESET}"
 # Start BCManager and BCController on host node
 if ((my_index == host_index)); then
   BC_manager_log_path=${logs_dir}/BCManager_log.txt
-  python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCManagement.py $json_file $my_index >> "$BC_manager_log_path" 2>&1 &
+  python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCManagement.py $json_file $my_index $port>> "$BC_manager_log_path" 2>&1 &
 
   sleep 5
   

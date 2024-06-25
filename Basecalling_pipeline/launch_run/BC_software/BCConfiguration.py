@@ -9,7 +9,7 @@ class Conf:
     mngt_outputdir = ''
     mngt_inputdir = ''
 
-    request_work_url = 'http://127.0.0.1:40765/assignwork'
+    request_work_url = 'http://127.0.0.1:8888/assignwork'
     
     port = ''
     engine_external_script = ''
@@ -20,10 +20,10 @@ class Conf:
     engine_optimal_request_size = 100
     engine_model = ''
     
-    keep_alive_terminate_url = "http://127.0.0.1:40765/completed"
-    keep_alive_url = "http://127.0.0.1:40765/keepalive"
+    keep_alive_terminate_url = "http://127.0.0.1:8888/completed"
+    keep_alive_url = "http://127.0.0.1:8888/keepalive"
 
-    heartbeat_url = "http://127.0.0.1:40765/heartbeat"
+    heartbeat_url = "http://127.0.0.1:8888/heartbeat"
 
     @classmethod
     def from_json(cls, file_path, node_index):
@@ -50,7 +50,7 @@ class Conf:
         conf_instance.mngt_inputdir = config["Basecalling"]["input_dir"]
 
         if node_index != index_host:
-            conf_instance.request_work_url = f'http://{host_address}:40765/assignwork'
+            conf_instance.request_work_url = f'http://{host_address}:{conf_instance.port}/assignwork'
         
         conf_instance.engine_external_script = config["Basecalling"]["supervisor_script_path"]
         conf_instance.engine_outputdir = config["Basecalling"]["output_dir"]
@@ -63,8 +63,8 @@ class Conf:
         conf_instance.engine_model = config["Basecalling"]["model"]
         
         if node_index != index_host:
-            conf_instance.keep_alive_terminate_url = f'http://{host_address}:40765/completed'
-            conf_instance.keep_alive_url = f'http://{host_address}:40765/keepalive'
-            conf_instance.heartbeat_url = f'http://{host_address}:40765/heartbeat'
+            conf_instance.keep_alive_terminate_url = f'http://{host_address}:{conf_instance.port}/completed'
+            conf_instance.keep_alive_url = f'http://{host_address}:{conf_instance.port}/keepalive'
+            conf_instance.heartbeat_url = f'http://{host_address}:{conf_instance.port}/heartbeat'
 
         return conf_instance
