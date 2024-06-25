@@ -51,6 +51,8 @@ class Conf:
 
         if node_index != index_host:
             conf_instance.request_work_url = f'http://{host_address}:{conf_instance.port}/assignwork'
+        else:
+            conf_instance.request_work_url = f'http://127.0.0.1:{conf_instance.port}/assignwork'
         
         conf_instance.engine_external_script = config["Basecalling"]["supervisor_script_path"]
         conf_instance.engine_outputdir = config["Basecalling"]["output_dir"]
@@ -66,5 +68,9 @@ class Conf:
             conf_instance.keep_alive_terminate_url = f'http://{host_address}:{conf_instance.port}/completed'
             conf_instance.keep_alive_url = f'http://{host_address}:{conf_instance.port}/keepalive'
             conf_instance.heartbeat_url = f'http://{host_address}:{conf_instance.port}/heartbeat'
+        else:
+            conf_instance.keep_alive_terminate_url = f'http://127.0.0.1:{conf_instance.port}/completed'
+            conf_instance.keep_alive_url = f'http://127.0.0.1:{conf_instance.port}/keepalive'
+            conf_instance.heartbeat_url = f'http://127.0.0.1:{conf_instance.port}/heartbeat'            
 
         return conf_instance
