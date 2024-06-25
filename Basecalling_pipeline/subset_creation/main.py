@@ -55,6 +55,8 @@ if __name__ == "__main__":
     
     pass_output_dir = os.path.join(run_params.output_dir, "pass")
     fail_output_dir = os.path.join(run_params.output_dir, "fail")
+    create_dir(pass_output_dir)
+    create_dir(fail_output_dir)
 
     #Create logs dir for the run
     run_params.logs_dir = os.path.join(main_params.logs_dir, run_params.id)
