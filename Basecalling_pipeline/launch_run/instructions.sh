@@ -87,7 +87,7 @@ while true; do
     port_file=$(grep "Starting server on port:" $logs_dir/Run_* | sed 's/.*Starting server on port: //')
     # Handle empty response
     if [ -z "$port_file" ]; then
-        port_file="not found"
+        port_file="Port file not found"
     fi
     echo $port_file
     output=$(python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/check_icp_port.py ${port_file})
