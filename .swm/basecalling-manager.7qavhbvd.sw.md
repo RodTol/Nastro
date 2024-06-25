@@ -1,13 +1,27 @@
 ---
-title: Basecalling Software
+title: Basecalling Manager
 ---
-<SwmSnippet path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" line="1">
+# Introduction
+
+This document will walk you through the implementation of the Basecalling Software. This code  is designed to manage and process batches of <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="50:21:22" line-data="    - INPUTDIR              path to the dir containing all the raw .POD5 files.">`.POD5`</SwmToken> files for basecalling. It assigns work to different engines, keeps track of the work status, and handles the completion of the work.
+
+We will cover:
+
+1. The purpose and structure of the <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="15:2:2" line-data="class BCBatch:">`BCBatch`</SwmToken> class.
+
+2. The purpose and structure of the <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="44:2:2" line-data="class BCWorkloadState:">`BCWorkloadState`</SwmToken> class.
+
+3. The purpose and structure of the <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="219:2:2" line-data="class BCManager:">`BCManager`</SwmToken> class.
+
+4. How these classes interact to manage and process the basecalling work.
+
+<SwmSnippet path="Basecalling_pipeline/launch_run/BC_software/BCManagement.py" line="1">
 
 ---
 
-&nbsp;
+Requirements&nbsp;
 
-```python
+```
 import json
 import os
 import sys
@@ -18,7 +32,25 @@ import uuid
 from flask import Flask, request, jsonify
 from collections import namedtuple
 from BCConfiguration import Conf
+```
 
+---
+
+</SwmSnippet>
+
+## <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="15:2:2" line-data="class BCBatch:">`BCBatch`</SwmToken>
+
+The <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="15:2:2" line-data="class BCBatch:">`BCBatch`</SwmToken> class represents a batch of <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="50:21:22" line-data="    - INPUTDIR              path to the dir containing all the raw .POD5 files.">`.POD5`</SwmToken> files that have been assigned for processing. Each batch has a unique job ID, input and output directories, an engine ID, a batch size, and a list of filenames. The class is initialized with default values, which can be updated when a batch is created. This class is crucial for managing individual batches of work and keeping track of their status.
+
+### Structure:
+
+<SwmSnippet path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" line="12">
+
+---
+
+This code snippet defines a class `BCBatch` that represents a batch of pod5 files assigned for processing. The class has several attributes such as `report_back_period`, `jobid`, `job_input_dir`, `job_output_dir`, `bc_engine_id`, `batch_size`, and `batch`. The class also has an `__init__` method that initializes these attributes. The `BCStatus` namedtuple is defined to store different status values for the batch processing.
+
+```python
 BCStatus = namedtuple("BCStatus", ["ASSIGNED", "STARTED", "PROCESSING", "STOPPED", "DONE", "FAILED"])
 bc_status = BCStatus("ASSIGNED", "STARTED", "PROCESSING", "STOPPED", "DONE", "FAILED")
 
@@ -50,7 +82,25 @@ class BCBatch:
         self.batch_size = batch_size
         self.batch = batch
 
+```
 
+---
+
+</SwmSnippet>
+
+## <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="44:2:2" line-data="class BCWorkloadState:">`BCWorkloadState`</SwmToken>
+
+The <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="44:2:2" line-data="class BCWorkloadState:">`BCWorkloadState`</SwmToken> class represents the state of the basecalling processing. It keeps track of the input and output directories, the list of files that still need to be basecalled, the default batch size, and the assigned batches. The class is initialized with a JSON file path and a node index, which are used to configure the basecalling workload. The class provides methods to update the state, assign work to an engine, and handle the completion of work. This class is essential for managing the overall basecalling workload and assigning work to different engines.
+
+### Structure:
+
+<SwmSnippet path="Basecalling_pipeline/launch_run/BC_software/BCManagement.py" line="44">
+
+---
+
+This code snippet defines a class called BCWorkloadState that represents the state of basecalling processing. It has attributes such as `INPUTDIR` and `OUTPUTDIR` which store the paths to the input and output directories respectively. It also has a list called `unassigned_bc` which keeps track of files that still need to be basecalled. The `default_batch_size` attribute stores the default size of the batch. The `assigned_batches` attribute is a dictionary that holds the actual batch of files. The `__init__` method initializes the class with a JSON file path and node index, and it uses the provided JSON file path and node index to set the values of the `INPUTDIR`, `OUTPUTDIR`, and `default_batch_size` attributes. The `Conf.from_json` function is called to create a Conf object from the JSON file path and node index.
+
+```
 class BCWorkloadState:
     """
     Class that represents the state of the basecalling processing, as well as
@@ -78,7 +128,21 @@ class BCWorkloadState:
         self.unassigned_bc = []
         self.default_batch_size = conf.mngt_batch_size
         self.assigned_batches = {}
+```
 
+---
+
+</SwmSnippet>
+
+### Methods
+
+<SwmSnippet path="Basecalling_pipeline/launch_run/BC_software/BCManagement.py" line="72">
+
+---
+
+This code snippet is a part of a method called `update` in a class. It is used to scan the filesystem and update the internal state of the `BCWorkloadStatus` object. The code first searches for processed `.FASTQ` files in the `pass` and `fail` directories of the `OUTPUTDIR`. Then it finds raw files in the `INPUTDIR` that have not been assigned a FASTQ counterpart and files that have been assigned for basecalling. The code filters out files that do not meet certain conditions (e.g., filename extensions) and adds the valid filenames to `fastq_files`, `potential_files`, and `assigned_files` lists respectively.
+
+```
     def update(self):
         """
         Method used to tell this BCWorkloadStatus to read the filesystem and update itself
@@ -132,7 +196,19 @@ class BCWorkloadState:
         # update this instance
         self.unassigned_bc = final_list
         #TO DO: reconstruct assigned_batches after crash?
+```
 
+---
+
+</SwmSnippet>
+
+<SwmSnippet path="Basecalling_pipeline/launch_run/BC_software/BCManagement.py" line="126">
+
+---
+
+This code snippet is a method `assign_work_to` that is used to assign work to a Dorado server. It takes in the `bc_engine_id` and `batch_size` as optional parameters. If no `batch_size` is specified, it uses the Dorado server's default batch size. The method returns a `BCBatch` object containing details of the assigned work. The code snippet also includes logic to handle cases where there are no pending files to assign, and it generates a unique job ID and prepares the input and output directories for the job.
+
+```
     def assign_work_to(self, bc_engine_id="default-engine", batch_size=0):
         """
         Method invoked to assign work to the supplied dorado_server. By default, the dorado_server's
@@ -179,7 +255,19 @@ class BCWorkloadState:
         bc_work = BCBatch(jobid=jobid, job_input_dir=job_input_dir, job_output_dir=job_output_dir, bc_engine_id=bc_engine_id, batch_size=batch_size, batch=batch)
         self.assigned_batches[jobid] = bc_work
         return bc_work
+```
 
+---
+
+</SwmSnippet>
+
+<SwmSnippet path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" line="173">
+
+---
+
+This code snippet is a method called `completed_work` that is invoked to complete the processing of a batch for a given job. It updates directories based on the job's state. If the jobstate is `FAILED`, it renames the input and output directories to indicate failure. If the jobstate is `DONE`, it moves the fastq files from the `pass` and `fail` directories to their final destination.
+
+```python
     def completed_work(self, jobid="", jobstate=""):
         """
         Method invoked to complete the processing of a batch for a given job. It is based on its
@@ -224,8 +312,27 @@ class BCWorkloadState:
             unknown_full_job_output_dir = os.path.join(self.OUTPUTDIR, bc_work.job_output_dir.replace("TMPOUTPUT","UNKNOWNOUTPUT"))
             os.rename(full_job_input_dir, unknown_full_job_input_dir)
             os.rename(full_job_output_dir, unknown_full_job_output_dir)
+```
 
+---
 
+</SwmSnippet>
+
+## <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="219:2:2" line-data="class BCManager:">`BCManager`</SwmToken>
+
+The <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="219:2:2" line-data="class BCManager:">`BCManager`</SwmToken> class represents a <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="221:9:9" line-data="    A class representing a RESTful Service for managing Basecalling work requests from Basecalling Engines.">`RESTful`</SwmToken> service for managing basecalling work requests from basecalling engines. It maintains a tracker for job statuses and a <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="44:2:2" line-data="class BCWorkloadState:">`BCWorkloadState`</SwmToken> instance for managing the basecalling workload. The class is initialized with a JSON file path, a node index, and a shutdown interval. The class provides routes for assigning work, keeping a job alive, and handling the completion of a job. This class is key for managing the interaction between the basecalling engines and the basecalling workload.
+
+The <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="219:2:2" line-data="class BCManager:">`BCManager`</SwmToken> class also includes a Flask server that listens for requests on different routes. The server is launched with the host set to <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="338:14:20" line-data="#app.run decide on which host (0.0.0.0 means all) and port to listen">`0.0.0.0`</SwmToken> and the port set to 40765. This allows the server to listen for requests from all available networks on the specified port.
+
+### Structure:
+
+<SwmSnippet path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" line="219">
+
+---
+
+This code snippet is a class `BCManager` that represents a RESTful service for managing Basecalling work requests from Basecalling Engines. It initializes the class with the provided parameters, including `json_file_path`, `node_index`, and `shutdown_interval`. The class has attributes such as `lock`, `tracker`, `bc_state`, `app`, `shutdown_interval`, and `last_activity_time`. The `bc_state` attribute is initialized with an instance of `BCWorkloadState` class, which takes `json_file_path` and `node_index` as arguments. The `update()` method is called on `bc_state` to update its state. The `app` attribute is an instance of Flask to handle the RESTful service.
+
+```python
 class BCManager:
     """
     A class representing a RESTful Service for managing Basecalling work requests from Basecalling Engines.
@@ -252,7 +359,21 @@ class BCManager:
         
         self.shutdown_interval = shutdown_interval
         self.last_activity_time = time.time()
+```
 
+---
+
+</SwmSnippet>
+
+### Methods:
+
+<SwmSnippet path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" line="246">
+
+---
+
+This code snippet defines a route `/assignwork` that handles GET requests. It takes in the batch size and engine ID from the request parameters. It then assigns work to the specified engine, updates the assignment report interval, and tracks the job status. Finally, it returns the assignment reply in JSON format.
+
+```python
         """
         Define a route "/assignwork" that handles GET requests to assign work to an engine. It takes in
         the batch size and engine ID from the request parameters. It then assigns work to the specified
@@ -273,7 +394,19 @@ class BCManager:
                 self.tracker[assignment_reply.jobid] = [time.time(), bc_status.ASSIGNED, 90]
             self.update_last_activity_time()    #update activy time 
             return json.dumps(assignment_reply.__dict__)
+```
 
+---
+
+</SwmSnippet>
+
+<SwmSnippet path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" line="267">
+
+---
+
+This code snippet defines a route `/keepalive` that handles GET requests to keep a job alive. It takes in `job_id` and `job_state` from the request parameters. The code updates the `tracker` dictionary with the current time and job state for the given `job_id`. It also updates the last activity time. Finally, it returns a JSON response indicating whether the job is late or not.
+
+```python
         """
         Define a route "/keepalive" that handles GET requests to keep a job alive. It takes in the
         job_id and the job_state from the request parameters.
@@ -294,7 +427,19 @@ class BCManager:
                 self.tracker[req_job_id] = entry
             self.update_last_activity_time()    #update activy time 
             return json.dumps({"late": False})
+```
 
+---
+
+</SwmSnippet>
+
+<SwmSnippet path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" line="288">
+
+---
+
+This code snippet defines a route '/completed' that handles GET requests to retrieve completed job information. It retrieves the 'job_id' and 'job_state' from the request arguments, deletes the corresponding job from the 'tracker' dictionary, and calls the 'completed_work' method to modify the job_state. It then updates the last activity time and returns a JSON response indicating the completion status.
+
+```python
         """
         Define a route that handles GET requests to retrieve completed job information. It 
         takes in the job_id, The ID of the completed job, and the job_state. Then it modify 
@@ -316,7 +461,19 @@ class BCManager:
             # NOTHING TO RETURN
             self.update_last_activity_time()    #update activy time 
             return json.dumps({"ok": True})    
-        
+```
+
+---
+
+</SwmSnippet>
+
+<SwmSnippet path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" line="310">
+
+---
+
+This code snippet defines a route `/heartbeat` that returns the status of the server based on the inactivity interval. It handles a GET request and checks the server's status by calculating the `inactivity_interval` as the difference between the current time and `self.last_activity_time`. If the `inactivity_interval` is greater than or equal to `self.shutdown_interval`, it returns a JSON response with a `status` of `true` and the `inactivity_interval`. Otherwise, it returns a JSON response with a `status` of `false` and the `inactivity_interval`.
+
+```python
         """
         Define a route '/heartbeat' that returns the status of the server based on the inactivity interval.
         GET request to check the server's status.
@@ -332,8 +489,19 @@ class BCManager:
                 return jsonify({"status": "true", "inactivity_interval": inactivity_interval})
             else:
                 return jsonify({"status": "false", "inactivity_interval": inactivity_interval})
+```
 
-    
+---
+
+</SwmSnippet>
+
+<SwmSnippet path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" line="327">
+
+---
+
+This code snippet updates the `last_activity_time` attribute of an object with the current time. It uses a lock to ensure thread safety.
+
+```python
     def update_last_activity_time(self):
         """
         Update the last_activity_time for when a /assignwork, /keepalive, /completed instance is called.
@@ -342,18 +510,6 @@ class BCManager:
         """
         with self.lock:
             self.last_activity_time = time.time()            
-            
-            
-#Launching the flask server
-#app.run decide on which host (0.0.0.0 means all) and port to listen
-if __name__ == '__main__':
-    json_file_path = sys.argv[1]
-    node_index = int(sys.argv[2])
-    RESTFulAPI = BCManager(json_file_path, node_index)
-    RESTFulAPI.app.run(host='0.0.0.0', port=40765)
-
-
-
 ```
 
 ---
