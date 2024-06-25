@@ -82,8 +82,12 @@ if __name__ == "__main__":
     run_slurm_error = os.path.join(run_params.logs_dir, "%x-%j.err")
     run_config.slurm = Slurm(run_config, run_slurm_output , run_slurm_error, "${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/instructions.sh")
     #Basecalling
+    home_dir = os.getenv('HOME')
+    supervisor_script_path = os.path.join(home_dir, 'Pipeline_long_reads/Basecalling_pipeline/launch_run/supervisor.sh')
+
+    # Assign the constructed path to your attribute
     run_config.basecalling = Basecalling(run_config, run_params.basecalling_model, run_params.input_dir,
-                                         run_params.output_dir, run_params.logs_dir, "${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/supervisor.sh")
+                                        run_params.output_dir, run_params.logs_dir, supervisor_script_path)
     #Resources
     #Calculate resources and then update the config file
     run_config.computing_resources = ResourceTuning(run_params, run_config).compute_resources()
