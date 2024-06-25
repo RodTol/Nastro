@@ -70,6 +70,7 @@ def create_sbatch_file(path_to_config, path_to_sbatch):
 
             sbatch_file.write(f"{data['Slurm']['main_script']} $config_file $((index_host + {i})) &\n")
 
+            # TODO can I remove it ?
             # Add a sleep command after each srun command except the last one
             if i != how_many_nodes-1:
                 sbatch_file.write("sleep 10\n")

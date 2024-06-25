@@ -56,6 +56,7 @@ class BCKeepAlive(threading.Thread):
         @param conf: Configuration object containing URLs for keep-alive messages.
         """
         #this is the creator for threading.Thread
+        print('------------------BCKEEPALIVE------------------' , flush=True)
         super().__init__()
         self.report_back_interval = report_back_interval
         self.job_id = job_id
@@ -172,6 +173,7 @@ class BCEngine:
         self.optimal_request_size = self.conf.engine_optimal_request_size
         self.engine_id = self.conf.engine_id
         self.polling_interval = self.conf.engine_polling_interval
+        #Links are already updated when creating Conf, but I need it here to launch the dorado client
         self.port = self.conf.port
         self.INPUTDIR = self.conf.engine_inputdir
         self.OUTPUTDIR = self.conf.engine_outputdir 
