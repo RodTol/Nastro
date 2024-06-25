@@ -41,8 +41,8 @@ class Conf:
         
         conf_instance = cls()
 
-        index_host = int(config["Resources"]["index_host"])
-        host_address = config["Resources"]["nodes_ip"][index_host]
+        index_host = int(config["ComputingResources"]["index_host"])
+        host_address = config["ComputingResources"]["nodes_ip"][index_host]
         
         conf_instance.mngt_outputdir = config["Basecalling"]["output_dir"]
         conf_instance.mngt_inputdir = config["Basecalling"]["input_dir"]
@@ -55,8 +55,8 @@ class Conf:
         conf_instance.engine_inputdir = config["Basecalling"]["input_dir"]
         conf_instance.engine_polling_interval = 1
 
-        conf_instance.engine_id = config["Resources"]["nodes_list"][node_index]
-        conf_instance.engine_optimal_request_size = config["Resources"]["batch_size_list"][node_index]
+        conf_instance.engine_id = config["ComputingResources"]["nodes_list"][node_index]
+        conf_instance.engine_optimal_request_size = config["ComputingResources"]["batch_size_list"][node_index]
 
         conf_instance.engine_model = config["Basecalling"]["model"]
         

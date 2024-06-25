@@ -40,6 +40,7 @@ logs_dir=$(jq -r '.Basecalling.logs_dir' "$json_file")
 
 
 host_index=$(jq -r '.ComputingResources.index_host' "$json_file")
+port=$(jq -r '.ComputingResources.port' "$json_file")
 node_queue=$(jq -r --argjson my_index "$my_index" '.ComputingResources.nodes_queue[$my_index]' "$json_file")
 node_name=$(jq -r --argjson my_index "$my_index" '.ComputingResources.nodes_list[$my_index]' "$json_file")
 gpus_settings=$(jq -r --argjson my_index "$my_index" '.ComputingResources.gpus[$my_index]' "$json_file")
@@ -79,8 +80,6 @@ fi
 mkdir $logs_dir/server_node_$node_name
 cd $logs_dir/server_node_$node_name
 
-port=42837
-
 echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") Launching the server ${RESET}"
 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/server.sh $model $logs_dir/server_node_$node_name $gpus_settings $port &
 
@@ -103,6 +102,23 @@ done
 
 echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") Server is up and running. ${RESET}"
 
+# Start BCManager and BCController on host node
+if ((my_index == host_index)); then
+  BC_manager_log_path=${logs_dir}/BCManager_log.txt
+  python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCManagement.py $json_file $my_index >> "$BC_manager_log_path" 2>&1 &
 
+  sleep 5
+  
+  BC_controller_log_path=${logs_dir}/BCController_log_$node_name.txt
+  python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCController.py $json_file $my_index >> "$BC_controller_log_path" 2>&1 &
+  
+  sleep 5
+fi
+
+# Start BCProcessor
+BC_processor_log_path="${logs_dir}/BCProcessor_log_$node_name.txt"
+python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCProcessors.py $json_file $my_index >> $BC_processor_log_path 2>&1 
+
+wait
 
 wait

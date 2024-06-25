@@ -298,6 +298,7 @@ class BCEngine:
 
     def _sleep_before_next_batch(self, start_time, end_time):
         """
+        TODO try to short the time to 10 seconds
         This private method sleeps for a specific duration before requesting a new batch
         for processing. If the processing time exceeds the polling interval, it sleeps for 30
         seconds; otherwise, it waits for the polling interval duration.
