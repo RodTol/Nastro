@@ -38,6 +38,44 @@ from BCConfiguration import Conf
 
 </SwmSnippet>
 
+## Diagram
+
+```mermaid
+sequenceDiagram
+    participant BCEngine
+    participant BCKeepAlive
+    participant BCManager
+    participant BCWorkloadState
+    participant BCController
+
+    BCEngine->>BCManager: GET /assignwork
+    activate BCManager
+    BCManager->>BCWorkloadState: assign_work_to(engine_id, batch_size)
+    BCWorkloadState-->>BCManager: BCBatch
+    BCManager-->>BCEngine: JSON(assignment_reply)
+    deactivate BCManager
+    
+    BCEngine->>BCKeepAlive: start(report_back_interval, job_id, starting_state)
+    activate BCKeepAlive
+    BCKeepAlive->>BCManager: GET /keepalive
+    BCManager-->>BCKeepAlive: JSON({"late": False})
+    deactivate BCKeepAlive
+    
+    BCEngine->>BCKeepAlive: terminate_keepalive(final_state)
+    activate BCKeepAlive
+    BCKeepAlive->>BCManager: GET /completed
+    deactivate BCKeepAlive
+    
+    BCManager->>BCWorkloadState: completed_work(job_id, job_state)
+    BCWorkloadState-->>BCManager: Done
+    BCManager-->>BCKeepAlive: JSON({"ok": True})
+    
+    BCController->>BCManager: GET /heartbeat
+    activate BCManager
+   
+
+```
+
 ## <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="15:2:2" line-data="class BCBatch:">`BCBatch`</SwmToken>
 
 The <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="15:2:2" line-data="class BCBatch:">`BCBatch`</SwmToken> class represents a batch of <SwmToken path="/Basecalling_pipeline/launch_run/BC_software/BCManagement.py" pos="50:21:22" line-data="    - INPUTDIR              path to the dir containing all the raw .POD5 files.">`.POD5`</SwmToken> files that have been assigned for processing. Each batch has a unique job ID, input and output directories, an engine ID, a batch size, and a list of filenames. The class is initialized with default values, which can be updated when a batch is created. This class is crucial for managing individual batches of work and keeping track of their status.
