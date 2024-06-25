@@ -22,9 +22,8 @@ echo -e "${RED}Model${RESET}"
 echo $model
 
 #Local Unix socket file 
-port=42837
-echo -e "${RED}Port${RESET}"
-echo $port
+port="$4"
+echo -e "${GREEN}Port: $port ${RESET}"
 
 #In case supervisor is not added to PATH
 #supervisor_path=

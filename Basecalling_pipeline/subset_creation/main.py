@@ -52,6 +52,9 @@ if __name__ == "__main__":
     #Create output dir for the run
     run_params.output_dir = os.path.join(main_params.output_dir, run_params.id)
     create_dir(run_params.output_dir)
+    
+    pass_output_dir = os.path.join(run_params.output_dir, "pass")
+    fail_output_dir = os.path.join(run_params.output_dir, "fail")
 
     #Create logs dir for the run
     run_params.logs_dir = os.path.join(main_params.logs_dir, run_params.id)
@@ -78,7 +81,7 @@ if __name__ == "__main__":
     run_config.slurm = Slurm(run_config, run_slurm_output , run_slurm_error, "${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/instructions.sh")
     #Basecalling
     run_config.basecalling = Basecalling(run_config, run_params.basecalling_model, run_params.input_dir,
-                                         run_params.output_dir, run_params.logs_dir, "supervisor.sh")
+                                         run_params.output_dir, run_params.logs_dir, "${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/supervisor.sh")
     #Resources
     #Calculate resources and then update the config file
     run_config.computing_resources = ResourceTuning(run_params, run_config).compute_resources()

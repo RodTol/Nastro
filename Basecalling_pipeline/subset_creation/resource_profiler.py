@@ -102,7 +102,7 @@ class ResourceTuning:
         #half the ideal size --> one node 2 dgx (half the resources)
         elif self.run_params.actual_size >= self.run_params.ideal_size/2:
             print("Using profile 2")
-            return ComputingResources(self.run_config, "0", "428", ["DGX"], [""],
+            return ComputingResources(self.run_config, "0", "42837", ["DGX"], [""],
                                                         ["10.128.2.161"], ["64"], 
                                                         ["200GB"], ["2"], ["cuda:all"],
                                                         [subset_length])        
