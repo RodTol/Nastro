@@ -113,7 +113,7 @@ pipeline {
                             sbatch_script="${logs_dir}/script_${id}.sh"
 
                             chmod +x ${sbatch_script}
-                            sbatch --export=SAMPLESHEET ${sbatch_script} ${config_path}
+                            sbatch ${sbatch_script} ${config_path}
                         '
                     '''
                 }
