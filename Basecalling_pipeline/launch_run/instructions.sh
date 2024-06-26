@@ -105,9 +105,18 @@ echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") Server is up and running. ${RESET}"
 # Start BCManager and BCController on host node
 if ((my_index == host_index)); then
   BC_manager_log_path=${logs_dir}/BCManager_log.txt
-  python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCManagement.py $json_file $my_index>> "$BC_manager_log_path" 2>&1 &
+  echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") BCM is launching. ${RESET}"
 
-  sleep 5
+  python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCManagement.py $json_file $my_index>> "$BC_manager_log_path" 2>&1 &
+  is_ready=$(python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/check_BCM.py $BC_manager_log_path)
+  if [[ "$is_ready" == *"True"* ]]; then
+      echo "BCM is up!"
+      break
+  else
+      #echo "BCM is down."
+      sleep 1
+  fi
+  echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") BCM is up and running. ${RESET}"
   
   BC_controller_log_path=${logs_dir}/BCController_log_$node_name.txt
   python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCController.py $json_file $my_index >> "$BC_controller_log_path" 2>&1 &
