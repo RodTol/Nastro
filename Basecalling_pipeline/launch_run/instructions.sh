@@ -51,6 +51,7 @@ echo -e "${RED}I am this node_name: $node_name${RESET}, and for Slurm: $SLURM_NO
 if  [ "$node_name" == "" ]; then
   echo -e "${CYAN}||| Update node_name from ${RESET} $node_name ${CYAN} to ${RESET} $SLURM_NODELIST ${CYAN} |||${RESET}"
   node_name=$SLURM_NODELIST
+  # TODO update the json file with the name ?
 fi
 # Brief output for checking everything it's correct
 echo -e "${RED}Cuda visible devices:${RESET} $CUDA_VISIBLE_DEVICES" 
@@ -106,8 +107,8 @@ echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") Server is up and running. ${RESET}"
 if ((my_index == host_index)); then
   BC_manager_log_path=${logs_dir}/BCManager_log.txt
   echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") BCM is launching. ${RESET}"
-
-  python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCManagement.py $json_file $my_index>> "$BC_manager_log_path" 2>&1 &
+  echo "SAMPLESHEET" $SAMPLESHEET
+  python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCManagement.py $json_file $my_index $SAMPLESHEET>> "$BC_manager_log_path" 2>&1 &
   is_ready=$(python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/check_BCM.py $BC_manager_log_path)
   if [[ "$is_ready" == *"True"* ]]; then
       echo "BCM is up!"

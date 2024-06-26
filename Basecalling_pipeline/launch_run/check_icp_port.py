@@ -1,5 +1,4 @@
 import zmq
-import os
 import sys
 
 def check_connection(ipc_file_path):

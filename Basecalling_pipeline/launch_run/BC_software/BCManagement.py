@@ -8,6 +8,10 @@ import hashlib
 from flask import Flask, request, jsonify
 from collections import namedtuple
 from BCConfiguration import Conf
+from resolve_symlinks import resolve_symlinks
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from samplesheet_check.samplesheet_api import Samplesheet
 
 BCStatus = namedtuple("BCStatus", ["ASSIGNED", "STARTED", "PROCESSING", "STOPPED", "DONE", "FAILED"])
 bc_status = BCStatus("ASSIGNED", "STARTED", "PROCESSING", "STOPPED", "DONE", "FAILED")
@@ -52,8 +56,9 @@ class BCWorkloadState:
     - unassigned_bc         list of file that still need to be basecalled
     - default_batch_size    default size of the batch 
     - assigned_batches      the actual batch of file
+    - samplesheet           Samplesheet object for updating the experiment
     """
-    def __init__(self, json_file_path, node_index):
+    def __init__(self, json_file_path, node_index, samplesheet):
         """
         Initialize the BCMReader class with the provided JSON file path and node index.
         
@@ -68,6 +73,7 @@ class BCWorkloadState:
         self.unassigned_bc = []
         self.default_batch_size = conf.mngt_batch_size
         self.assigned_batches = {}
+        self.samplesheet = Samplesheet(samplesheet)
 
     def update(self):
         """
@@ -174,6 +180,7 @@ class BCWorkloadState:
         """
         Method invoked to complete the processing of a batch for a given job. It is based on its
         state and updates the directories accordingly.
+        This function should also update the samplesheet
 
         @param jobid - The ID of the job being completed.
         @param jobstate - The state of the job (FAILED, DONE, or UNKNOWN).
@@ -183,10 +190,21 @@ class BCWorkloadState:
         bc_work = self.assigned_batches.pop(jobid)
         full_job_input_dir = os.path.join(self.INPUTDIR, bc_work.job_input_dir)
         full_job_output_dir = os.path.join(self.OUTPUTDIR, bc_work.job_output_dir)
+
+        input_files = resolve_symlinks(full_job_input_dir)
+
         if jobstate == bc_status.FAILED:
             # rename inputdir to FAILED so it can be excluded from reassignment until manual intervention
             failed_full_job_input_dir = os.path.join(self.INPUTDIR, bc_work.job_input_dir.replace("ASSIGNED","FAILED"))
             failed_full_job_output_dir = os.path.join(self.OUTPUTDIR, bc_work.job_output_dir.replace("TMPOUTPUT","FAILEDOUTPUT"))
+
+            #Update the samplesheet
+            for entry in self.samplesheet.data:
+                if entry["path"] in input_files:
+                    entry["basecalled"] = "Failed"
+                    input_files.remove(entry["path"])
+            self.samplesheet.update_json_file()
+
             os.rename(full_job_input_dir, failed_full_job_input_dir)
             os.rename(full_job_output_dir, failed_full_job_output_dir)
         elif jobstate == bc_status.DONE:
@@ -205,6 +223,14 @@ class BCWorkloadState:
                     str_name = "bc_id_" + jobid + "_" + entry.name #added bc_id tag
                     dst = os.path.join(destfaildir, str_name)
                     os.rename(entry.path, dst)  # it will move the fastq file to the final destination
+            
+            #Update the samplesheet
+            for entry in self.samplesheet.data:
+                if entry["path"] in input_files:
+                    entry["basecalled"] = True
+                    input_files.remove(entry["path"])
+            self.samplesheet.update_json_file()
+
             shutil.rmtree(full_job_input_dir)
             log_full_job_output_dir = os.path.join(self.OUTPUTDIR, bc_work.job_output_dir.replace("TMPOUTPUT", "LOGOUTPUT"))
             os.rename(full_job_output_dir, log_full_job_output_dir)
@@ -222,10 +248,11 @@ class BCManager:
 
     @param json_file_path - The path to the JSON file.
     @param node_index - The index of the node.
+    @param samplesheet - Path to the samplesheet of the experiment
     @param shutdown_interval - The interval for shutting down.
     """
 
-    def __init__(self,json_file_path, node_index, shutdown_interval=100):
+    def __init__(self,json_file_path, node_index, samplesheet, shutdown_interval=100):
         """
         Initialize the class with the provided parameters.
 
@@ -235,7 +262,7 @@ class BCManager:
         """
         self.lock = threading.Lock()
         self.tracker = {} # dict of job_id -> [last_ack_time, state, report_back_period]
-        self.bc_state = BCWorkloadState(json_file_path, node_index)
+        self.bc_state = BCWorkloadState(json_file_path, node_index, samplesheet)
         self.bc_state.update()
         self.app = Flask(__name__)
         a = self.app
@@ -339,7 +366,8 @@ class BCManager:
 if __name__ == '__main__':
     json_file_path = sys.argv[1]
     node_index = int(sys.argv[2])
-    RESTFulAPI = BCManager(json_file_path, node_index)
+    samplesheet = sys.argv[3]
+    RESTFulAPI = BCManager(json_file_path, node_index, samplesheet)
     RESTFulAPI.app.run(host='0.0.0.0', port=57967)
 
 
