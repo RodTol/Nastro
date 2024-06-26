@@ -340,7 +340,7 @@ if __name__ == '__main__':
     json_file_path = sys.argv[1]
     node_index = int(sys.argv[2])
     RESTFulAPI = BCManager(json_file_path, node_index)
-    RESTFulAPI.app.run(host='0.0.0.0', port=6666)
+    RESTFulAPI.app.run(host='0.0.0.0', port=57967)
 
 
 
