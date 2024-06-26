@@ -40,7 +40,7 @@ logs_dir=$(jq -r '.Basecalling.logs_dir' "$json_file")
 
 
 host_index=$(jq -r '.ComputingResources.index_host' "$json_file")
-port=$(jq -r '.ComputingResources.port' "$json_file")
+dorado_port=$(jq -r '.ComputingResources.port' "$json_file")
 node_queue=$(jq -r --argjson my_index "$my_index" '.ComputingResources.nodes_queue[$my_index]' "$json_file")
 node_name=$(jq -r --argjson my_index "$my_index" '.ComputingResources.nodes_list[$my_index]' "$json_file")
 gpus_settings=$(jq -r --argjson my_index "$my_index" '.ComputingResources.gpus[$my_index]' "$json_file")
@@ -75,13 +75,13 @@ else
   echo -e "${RED}SOMETHING WRONG IN THE VIRTUALENV FOR BC SOFTWARE${RESET}"
 fi
 
-# Each node has its own dir with the port file for the connection
+# Each node has its own dir with the dorado_port file for the connection
 # and the logs from the server
 mkdir $logs_dir/server_node_$node_name
 cd $logs_dir/server_node_$node_name
 
 echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") Launching the server ${RESET}"
-${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/server.sh $model $logs_dir/server_node_$node_name $gpus_settings $port &
+${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/server.sh $model $logs_dir/server_node_$node_name $gpus_settings $dorado_port &
 
 while true; do
     port_file=$(grep "Starting server on port:" $logs_dir/Run_* | sed 's/.*Starting server on port: //')
@@ -105,7 +105,7 @@ echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") Server is up and running. ${RESET}"
 # Start BCManager and BCController on host node
 if ((my_index == host_index)); then
   BC_manager_log_path=${logs_dir}/BCManager_log.txt
-  python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCManagement.py $json_file $my_index $port>> "$BC_manager_log_path" 2>&1 &
+  python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCManagement.py $json_file $my_index>> "$BC_manager_log_path" 2>&1 &
 
   sleep 5
   
@@ -115,9 +115,9 @@ if ((my_index == host_index)); then
   sleep 5
 fi
 
-# Start BCProcessor
+# Start BCProcessor. Remember to give the port to its dorado engine
 BC_processor_log_path="${logs_dir}/BCProcessor_log_$node_name.txt"
-python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCProcessors.py $json_file $my_index >> $BC_processor_log_path 2>&1 
+python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCProcessors.py $json_file $my_index $dorado_port >> $BC_processor_log_path 2>&1 
 
 wait
 

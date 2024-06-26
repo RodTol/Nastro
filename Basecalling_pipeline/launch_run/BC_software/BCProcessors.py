@@ -146,11 +146,11 @@ class BCEngine:
     - optimal_request_size  ideal number of pod5 files to process per request
     - engine_id             unique ID of engine
     - polling_interval      minimum time in minutes between successive requests
-    - port                  Port for ICP communication
     - INPUTDIR              ROOT of the inputdir where pod5 files are stored
     - OUTPUTDIR             path to the dir where the basecalling should direct its
                             output for this job.
     - bc_script             local script to execute for BC processing
+    - bc_port               port for the local script
     - bc_model              basecalling model (i.e. dna_r10.4.1_e8.2_400bps_hac.cfg)
     - PROCESSING_STATE      internal state of processing
     - api_url               url for the request work rout to the BCManager
@@ -158,7 +158,7 @@ class BCEngine:
     - work_until_none_left  boolean option for work until none is left
     """
 
-    def __init__(self, json_file_path, node_index):
+    def __init__(self, json_file_path, node_index, bc_port):
         """
         Initialize the BCP object with configuration settings loaded from a JSON file.
 
@@ -173,11 +173,12 @@ class BCEngine:
         self.optimal_request_size = self.conf.engine_optimal_request_size
         self.engine_id = self.conf.engine_id
         self.polling_interval = self.conf.engine_polling_interval
+
         #Links are already updated when creating Conf, but I need it here to launch the dorado client
-        self.port = self.conf.port
         self.INPUTDIR = self.conf.engine_inputdir
         self.OUTPUTDIR = self.conf.engine_outputdir 
         self.bc_script = self.conf.engine_external_script
+        self.bc_port = bc_port #This is the only one that is not read from BCConfiguration
         self.bc_model = self.conf.engine_model
         self.api_url = self.conf.request_work_url 
 
@@ -220,7 +221,7 @@ class BCEngine:
                 input_dir = os.path.join(self.INPUTDIR, answer['job_input_dir'])
                 output_dir = os.path.join(self.OUTPUTDIR, answer['job_output_dir'])
                 model = self.bc_model
-                port = self.port
+                port = self.bc_port
                 # Check how the BCManager is doing
                 keep_alive_manager.shutdown_if_broken_keepalive()
                 
@@ -322,6 +323,7 @@ class BCEngine:
 if __name__ == '__main__':
     json_file_path = sys.argv[1]
     node_index = int(sys.argv[2])
-    eng = BCEngine(json_file_path, node_index)
+    bc_port = sys.argv[3]
+    eng = BCEngine(json_file_path, node_index, bc_port)
     eng.work_until_none_left = True
     eng.begin_working()
