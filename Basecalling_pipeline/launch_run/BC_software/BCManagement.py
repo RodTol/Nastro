@@ -4,7 +4,7 @@ import sys
 import shutil
 import threading
 import time
-import uuid
+import hashlib
 from flask import Flask, request, jsonify
 from collections import namedtuple
 from BCConfiguration import Conf
@@ -151,8 +151,8 @@ class BCWorkloadState:
         batch_size = min(batch_size, len(self.unassigned_bc))
         # get the files
         batch = [self.unassigned_bc.pop(0) for x in range(batch_size)]
-        # choose a new jobid
-        jobid = str(uuid.uuid4().int)
+        # choose a new jobid using the engine name as input
+        jobid = hashlib.sha256(bc_engine_id.encode()).hexdigest()[:6]
         # prepare the input dir name for the job
         job_input_dir = "_".join(["ASSIGNED", str(jobid), bc_engine_id])
         # transactionally create in one go the dir and symlinks
@@ -195,14 +195,14 @@ class BCWorkloadState:
             destpassdir = os.path.join(self.OUTPUTDIR, 'pass')
             if os.path.exists(passdir) & os.path.exists(destpassdir):
                 for entry in os.scandir(passdir):
-                    str_name = "job_id_" + jobid + "_" + entry.name #added jobid tag
+                    str_name = "bc_id_" + jobid + "_" + entry.name #added bc_id tag
                     dst = os.path.join(destpassdir, str_name)
                     os.rename(entry.path, dst)  # it will move the fastq file to the final destination
             faildir = os.path.join(full_job_output_dir,'fail')
             destfaildir = os.path.join(self.OUTPUTDIR, 'fail')
             if os.path.exists(faildir) & os.path.exists(destfaildir):
                 for entry in os.scandir(faildir):
-                    str_name = "job_id_" + jobid + "_" + entry.name #added jobid tag
+                    str_name = "bc_id_" + jobid + "_" + entry.name #added bc_id tag
                     dst = os.path.join(destfaildir, str_name)
                     os.rename(entry.path, dst)  # it will move the fastq file to the final destination
             shutil.rmtree(full_job_input_dir)
