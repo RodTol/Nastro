@@ -107,10 +107,13 @@ pipeline {
                             logs_dir=$(jq -r '.logs_dir' $RUN_PARAMS_PATH)
                             config_path=$(jq -r '.config_path' $RUN_PARAMS_PATH)
                             
+                            #Make pathToSamplesheet an env variable
+                            export SAMPLESHEET='${pathToSamplesheet}'
+
                             sbatch_script="${logs_dir}/script_${id}.sh"
 
                             chmod +x ${sbatch_script}
-                            sbatch ${sbatch_script} ${config_path}
+                            sbatch --export=SAMPLESHEET ${sbatch_script} ${config_path}
                         '
                     '''
                 }
