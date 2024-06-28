@@ -1,7 +1,7 @@
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from Basecalling_pipeline.subset_creation.config_file_api import *
 from Basecalling_pipeline.subset_creation.runParameters import runParameters
 from Basecalling_pipeline.samplesheet_check.samplesheet_api import Samplesheet
