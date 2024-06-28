@@ -20,3 +20,5 @@ if __name__ == "__main__":
     """
     telegram_send_message(message)
     
+    target_file = [i for entry, i in enumerate(samplesheet.data["basecalled"]) if entry==run_params.id]
+    print(target_file)
