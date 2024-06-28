@@ -86,6 +86,7 @@ class BCKeepAlive(threading.Thread):
             while self.final_state == '':
                 # send a keep-alive!
                 payload = {'job_id': self.job_id, 'job_state': self.starting_state}
+                # Make keepalvie request
                 response = requests.get(self.keep_alive_url, params=payload)
                 response.raise_for_status()  # SO ALSO HTTP ERRORS ARE RAISED AS EXCEPTIONS!
                 #if response.json()["late"]:
@@ -93,6 +94,7 @@ class BCKeepAlive(threading.Thread):
                 time.sleep(interval)
             # exiting while: it means a final state has been reached and the BCManager must be informed
             payload = {'job_id': self.job_id, 'job_state': self.final_state}
+            # Make /completed request
             response = requests.get(self.keep_alive_terminate_url, params=payload)
             response.raise_for_status()
         except Exception as e:
