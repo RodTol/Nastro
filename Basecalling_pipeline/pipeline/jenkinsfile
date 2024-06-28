@@ -118,6 +118,26 @@ pipeline {
                     '''
                 }
             }
+        }               
+        stage('Monitor the basecalling') {
+            steps {    
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
+                    sh '''
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/monitor_run
+
+                            export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
+                            export LOG_PATH='${pathToLogsDir}'
+
+                            export RUN_PARAMS_PATH="${LOG_PATH}/runParams_build_${BUILD_NUMBER_LOCAL}.txt"
+                            echo ${RUN_PARAMS_PATH}
+
+                            python3 main.py ${RUN_PARAMS_PATH} '${pathToSamplesheet}'                                       
+                        '
+                    '''
+                }
+            }
         }                   
+            
     }
 }
