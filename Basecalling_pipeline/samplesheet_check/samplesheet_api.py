@@ -13,8 +13,8 @@ class Samplesheet:
     
     def read_file(self):
         '''
-        Given a path to the samplesheet.json file, save it as data. Check if 
-        all the parameters are correct also
+        Given a path to the samplesheet.json file, return it as data. Check if 
+        all the parameters are correct also. THIS DOES NOT UPDATE self.data
         '''
         try:
             with open(self.file_path, 'r') as file:
