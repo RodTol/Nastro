@@ -133,7 +133,7 @@ pipeline {
                             echo ${RUN_PARAMS_PATH}
 
                             #Not to be run on login node 
-                            srun -p THIN -N 1 -c 1 --time=1:0:0 python3 main.py ${RUN_PARAMS_PATH} '${pathToSamplesheet}'                                       
+                            srun -p THIN -N 1 -n 1 -c 1 --time=1:0:0 python3 main.py ${RUN_PARAMS_PATH} '${pathToSamplesheet}'                                       
                         '
                     '''
                 }
