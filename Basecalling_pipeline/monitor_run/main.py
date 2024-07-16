@@ -16,13 +16,17 @@ if __name__ == "__main__":
 
     expected_time = run_params.actual_size*10/run_params.ideal_size
     sleeping_time = expected_time/100
+    if sleeping_time < 20:
+        sleeping_time = 20
+
+    telegram_send_bar("-----BASECALLING-RUN-----")
 
     message = f"""I am watching the run `{run_params.id}`
 This run has a size of `{round(run_params.actual_size,2)} GB`, an excepted one of `{round(run_params.ideal_size,2)} GB`
-So the expected time is `{round(expected_time,2)}`
+So the expected time is `{round(expected_time,2)} minutes`
 """
     telegram_send_message(message)
-    telegram_send_message(f"I will send a message each `{run_params.id}` seconds")
+    telegram_send_message(f"I will send a message each `{sleeping_time}` s")
 
     target_file_indexes = [i for i,sample in enumerate(samplesheet.data) if sample['basecalled']==run_params.id]
     start_size=len(target_file_indexes)
@@ -36,10 +40,12 @@ So the expected time is `{round(expected_time,2)}`
                             start=0,
                             scale_start=0,
                             scale_end=run_params.actual_size)
-    print(bar.progress_bar)
-
+    
     processed_file_indexes_new = []
     processed_file_indexes_old = []
+
+    telegram_send_bar(bar.progress_bar)
+
     while len(target_file_indexes) > 0:
         sleep(sleeping_time)
         #Update
@@ -51,11 +57,11 @@ So the expected time is `{round(expected_time,2)}`
         processed_file_indexes_new = [i for i,sample in enumerate(samplesheet.data) if sample['basecalled']==True]
 
         cycle_processed = [item for item in processed_file_indexes_new if item not in processed_file_indexes_old]
-        print("File processati", cycle_processed)
+        print("File processati", [samplesheet.data[i]["name"] for i in cycle_processed])
         
-        message = f""" I started with {start_size} files;
-I processed in this cycle {len(cycle_processed)} files, so
-{current_size} files are still being processed
+        message = f"""I processed in this cycle {len(cycle_processed)} files, so
+{current_size} files are still being processed.
+The batch is made of {start_size} files;
         """
         telegram_send_message(message)
 
@@ -65,5 +71,8 @@ I processed in this cycle {len(cycle_processed)} files, so
                 processed_bytes += samplesheet.data[i]['size(GB)']
 
             bar.increase(processed_bytes)
-            print(bar.progress_bar)
+        telegram_send_bar(bar.progress_bar)
 
+    message = f""" Basecalling was finished. This is the updated samplesheet
+    """
+    telegram_send_file(sys.argv[2], message)
