@@ -10,6 +10,7 @@ pipeline {
         string(name: 'pathToOutputDir', defaultValue: '/u/area/jenkins_onpexp/scratch/TEST/output', description: 'Path to where the output of the batch will be stored. Root for each run')
         string(name: 'pathToLogsDir', defaultValue: '/u/area/jenkins_onpexp/scratch/TEST/logs', description: 'Path to where the logs of the batch will be stored. Root for each run')
         string(name: 'basecallingModel', defaultValue: 'dna_r10.4.1_e8.2_400bps_hac.cfg', description: 'Basecalling model selected for this batch')
+        booleanParam(name: 'RUN_TESTING_CLEANUP', defaultValue: true, description: 'Run Testing Cleanup Stage')
     }
     stages {
         stage('Pull project repository on the Cluster') {
@@ -35,6 +36,9 @@ pipeline {
             }
         }
         stage('TESTING CLEANUP') {
+            when {
+                expression { return params.RUN_TESTING_CLEANUP }
+            }
             steps {    
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     /*To be removed*/                                           
@@ -212,5 +216,23 @@ pipeline {
                 }
             }
         }
+        stage('Ending') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
+                    sh '''
+                        
+                            ' && break
+                            RETRY_COUNT=$((RETRY_COUNT + 1))
+                            echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
+                            sleep 5
+                        done
+                        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+                            echo "SSH connection failed after $MAX_RETRIES attempts."
+                            exit 1
+                        fi
+                    '''
+                }
+            }
+        }        
     }
 }
