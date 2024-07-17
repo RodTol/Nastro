@@ -16,39 +16,72 @@ pipeline {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     sh '''
-                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
-                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline && git pull
-                        '
+                        MAX_RETRIES=5
+                        RETRY_COUNT=0
+                        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline && git pull
+                            ' && break
+                            RETRY_COUNT=$((RETRY_COUNT + 1))
+                            echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
+                            sleep 5
+                        done
+                        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+                            echo "SSH connection failed after $MAX_RETRIES attempts."
+                            exit 1
+                        fi
                     '''
                 }    
             }
         }
         stage('TESTING CLEANUP') {
             steps {    
-                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
-                    /*TO BE REMOVED*/
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) { à
+                    /*To be removed*/                                           
                     sh '''
-                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
-                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/samplesheet/
-                            cp orfeo_template_copy.json orfeo_template.json
-                            cd /u/area/jenkins_onpexp/scratch/TEST
-                            rm -rf input/*
-                            rm -rf output/*
-                            rm -rf logs/*
-                        '
+                        MAX_RETRIES=5
+                        RETRY_COUNT=0
+                        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/samplesheet/
+                                cp orfeo_template_copy.json orfeo_template.json
+                                cd /u/area/jenkins_onpexp/scratch/TEST
+                                rm -rf input/*
+                                rm -rf output/*
+                                rm -rf logs/*
+                            ' && break
+                            RETRY_COUNT=$((RETRY_COUNT + 1))
+                            echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
+                            sleep 5
+                        done
+                        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+                            echo "SSH connection failed after $MAX_RETRIES attempts."
+                            exit 1
+                        fi
                     '''
                 }
             }
         }        
         stage('Cleanup software dir') {
             steps {    
-                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
-                    /*Check if all the trash is removed in the correct way*/
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {     
+                    /*Check if all the trash is removed in the correct way*/                                       
                     sh '''
-                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
-                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline
-                            rm -rf __pycache__
-                        '
+                        MAX_RETRIES=5
+                        RETRY_COUNT=0
+                        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline
+                                rm -rf __pycache__
+                            ' && break
+                            RETRY_COUNT=$((RETRY_COUNT + 1))
+                            echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
+                            sleep 5
+                        done
+                        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+                            echo "SSH connection failed after $MAX_RETRIES attempts."
+                            exit 1
+                        fi
                     '''
                 }
             }
@@ -58,10 +91,21 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
                     /*Check if the samplesheet is correct*/
                     sh '''
-                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
-                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/samplesheet_check
-                            python3 main.py '${pathToSamplesheet}'
-                        '
+                        MAX_RETRIES=5
+                        RETRY_COUNT=0
+                        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/samplesheet_check
+                                python3 main.py '${pathToSamplesheet}'
+                            ' && break
+                            RETRY_COUNT=$((RETRY_COUNT + 1))
+                            echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
+                            sleep 5
+                        done
+                        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+                            echo "SSH connection failed after $MAX_RETRIES attempts."
+                            exit 1
+                        fi
                     '''
                 }
             }
@@ -72,17 +116,28 @@ pipeline {
                     /*Create from the batch samplesheet the subset to work on for this run
                     of the pipeline. This include input, output, log dirs and the config file*/
                     sh '''
-                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
-                            source ${HOME}/python_venvs/login_venv_jenkins/bin/activate
-                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/subset_creation
+                        MAX_RETRIES=5
+                        RETRY_COUNT=0
+                        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                                source ${HOME}/python_venvs/login_venv_jenkins/bin/activate
+                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/subset_creation
 
-                            export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
-                            echo "BUILD NUMBER is:" ${BUILD_NUMBER_LOCAL}
+                                export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
+                                echo "BUILD NUMBER is:" ${BUILD_NUMBER_LOCAL}
 
-                            python3 main.py '${pathToSamplesheet}' '${pathToInputDir}' '${pathToOutputDir}' '${pathToLogsDir}' '${basecallingModel}'
-                            deactivate
-                        ' 
-                    '''
+                                python3 main.py '${pathToSamplesheet}' '${pathToInputDir}' '${pathToOutputDir}' '${pathToLogsDir}' '${basecallingModel}'
+                                deactivate                            
+                            ' && break
+                            RETRY_COUNT=$((RETRY_COUNT + 1))
+                            echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
+                            sleep 5
+                        done
+                        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+                            echo "SSH connection failed after $MAX_RETRIES attempts."
+                            exit 1
+                        fi
+                    '''                    
                 }
             }
         }     
@@ -91,55 +146,72 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
                     /*Use the run config to create a sbatch script and launch it*/
                     sh '''
-                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
-                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/launch_run
+                        MAX_RETRIES=5
+                        RETRY_COUNT=0
+                        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/launch_run
 
-                            export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
-                            export LOG_PATH='${pathToLogsDir}'
+                                export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
+                                export LOG_PATH='${pathToLogsDir}'
 
-                            export RUN_PARAMS_PATH="${LOG_PATH}/runParams_build_${BUILD_NUMBER_LOCAL}.txt"
-                            echo ${RUN_PARAMS_PATH}
+                                export RUN_PARAMS_PATH="${LOG_PATH}/runParams_build_${BUILD_NUMBER_LOCAL}.txt"
+                                echo ${RUN_PARAMS_PATH}
 
-                            python3 main.py ${RUN_PARAMS_PATH}
+                                python3 main.py ${RUN_PARAMS_PATH}
 
-                            #Make executable the sbatch file and launch it
-                            id=$(jq -r '.id' $RUN_PARAMS_PATH)
-                            logs_dir=$(jq -r '.logs_dir' $RUN_PARAMS_PATH)
-                            config_path=$(jq -r '.config_path' $RUN_PARAMS_PATH)
-                            
-                            #Make pathToSamplesheet an env variable
-                            export SAMPLESHEET='${pathToSamplesheet}'
+                                #Make executable the sbatch file and launch it
+                                id=$(jq -r '.id' $RUN_PARAMS_PATH)
+                                logs_dir=$(jq -r '.logs_dir' $RUN_PARAMS_PATH)
+                                config_path=$(jq -r '.config_path' $RUN_PARAMS_PATH)
+                                
+                                #Make pathToSamplesheet an env variable
+                                export SAMPLESHEET='${pathToSamplesheet}'
 
-                            sbatch_script="${logs_dir}/script_${id}.sh"
+                                sbatch_script="${logs_dir}/script_${id}.sh"
 
-                            chmod +x ${sbatch_script}
-                            sbatch ${sbatch_script} ${config_path}
-                        '
-                    '''
+                                chmod +x ${sbatch_script}
+                                sbatch ${sbatch_script} ${config_path}
+                            ' && break
+                            RETRY_COUNT=$((RETRY_COUNT + 1))
+                            echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
+                            sleep 5
+                        done
+                        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+                            echo "SSH connection failed after $MAX_RETRIES attempts."
+                            exit 1
+                        fi
+                    '''                    
                 }
             }
         }               
         stage('Monitor the basecalling') {
-            steps {    
-                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     sh '''
-                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
-                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/monitor_run
-
-                            export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
-                            export LOG_PATH='${pathToLogsDir}'
-
-                            export RUN_PARAMS_PATH="${LOG_PATH}/runParams_build_${BUILD_NUMBER_LOCAL}.txt"
-                            echo ${RUN_PARAMS_PATH}
-
-                            #Not to be run on login node 
-                            srun -p EPYC -N 1 -n 1 --time=1:0:0 python3 main.py ${RUN_PARAMS_PATH} '${pathToSamplesheet}'
-                            srun -p EPYC -N 1 -n 1 --time=1:0:0 python3 /u/area/jenkins_onpexp/LTS_tolloi/Orfeo_bot/main.py '${pathToSamplesheet}'
-                        '
+                        MAX_RETRIES=5
+                        RETRY_COUNT=0
+                        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/monitor_run
+                                export BUILD_NUMBER_LOCAL=\'${BUILD_NUMBER}\'
+                                export LOG_PATH=\'${pathToLogsDir}\'
+                                export RUN_PARAMS_PATH="${LOG_PATH}/runParams_build_${BUILD_NUMBER_LOCAL}.txt"
+                                echo ${RUN_PARAMS_PATH}
+                                srun -p EPYC -N 1 -n 1 --time=1:0:0 python3 main.py ${RUN_PARAMS_PATH} \'${pathToSamplesheet}\'
+                                srun -p EPYC -N 1 -n 1 --time=1:0:0 python3 /u/area/jenkins_onpexp/LTS_tolloi/Orfeo_bot/main.py \'${pathToSamplesheet}\'
+                            ' && break
+                            RETRY_COUNT=$((RETRY_COUNT + 1))
+                            echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
+                            sleep 5
+                        done
+                        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+                            echo "SSH connection failed after $MAX_RETRIES attempts."
+                            exit 1
+                        fi
                     '''
                 }
             }
-        }                   
-            
+        }
     }
 }
