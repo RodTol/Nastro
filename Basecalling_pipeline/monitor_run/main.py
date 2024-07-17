@@ -28,8 +28,8 @@ So the expected time is `{round(expected_time,2)} minutes`
     telegram_send_message(message)
     telegram_send_message(f"I will send a message each `{sleeping_time}` s")
 
-    target_file_indexes = [i for i,sample in enumerate(samplesheet.data) if sample['basecalled']==run_params.id]
-    start_size=len(target_file_indexes)
+    original_target_file_indexes = [i for i,sample in enumerate(samplesheet.data) if sample['basecalled']==run_params.id]
+    start_size=len(original_target_file_indexes)
 
     bar = CustomPercentProgressBar(length=50,
                             left_limit='[',
@@ -45,7 +45,7 @@ So the expected time is `{round(expected_time,2)} minutes`
     processed_file_indexes_old = []
 
     telegram_send_bar(bar.progress_bar)
-
+    target_file_indexes = original_target_file_indexes
     while len(target_file_indexes) > 0:
         sleep(sleeping_time)
         #Update
@@ -54,7 +54,7 @@ So the expected time is `{round(expected_time,2)} minutes`
         current_size=len(target_file_indexes)
 
         processed_file_indexes_old = processed_file_indexes_new
-        processed_file_indexes_new = [i for i,sample in enumerate(samplesheet.data) if sample['basecalled']==True]
+        processed_file_indexes_new = [i for i in original_target_file_indexes if samplesheet.data[i]['basecalled']==True]
 
         cycle_processed = [item for item in processed_file_indexes_new if item not in processed_file_indexes_old]
         print("File processati", [samplesheet.data[i]["name"] for i in cycle_processed])
