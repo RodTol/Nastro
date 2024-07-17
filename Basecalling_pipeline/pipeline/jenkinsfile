@@ -198,8 +198,8 @@ pipeline {
                                 export LOG_PATH=\'${pathToLogsDir}\'
                                 export RUN_PARAMS_PATH="${LOG_PATH}/runParams_build_${BUILD_NUMBER_LOCAL}.txt"
                                 echo ${RUN_PARAMS_PATH}
-                                srun -p EPYC -N 1 -n 1 --time=1:0:0 python3 main.py ${RUN_PARAMS_PATH} \'${pathToSamplesheet}\'
-                                srun -p EPYC -N 1 -n 1 --time=1:0:0 python3 /u/area/jenkins_onpexp/LTS_tolloi/Orfeo_bot/main.py \'${pathToSamplesheet}\'
+                                srun -p EPYC -N 1 -n 1 --time=1:0:0 python3 /u/area/jenkins_onpexp/LTS_tolloi/Orfeo_bot/main.py \'${pathToSamplesheet}\' &
+                                srun -p EPYC -N 1 -n 1 --time=1:0:0 python3 main.py ${RUN_PARAMS_PATH} \'${pathToSamplesheet}\'                                 
                             ' && break
                             RETRY_COUNT=$((RETRY_COUNT + 1))
                             echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
