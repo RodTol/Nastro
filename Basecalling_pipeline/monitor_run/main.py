@@ -60,7 +60,7 @@ So the expected time is `{round(expected_time,2)} minutes`
         print("File processati", [samplesheet.data[i]["name"] for i in cycle_processed])
         
         message = f"""I processed in this cycle {len(cycle_processed)} files, so
-{current_size} files are still being processed.
+{current_size} files are still being processed;
 The batch is made of {start_size} files;
         """
         telegram_send_message(message)
