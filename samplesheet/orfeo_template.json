@@ -27,42 +27,42 @@
         "name": "PAM63974_pass_58881fec_4",
         "path": "/orfeo/cephfs/scratch/area/jenkins_onpexp/10G_dataset_POD5/PAM63974_pass_58881fec_4.pod5",
         "size(GB)": 0.703,
-        "basecalled": "8dd599e9_2024-07-17_16-11"
+        "basecalled": true
     },
     {
         "name": "PAM63974_pass_58881fec_5",
         "path": "/orfeo/cephfs/scratch/area/jenkins_onpexp/10G_dataset_POD5/PAM63974_pass_58881fec_5.pod5",
         "size(GB)": 1.1,
-        "basecalled": "8dd599e9_2024-07-17_16-11"
+        "basecalled": true
     },
     {
         "name": "PAM63974_pass_58881fec_6",
         "path": "/orfeo/cephfs/scratch/area/jenkins_onpexp/10G_dataset_POD5/PAM63974_pass_58881fec_6.pod5",
         "size(GB)": 1.0,
-        "basecalled": "8dd599e9_2024-07-17_16-11"
+        "basecalled": true
     },
     {
         "name": "PAM63974_pass_58881fec_7",
         "path": "/orfeo/cephfs/scratch/area/jenkins_onpexp/10G_dataset_POD5/PAM63974_pass_58881fec_7.pod5",
         "size(GB)": 1.2,
-        "basecalled": "8dd599e9_2024-07-17_16-11"
+        "basecalled": true
     },
     {
         "name": "PAM63974_pass_58881fec_8",
         "path": "/orfeo/cephfs/scratch/area/jenkins_onpexp/10G_dataset_POD5/PAM63974_pass_58881fec_8.pod5",
         "size(GB)": 1.1,
-        "basecalled": "8dd599e9_2024-07-17_16-11"
+        "basecalled": true
     },
     {
         "name": "PAM63974_pass_58881fec_9",
         "path": "/orfeo/cephfs/scratch/area/jenkins_onpexp/10G_dataset_POD5/PAM63974_pass_58881fec_9.pod5",
         "size(GB)": 1.3,
-        "basecalled": "8dd599e9_2024-07-17_16-11"
+        "basecalled": true
     },
     {
         "name": "PAM63974_pass_58881fec_10",
         "path": "/orfeo/cephfs/scratch/area/jenkins_onpexp/10G_dataset_POD5/PAM63974_pass_58881fec_10.pod5",
         "size(GB)": 1.3,
-        "basecalled": "8dd599e9_2024-07-17_16-11"
+        "basecalled": true
     }
 ]
