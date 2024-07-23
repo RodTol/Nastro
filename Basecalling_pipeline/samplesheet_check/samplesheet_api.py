@@ -26,34 +26,48 @@ class Samplesheet:
             print(f"Error decoding JSON from file: {self.file_path}")
             sys.exit(1)
 
-        if self._verify_file(data):
+        if self._verify_samplesheet(data):
             return data
         else:
             print("Something went wrong. See above for the exception")
             sys.exit(1)
 
-    def _verify_file(self, json_data):
+    def _verify_samplesheet(self, json_data):
         '''
-        Given the loaded json file, run a check to see if the file is
-        correct
+        Given the loaded json file, run a check to see if the file is correct
         '''
-        if self._verify_elements(json_data):
+        if "metadata" not in json_data or "files" not in json_data:
+            print("The JSON file must contain 'metadata' and 'files' sections.")
+            return False
+        
+        if self._verify_metadata(json_data["metadata"]) and self._verify_files(json_data["files"]):
             print("All elements in the list have the required parameters.")
             return True
         else:
             print("Not all elements have the required parameters.")
             return False
 
-    def _verify_elements(self, elements):
+    def _verify_files(self, elements):
             '''
             This function will check if all the elements have the same 4 
             keys. Note that I do not check the values for any of the keys
             '''
-            required_keys = {"name", "path", "size(GB)", "basecalled"}
+            required_keys = {"name", "path", "size(GB)", "basecalled", "aligned"}
             for element in elements:
                 if not required_keys.issubset(element.keys()):
+                    print(f"{element} does not have the required parameters.")
                     return False
             return True
+
+    def _verify_metadata(self, metadata):
+        '''
+        Verify the metadata section
+        '''
+        required_keys = {"dir", "model"}
+        if not required_keys.issubset(metadata.keys()):
+            print("Wrong metadata")
+            return False
+        return True            
     
     def update_json_file(self):
         '''
@@ -71,4 +85,34 @@ class Samplesheet:
         A basic print that returns the file as it is written
         '''
         print(json.dumps(self.data, indent=4))
+
+    def get_metadata(self):
+        '''
+        Return the metadata section of the JSON file
+        '''
+        return self.data.get("metadata", {})
+
+    def set_metadata(self, metadata):
+        '''
+        Set the metadata section of the JSON file
+        '''
+        if self._verify_metadata(metadata):
+            self.data["metadata"] = metadata
+        else:
+            print("Invalid metadata format.")
+    
+    def get_files(self):
+        '''
+        Return the files section of the JSON file
+        '''
+        return self.data.get("files", [])
+
+    def add_file(self, file_entry):
+        '''
+        Add a new file entry to the files list
+        '''
+        if self._verify_elements([file_entry]):
+            self.data["files"].append(file_entry)
+        else:
+            print("Invalid file entry format.")
 
