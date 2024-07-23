@@ -1,8 +1,8 @@
 import pandas as pd
 import sys
 import os
-sys.path.append("../samplesheet_check")
-from samplesheet_api import Samplesheet
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from Basecalling_pipeline.samplesheet_check.samplesheet_api import Samplesheet
 
 class Subsetter:
     '''
@@ -14,7 +14,8 @@ class Subsetter:
     def __init__(self, input_file):
         samplesheet = Samplesheet(input_file) 
         self.samplesheet = samplesheet
-        self.dataframe = pd.DataFrame(samplesheet.data)
+        #Only the files and not the metadata
+        self.dataframe = pd.DataFrame(samplesheet.get_files())
 
     def create_subset(self, run_id, target_size=0.8):
         '''
@@ -56,7 +57,7 @@ class Subsetter:
                 break
 
         #Update the samplesheet file (every file was verified)
-        self.samplesheet.data = self.dataframe.to_dict(orient='records')
+        self.samplesheet.data["files"] = self.dataframe.to_dict(orient='records')
         self.samplesheet.update_json_file()
 
         return subset, cumulative_size

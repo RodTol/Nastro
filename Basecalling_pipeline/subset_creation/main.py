@@ -2,9 +2,9 @@ import sys
 import os
 import hashlib
 import datetime
-import requests
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from Basecalling_pipeline.samplesheet_check.samplesheet_api import Samplesheet
 from runParameters import runParameters
 from mainParameters import mainParameters
 from config_file_api import *
@@ -24,15 +24,17 @@ def generate_short_hash(input_str):
 
 if __name__ == "__main__":
     if len(sys.argv) != 6:
-        print("Usage: python3 main.py path/to/file.json path/to/input/root/dir path/to/output/root/dir path/to/logs/root/dir basecalling model")
+        print("Usage: python3 main.py path/to/samplesheet.json path/to/input/root/dir path/to/output/root/dir path/to/logs/root/dir")
         sys.exit(1)
     
-    main_params = mainParameters(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
+    samplesheet = Samplesheet(sys.argv[1])
+    bc_model = samplesheet.get_metadata()["model"]
+
+    main_params = mainParameters(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], bc_model)
     print(main_params)
 
     run_params = runParameters('','','','','')
     jenkins_build_id = os.environ.get('BUILD_NUMBER_LOCAL')
-
 
     #Create batch hash identifier
     time = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
