@@ -32,12 +32,12 @@ class Subsetter:
         #cast to object type beacuse I will have both booleans and strings
         all_non_basecalled_files['basecalled'] = all_non_basecalled_files['basecalled'].astype(object)
 
-        if len(all_non_basecalled_files) == 0:
-            print("THERE ARE NO FILE TO BE PROCESSED") #also here decide how to handle
-            sys.exit(0)
-
         cumulative_size = 0
-        subset = []
+        subset = []        
+
+        if len(all_non_basecalled_files) == 0:
+            print("THERE ARE NO FILE TO BE PROCESSED")
+            return subset, cumulative_size
 
         for i, row in all_non_basecalled_files.iterrows():
             file_size = row['size(GB)']

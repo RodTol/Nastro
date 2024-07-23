@@ -40,6 +40,7 @@ pipeline {
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
                             ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
                                 cd '${pathToDir}'
+                                ls 
                                 ls | grep .pod5
                             ' && break
                             RETRY_COUNT=$((RETRY_COUNT + 1))

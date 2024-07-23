@@ -131,6 +131,7 @@ pipeline {
                                 echo "BUILD NUMBER is:" ${BUILD_NUMBER_LOCAL}
 
                                 python3 main.py '${pathToSamplesheet}' '${pathToInputDir}' '${pathToOutputDir}' '${pathToLogsDir}' '${basecallingModel}'
+                                #here stop the pipeline if the script python has set the CLOSE_RUN variable to 1
                                 deactivate                            
                             ' && break
                             RETRY_COUNT=$((RETRY_COUNT + 1))

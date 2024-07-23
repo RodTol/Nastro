@@ -2,6 +2,7 @@ import sys
 import os
 import hashlib
 import datetime
+import requests
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from runParameters import runParameters
@@ -9,6 +10,7 @@ from mainParameters import mainParameters
 from config_file_api import *
 from resource_profiler import *
 from subset_creator import Subsetter
+from pipelineInteract import Jenkins_trigger
 
 def create_dir(path):
     try: 
@@ -29,14 +31,12 @@ if __name__ == "__main__":
     print(main_params)
 
     run_params = runParameters('','','','','')
+    jenkins_build_id = os.environ.get('BUILD_NUMBER_LOCAL')
+
 
     #Create batch hash identifier
     time = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
     run_params.id = generate_short_hash(time) + "_" + time
-
-    #Create input dir for the run
-    run_params.input_dir = os.path.join(main_params.input_dir, run_params.id)
-    create_dir(run_params.input_dir)
 
     #Set basecalling model
     run_params.basecalling_model = main_params.basecalling_model
@@ -44,9 +44,25 @@ if __name__ == "__main__":
     #Set ideal size
     run_params.ideal_size = choose_ideal_size(run_params.basecalling_model)
 
-    #Create the actual subset inside the input dir
+    #Create the actual subset
     subsetter = Subsetter(main_params.samplesheet)
     run_subset, run_params.actual_size = subsetter.create_subset(run_params.id, target_size=run_params.ideal_size)
+    
+    if (len(run_subset)==0 and run_params.actual_size==0) :
+        # jenkins_parameter =  {
+        #     "pathToDir": al_config_path,
+        # }
+
+        jenkins = Jenkins_trigger()
+        #jenkins.start_job('tolloi/Pipeline_long_reads/FileScanner', 'akira', jenkins_parameter)
+        jenkins.stop_job('Pipeline_long_reads/job/basecalling_pipeline/', jenkins_build_id)
+        sys.exit(0)
+
+    #Create input dir for the run
+    run_params.input_dir = os.path.join(main_params.input_dir, run_params.id)
+    create_dir(run_params.input_dir)
+
+    #Create the symlinks inside the input dir
     run_params.create_run_input_symlinks(run_subset)
 
     #Create output dir for the run
@@ -70,7 +86,6 @@ if __name__ == "__main__":
     print(run_params)
 
     #Save the run_params and print it to file
-    jenkins_build_id = os.environ.get('BUILD_NUMBER_LOCAL')
     run_params_file_path = os.path.join(main_params.logs_dir, f"runParams_build_{jenkins_build_id}.txt")
     run_params.write_to_file(run_params_file_path)
 
