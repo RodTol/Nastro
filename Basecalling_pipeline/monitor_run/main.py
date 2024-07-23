@@ -28,7 +28,7 @@ So the expected time is `{round(expected_time,2)} minutes`
     telegram_send_message(message)
     telegram_send_message(f"I will send a message each `{sleeping_time}` s")
 
-    original_target_file_indexes = [i for i,sample in enumerate(samplesheet.data) if sample['basecalled']==run_params.id]
+    original_target_file_indexes = [i for i,sample in enumerate(samplesheet.get_files()) if sample['basecalled']==run_params.id]
     start_size=len(original_target_file_indexes)
 
     bar = CustomPercentProgressBar(length=50,
@@ -50,14 +50,14 @@ So the expected time is `{round(expected_time,2)} minutes`
         sleep(sleeping_time)
         #Update
         samplesheet.data = samplesheet.read_file()
-        target_file_indexes = [i for i,sample in enumerate(samplesheet.data) if sample['basecalled']==run_params.id]
+        target_file_indexes = [i for i,sample in enumerate(samplesheet.get_files()) if sample['basecalled']==run_params.id]
         current_size=len(target_file_indexes)
 
         processed_file_indexes_old = processed_file_indexes_new
-        processed_file_indexes_new = [i for i in original_target_file_indexes if samplesheet.data[i]['basecalled']==True]
+        processed_file_indexes_new = [i for i in original_target_file_indexes if samplesheet.data["files"][i]['basecalled']==True]
 
         cycle_processed = [item for item in processed_file_indexes_new if item not in processed_file_indexes_old]
-        print("File processati", [samplesheet.data[i]["name"] for i in cycle_processed])
+        print("File processati", [samplesheet.data["files"][i]["name"] for i in cycle_processed])
         
         message = f"""I processed in this cycle {len(cycle_processed)} files, so
 {current_size} files are still being processed;
@@ -68,7 +68,7 @@ The batch is made of {start_size} files;
         if (len(cycle_processed)>0):
             processed_bytes = 0
             for i in cycle_processed:
-                processed_bytes += samplesheet.data[i]['size(GB)']
+                processed_bytes += samplesheet.data["files"][i]['size(GB)']
 
             bar.increase(processed_bytes)
         telegram_send_bar(bar.progress_bar)

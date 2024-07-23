@@ -23,7 +23,7 @@ def generate_short_hash(input_str):
     return hashlib.sha256(input_str.encode()).hexdigest()[:8]
 
 if __name__ == "__main__":
-    if len(sys.argv) != 6:
+    if len(sys.argv) != 5:
         print("Usage: python3 main.py path/to/samplesheet.json path/to/input/root/dir path/to/output/root/dir path/to/logs/root/dir")
         sys.exit(1)
     

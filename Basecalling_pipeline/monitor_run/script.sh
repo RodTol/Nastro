@@ -5,8 +5,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=2
 #SBATCH --cpus-per-task=1
-##SBATCH --output=monitor.out
-##SBATCH --error=monitor.err
+#SBATCH --output=monitor.out
+#SBATCH --error=monitor.err
 
 pathToSamplesheet=$1
 RUN_PARAMS_PATH=$2

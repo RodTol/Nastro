@@ -315,7 +315,7 @@ class ConfigFile:
             self._basecalling = Basecalling(self, **self.data['Basecalling'])
             self._computing_resources = ComputingResources(self, **self.data['ComputingResources'])           
         else:
-            print(f"The file '{file_path}' does not exist or has incomplete json structure. Creating empty file.")
+            print(f" Creating empty file: '{file_path}' does not exist or has incomplete json structure.")
             self.data = {}  # empty dict
             self._general = general
             self._slurm = slurm
