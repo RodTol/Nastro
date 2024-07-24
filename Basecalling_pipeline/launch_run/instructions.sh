@@ -83,6 +83,7 @@ cd $logs_dir/server_node_$node_name
 
 echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") Launching the server ${RESET}"
 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/server.sh $model $logs_dir/server_node_$node_name $gpus_settings $dorado_port &
+SERVER_PID=$!
 
 while true; do
     port_file=$(grep "Starting server on port:" $logs_dir/Run_* | sed 's/.*Starting server on port: //')
@@ -103,12 +104,14 @@ done
 
 echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") Server is up and running. ${RESET}"
 
-# Start BCManager and BCController on host node
+# Start BCManager on host node
 if ((my_index == host_index)); then
   BC_manager_log_path=${logs_dir}/BCManager_log.txt
   echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") BCM is launching. ${RESET}"
   echo "SAMPLESHEET" $SAMPLESHEET
   python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCManagement.py $json_file $my_index $SAMPLESHEET>> "$BC_manager_log_path" 2>&1 &
+  BC_MANAGER_PID=$!
+  
   is_ready=$(python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/check_BCM.py $BC_manager_log_path)
   if [[ "$is_ready" == *"True"* ]]; then
       echo "BCM is up!"
@@ -118,17 +121,17 @@ if ((my_index == host_index)); then
       sleep 1
   fi
   echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") BCM is up and running. ${RESET}"
-  
-  BC_controller_log_path=${logs_dir}/BCController_log_$node_name.txt
-  python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCController.py $json_file $my_index >> "$BC_controller_log_path" 2>&1 &
-  
-  sleep 5
+    
 fi
 
 # Start BCProcessor. Remember to give the port to its dorado engine
 BC_processor_log_path="${logs_dir}/BCProcessor_log_$node_name.txt"
 python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCProcessors.py $json_file $my_index $dorado_port >> $BC_processor_log_path 2>&1 
+BC_PROCESSOR_PID=$!
 
-wait
+# Start BCController with all the pids
+BC_controller_log_path=${logs_dir}/server_node_$node_name/BCController_log_$node_name.txt
+echo "PIDs: ${BC_MANAGER_PID} ${Bc_PROCESSOR_PID} ${SERVER_PID}"
+python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCController.py $BC_MANAGER_PID $BC_PROCESSOR_PID $SERVER_PID $SAMPLESHEET >> "$BC_controller_log_path" 2>&1 &
 
 wait

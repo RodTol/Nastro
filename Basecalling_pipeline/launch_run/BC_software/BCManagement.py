@@ -332,34 +332,7 @@ class BCManager:
                 self.bc_state.completed_work(req_job_id, req_job_state)
             # NOTHING TO RETURN
             self.update_last_activity_time()    #update activy time 
-            return json.dumps({"ok": True})    
-        
-        """
-        Define a route '/heartbeat' that returns the status of the server based on the inactivity interval.
-        GET request to check the server's status.
-
-        @return JSON response with server status and inactivity interval.
-        """
-        # /heartbeat 
-        @a.route('/heartbeat', methods=['GET'])
-        def heartbeat():
-            current_time = time.time()
-            inactivity_interval = current_time - self.last_activity_time
-            if inactivity_interval >= self.shutdown_interval:
-                return jsonify({"status": "true", "inactivity_interval": inactivity_interval})
-            else:
-                return jsonify({"status": "false", "inactivity_interval": inactivity_interval})
-
-    
-    def update_last_activity_time(self):
-        """
-        Update the last_activity_time for when a /assignwork, /keepalive, /completed instance is called.
-        
-        @return None
-        """
-        with self.lock:
-            self.last_activity_time = time.time()            
-            
+            return json.dumps({"ok": True})                
             
 #Launching the flask server
 #app.run decide on which host (0.0.0.0 means all) and port to listen

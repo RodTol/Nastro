@@ -22,8 +22,6 @@ class Conf:
     keep_alive_terminate_url = "http://127.0.0.1:57967/completed"
     keep_alive_url = "http://127.0.0.1:57967/keepalive"
 
-    heartbeat_url = "http://127.0.0.1:666/heartbeat"
-
     @classmethod
     def from_json(cls, file_path, node_index):
         """
@@ -65,10 +63,8 @@ class Conf:
         if node_index != index_host:
             conf_instance.keep_alive_terminate_url = f'http://{host_address}:57967/completed'
             conf_instance.keep_alive_url = f'http://{host_address}:57967/keepalive'
-            conf_instance.heartbeat_url = f'http://{host_address}:57967/heartbeat'
         else:
             conf_instance.keep_alive_terminate_url = f'http://127.0.0.1:57967/completed'
             conf_instance.keep_alive_url = f'http://127.0.0.1:57967/keepalive'
-            conf_instance.heartbeat_url = f'http://127.0.0.1:57967/heartbeat'            
 
         return conf_instance
