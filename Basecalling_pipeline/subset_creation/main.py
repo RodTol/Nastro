@@ -51,12 +51,12 @@ if __name__ == "__main__":
     run_subset, run_params.actual_size = subsetter.create_subset(run_params.id, target_size=run_params.ideal_size)
     
     if (len(run_subset)==0 and run_params.actual_size==0) :
-        # jenkins_parameter =  {
-        #     "pathToDir": al_config_path,
-        # }
+        jenkins_parameter =  {
+             "pathToDir": samplesheet.get_metadata()["dir"],
+         }
 
         jenkins = Jenkins_trigger()
-        #jenkins.start_job('tolloi/Pipeline_long_reads/FileScanner', 'akira', jenkins_parameter)
+        jenkins.start_job('tolloi/Pipeline_long_reads/FileScanner', 'akira', jenkins_parameter)
         jenkins.stop_job('Pipeline_long_reads/job/basecalling_pipeline/', jenkins_build_id)
         sys.exit(0)
 

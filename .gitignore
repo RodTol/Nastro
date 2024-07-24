@@ -167,3 +167,6 @@ cython_debug/
 samplesheet/orfeo_template_copy.json
 tests/test_files/config_tmp.json
 samplesheet/orfeo_template.json
+Basecalling_pipeline/monitor_run/monitor.err
+Basecalling_pipeline/monitor_run/monitor.out
+**/orfeo_template.json
