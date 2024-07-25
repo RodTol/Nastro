@@ -2,6 +2,7 @@ import sys
 import time
 import requests
 import os
+from datetime import datetime
 import subprocess
 import threading
 from BCManagement import bc_status
@@ -249,6 +250,9 @@ class BCEngine:
                 self._sleep_before_next_batch(start_time, end_time)
         # exiting while loop (due to shutdown var being True): log it somehow
         self.PROCESSING_STATE = bc_status.STOPPED # 'STOPPED'
+        date = datetime.now()
+        date = date.strftime("[%d/%b/%Y %H:%M:%S]") 
+        print(f"Shutdown at: {date}")
         print("STOPPING BATCH REQUEST LOOP: ENGINE " + str(self.engine_id) + " WILL NO LONGER ASK FOR NEW BATCHES OF WORK.")
 
     def _request_a_batch(self, api_url, engine_id, optimal_request_size):
@@ -271,6 +275,9 @@ class BCEngine:
             return response.json()
         except Exception as e:
             # BCManager SERVER PROBLEMS!
+            date = datetime.now()
+            date = date.strftime("[%d/%b/%Y %H:%M:%S]") 
+            print(f"Shutdown at: {date}")
             print("BC CONTROLLER PROBLEM! AS PER PROTOCOL, ABORTING PROCESSING AND SHUTTING DOWN! " + str(e))
             sys.exit(1)
 

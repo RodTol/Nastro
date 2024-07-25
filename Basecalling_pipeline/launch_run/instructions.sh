@@ -32,6 +32,7 @@ RESET="\033[0m"
 json_file=$1
 my_index=$2
 
+run_name=$(jq -r '.General.name' "$json_file")
 # Read from config.json file (necessary)
 model=$(jq -r '.Basecalling.model' "$json_file")
 input_dir=$(jq -r '.Basecalling.input_dir' "$json_file")
@@ -104,6 +105,7 @@ done
 
 echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") Server is up and running. ${RESET}"
 
+BC_MANAGER_PID="NULL"
 # Start BCManager on host node
 if ((my_index == host_index)); then
   BC_manager_log_path=${logs_dir}/BCManager_log.txt
@@ -126,12 +128,12 @@ fi
 
 # Start BCProcessor. Remember to give the port to its dorado engine
 BC_processor_log_path="${logs_dir}/BCProcessor_log_$node_name.txt"
-python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCProcessors.py $json_file $my_index $dorado_port >> $BC_processor_log_path 2>&1 
+exec python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCProcessors.py $json_file $my_index $dorado_port >> $BC_processor_log_path 2>&1 &
 BC_PROCESSOR_PID=$!
 
 # Start BCController with all the pids
 BC_controller_log_path=${logs_dir}/server_node_$node_name/BCController_log_$node_name.txt
-echo "PIDs: ${BC_MANAGER_PID} ${Bc_PROCESSOR_PID} ${SERVER_PID}"
-python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCController.py $BC_MANAGER_PID $BC_PROCESSOR_PID $SERVER_PID $SAMPLESHEET >> "$BC_controller_log_path" 2>&1 &
+echo "PIDs: BCM-${BC_MANAGER_PID} BCP-${BC_PROCESSOR_PID} SERVER-${SERVER_PID}"
+python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCController.py $run_name $BC_MANAGER_PID $BC_PROCESSOR_PID $SERVER_PID $SAMPLESHEET >> "$BC_controller_log_path" 2>&1 &
 
 wait
