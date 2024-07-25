@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 import time
 import psutil
+import json
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from samplesheet_check.samplesheet_api import Samplesheet
@@ -25,7 +26,7 @@ class BCController:
     (so when BCM makes a completed_work() call) everything is shutted down
     """
 
-    def __init__(self, run_name, BCM_pid, BCP_pid, Dorado_pid, samplesheet):
+    def __init__(self, run_params_path, BCM_pid, BCP_pid, Dorado_pid, samplesheet):
         """
         Initialize the BCController object by taking the BCP, BCM and dorado server PIDs and also
         the samplesheet path.
@@ -35,12 +36,22 @@ class BCController:
         """
         #Debugging print
         print("*************BCController*************")
-        self.run_name = run_name
+        self.run_params_path = run_params_path
         self.BCM_pid = BCM_pid
         self.BCP_pid = BCP_pid
         self.Dorado_pid = Dorado_pid
         self.samplesheet = Samplesheet(samplesheet)
         self.assigned_reads = self._get_assigned_reads()
+
+        # Load the JSON file
+        with open(self.run_params_path, 'r') as file:
+            config = json.load(file)
+
+        # Run parameters
+        self.run_name = config["id"]
+        self.input_dir = config['input_dir']
+        self.output_dir = config['output_dir']
+        self.logs_dir = config['logs_dir']
 
         self.jenkins = Jenkins_trigger()
 
@@ -98,6 +109,16 @@ class BCController:
         print("Shutting down\n")
         if self.BCM_pid != 'NULL':
             self._kill_process(self.BCM_pid) #BCM
+            #Only the BCM hosting will launch the run
+            jenkins_parameter =  {
+                "pathToSamplesheet": self.samplesheet,
+                "pathToInputDir": self.input_dir,
+                "pathToOutputDir": self.output_dir, 
+                "pathToLogsDir": self.logs_dir,
+                "RUN_TESTING_CLEANUP": False
+            }
+            print("Launching a new run")
+            self.jenkins.start_job("tolloi/Pipeline_long_reads/basecalling_pipeline", "kuribo", jenkins_parameter)            
         self._kill_process(self.Dorado_pid) #Dorado
         sys.exit(0) #BCC
 
@@ -123,11 +144,11 @@ class BCController:
 
 
 if __name__ == '__main__':
-    run_name = sys.argv[1]
+    run_params_path = sys.argv[1]
     BCM_pid = sys.argv[2]
     BCP_pid = sys.argv[3]
     Dorado_pid = sys.argv[4]
     samplesheet = sys.argv[5]
-    bc_processor = BCController(run_name, BCM_pid, BCP_pid, Dorado_pid, samplesheet)
+    bc_processor = BCController(run_params_path, BCM_pid, BCP_pid, Dorado_pid, samplesheet)
     bc_processor.monitor_bcp_pid()
     

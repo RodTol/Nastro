@@ -31,14 +31,13 @@ RESET="\033[0m"
 # Input parameters are the config.json and what node I am on the list 
 json_file=$1
 my_index=$2
+run_params_path=$3
 
-run_name=$(jq -r '.General.name' "$json_file")
 # Read from config.json file (necessary)
 model=$(jq -r '.Basecalling.model' "$json_file")
 input_dir=$(jq -r '.Basecalling.input_dir' "$json_file")
 output_dir=$(jq -r '.Basecalling.output_dir' "$json_file") 
 logs_dir=$(jq -r '.Basecalling.logs_dir' "$json_file")
-
 
 host_index=$(jq -r '.ComputingResources.index_host' "$json_file")
 dorado_port=$(jq -r '.ComputingResources.port' "$json_file")
@@ -134,6 +133,6 @@ BC_PROCESSOR_PID=$!
 # Start BCController with all the pids
 BC_controller_log_path=${logs_dir}/server_node_$node_name/BCController_log_$node_name.txt
 echo "PIDs: BCM-${BC_MANAGER_PID} BCP-${BC_PROCESSOR_PID} SERVER-${SERVER_PID}"
-python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCController.py $run_name $BC_MANAGER_PID $BC_PROCESSOR_PID $SERVER_PID $SAMPLESHEET >> "$BC_controller_log_path" 2>&1 &
+python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCController.py $run_params_path $BC_MANAGER_PID $BC_PROCESSOR_PID $SERVER_PID $SAMPLESHEET >> "$BC_controller_log_path" 2>&1 &
 
 wait
