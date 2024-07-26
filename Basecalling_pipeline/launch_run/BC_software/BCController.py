@@ -106,21 +106,28 @@ class BCController:
         except Exception as e:
             print(f"An error occurred: {e}", flush=True)
     
+    def _launching_file_scanner(self):
+        # Only the BCM hosting will launch the run
+        jenkins_parameter =  {
+            "pathToSamplesheet": self.samplesheet_path,
+            "pathToInputDir": self.input_dir,
+            "pathToOutputDir": self.output_dir, 
+            "pathToLogsDir": self.logs_dir,
+            "RUN_TESTING_CLEANUP": False
+        }
+        #print("Launching a new run with the following parameters:", flush=True)
+        print(jenkins_parameter, flush=True)
+        self.jenkins.start_job("tolloi/Pipeline_long_reads/basecalling_pipeline", "kuribo", jenkins_parameter)            
+
     def _shutdown_BCsoftware(self):
         print("Shutting down\n", flush=True)
         if self.BCM_pid != 'NULL':
             self._kill_process(self.BCM_pid) # BCM
-            # Only the BCM hosting will launch the run
-            jenkins_parameter =  {
-                "pathToSamplesheet": self.samplesheet_path,
-                "pathToInputDir": self.input_dir,
-                "pathToOutputDir": self.output_dir, 
-                "pathToLogsDir": self.logs_dir,
-                "RUN_TESTING_CLEANUP": False
-            }
-            print("Launching a new run with the following parameters:", flush=True)
-            print(jenkins_parameter, flush=True)
-            self.jenkins.start_job("tolloi/Pipeline_long_reads/basecalling_pipeline", "kuribo", jenkins_parameter)            
+
+            self._launching_file_scanner()
+
+            #TODO Alignment pipeline launching 
+
         self._kill_process(self.Dorado_pid) # Dorado
         sys.exit(0) # BCC
 
@@ -129,7 +136,7 @@ class BCController:
         self.samplesheet.data = self.samplesheet.read_file()
         for i in self.assigned_reads:
             if self.samplesheet.get_files()[i]["basecalled"] != True:
-                print(f"File {self.samplesheet.get_files()[i]} still need to be basecalled", flush=True)
+                #print(f"File {self.samplesheet.get_files()[i]} still need to be basecalled", flush=True)
                 return False
         return True
 
