@@ -130,6 +130,8 @@ BC_processor_log_path="${logs_dir}/BCProcessor_log_$node_name.txt"
 exec python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCProcessors.py $json_file $my_index $dorado_port >> $BC_processor_log_path 2>&1 &
 BC_PROCESSOR_PID=$!
 
+sleep 10 #TODO: check BCP started
+
 # Start BCController with all the pids
 BC_controller_log_path=${logs_dir}/server_node_$node_name/BCController_log_$node_name.txt
 echo "PIDs: BCM-${BC_MANAGER_PID} BCP-${BC_PROCESSOR_PID} SERVER-${SERVER_PID}"

@@ -117,7 +117,7 @@ class Samplesheet:
             print("Invalid file entry format.")
 
     def  check_basecalling_is_finished(self):
-        self.read_file()            
+        self.data = self.read_file()            
         
         for entry in self.data["files"]:
             if entry["basecalled"] != "True":
@@ -125,7 +125,7 @@ class Samplesheet:
         return True
 
     def  check_alignment_is_finished(self):
-        self.read_file()            
+        self.data = self.read_file()            
         
         for entry in self.data["files"]:
             if entry["aligned"] != "True":
