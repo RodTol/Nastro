@@ -113,7 +113,7 @@ if ((my_index == host_index)); then
   python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCManagement.py $json_file $my_index $SAMPLESHEET>> "$BC_manager_log_path" 2>&1 &
   BC_MANAGER_PID=$!
   
-  is_ready=$(python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/check_BCM.py $BC_manager_log_path)
+  is_ready=$(python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/check_log_file.py $BC_manager_log_path "Press CTRL+C to quit")
   if [[ "$is_ready" == *"True"* ]]; then
       echo "BCM is up!"
       break
@@ -130,7 +130,15 @@ BC_processor_log_path="${logs_dir}/BCProcessor_log_$node_name.txt"
 exec python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCProcessors.py $json_file $my_index $dorado_port >> $BC_processor_log_path 2>&1 &
 BC_PROCESSOR_PID=$!
 
-sleep 10 #TODO: check BCP started
+is_ready=$(python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/check_log_file.py $BC_processor_log_path "ONT basecaller supervisor version 7.1.4+d7df870c0")
+if [[ "$is_ready" == *"True"* ]]; then
+    echo "BCP is connected!"
+    break
+else
+    #echo "BCM is down."
+    sleep 1
+fi
+echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") BCP is running. ${RESET}"
 
 # Start BCController with all the pids
 BC_controller_log_path=${logs_dir}/server_node_$node_name/BCController_log_$node_name.txt

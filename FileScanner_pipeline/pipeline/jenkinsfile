@@ -16,7 +16,7 @@ pipeline {
                         RETRY_COUNT=0
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
                             ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
-                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/FileScanner_pipeline && git pull
+                                cd ${HOME}/Pipeline_long_reads/FileScanner_pipeline && git pull
                             ' && break
                             RETRY_COUNT=$((RETRY_COUNT + 1))
                             echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
@@ -39,9 +39,8 @@ pipeline {
                         RETRY_COUNT=0
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
                             ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
-                                cd '${pathToDir}'
-                                ls 
-                                ls | grep .pod5
+                                cd ${HOME}/Pipeline_long_reads/FileScanner_pipeline/scan_dir
+                                python3 main.py '${pathToDir}'
                             ' && break
                             RETRY_COUNT=$((RETRY_COUNT + 1))
                             echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
