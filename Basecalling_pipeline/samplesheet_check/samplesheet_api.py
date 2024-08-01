@@ -1,10 +1,11 @@
 import json
 import sys 
+import os
 
 class Samplesheet:
     '''
     Class used to represent and interact with the samplesheet 
-    of the experiment
+    of the experiment. The json file needs to already exist
     '''
 
     def __init__(self, file_path):
@@ -41,7 +42,7 @@ class Samplesheet:
             return False
         
         if self._verify_metadata(json_data["metadata"]) and self._verify_files(json_data["files"]):
-            print("All elements in the list have the required parameters.")
+            #print("All elements in the list have the required parameters.")
             return True
         else:
             print("Not all elements have the required parameters.")
@@ -53,7 +54,17 @@ class Samplesheet:
             keys. Note that I do not check the values for any of the keys
             '''
             required_keys = {"name", "path", "size(GB)", "basecalled", "aligned"}
+
+            # Check if elements is a list
+            if not isinstance(elements, list):
+                print(f"Expected a list of dictionaries, got {type(elements).__name__}.")
+                return False
+
+            # Iterate over the list to ensure each element is a dictionary with the required keys
             for element in elements:
+                if not isinstance(element, dict):
+                    print(f"Expected a dictionary, got {type(element).__name__}.")
+                    return False
                 if not required_keys.issubset(element.keys()):
                     print(f"{element} does not have the required parameters.")
                     return False
@@ -111,10 +122,19 @@ class Samplesheet:
         '''
         Add a new file entry to the files list
         '''
-        if self._verify_elements([file_entry]):
+        if self._verify_files([file_entry]):
             self.data["files"].append(file_entry)
         else:
-            print("Invalid file entry format.")
+            print("I wasn't able to append the entry.")
+
+
+    def file_belongs_to_samplesheet(self, file_path,):
+        for file in self.data["files"]:
+            if  file["path"] == file_path:
+                #print(f"{file_path} found")
+                return True
+        return False
+
 
     def  check_basecalling_is_finished(self):
         self.data = self.read_file()            
@@ -131,4 +151,30 @@ class Samplesheet:
             if entry["aligned"] != "True":
                 return False
         return True
+
+
+def create_samplesheet_entry(file_path):
+    '''
+    Create a dictionary entry for a samplesheet from a given file path.
+    '''
+    try:
+        file_name = os.path.basename(file_path)
+        file_size = os.path.getsize(file_path) / (1024**3) 
+
+        entry = {
+            "name": file_name,
+            "path": file_path,
+            "size(GB)": round(file_size, 2),  # Round to 2 decimal places
+            "basecalled": False,  
+            "aligned": False 
+        }
+
+        return entry
+
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+        return None
+    except Exception as e:
+        print(f"An error occurred while creating samplesheet entry: {e}")
+        return None
 

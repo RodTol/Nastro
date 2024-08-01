@@ -1,23 +1,17 @@
 import sys
 import os
+import json
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from Basecalling_pipeline.samplesheet_check.samplesheet_api import Samplesheet
+from Basecalling_pipeline.samplesheet_check.samplesheet_api import create_samplesheet_entry
+
 from pathlib import Path
 from typing import Callable, Dict, List
 import pod5
 from pod5.tools.pod5_inspect import do_debug_command, do_read_command, do_reads_command, do_summary_command
 from pod5.tools.utils import collect_inputs
 from pod5.tools.parsers import prepare_pod5_inspect_argparser
-
-def list_pod5(dir):
-    all_files= os.listdir(dir)
-    pod5_files = [file for file in all_files if file.endswith('.pod5')]
-    return pod5_files    
-
-def list_json(dir):
-    all_files= os.listdir(dir)
-    json_files = [file for file in all_files if file.endswith('.json')]
-    return json_files    
 
 def inspect_pod5(
     command: str, input_files: List[Path], recursive: bool = False, **kwargs
@@ -50,6 +44,81 @@ def inspect_pod5(
         commands[command](**kwargs)
 
 
-def create_samplesheet(dir):
-    #Scan for other samplesheet
-    list_json(dir)
+def list_pod5(dir):
+    dir_path = Path(dir)
+    all_files = os.listdir(dir)
+    pod5_files = [Path(file) for file in all_files if file.endswith('.pod5')]
+    # Get absolute paths for each .pod5 file
+    pod5_files = [dir_path / file for file in pod5_files]
+    pod5_files = [str(file.resolve()) for file in pod5_files]
+
+    return pod5_files
+
+def list_json(dir):
+    all_files= os.listdir(dir)
+    json_files = [file for file in all_files if file.endswith('.json')]
+    json_files = [os.path.join(dir, file) for file in json_files]
+    return json_files    
+
+def is_same_samplesheet(path_to_samplesheet, dir, model):
+    samplesheet = Samplesheet(path_to_samplesheet)
+    if Path(samplesheet.get_metadata()["dir"]).resolve() != Path(dir).resolve():
+        print(f"{path_to_samplesheet} has a different dir")
+        return False
+    if samplesheet.get_metadata()["model"] != model:
+        print(f"{path_to_samplesheet} has a different model")
+        return False
+    return True
+
+def create_blank_samplesheet(dir, model):
+    # Define the structure of the JSON data
+    data = {
+        "metadata": {
+            "dir": dir,
+            "model": model
+        },
+        "files": []
+    }
+
+    # Define the file name
+    path = Path(dir)
+    dir_name = path.name if path.is_dir() else path.parent.name
+    file_name = f"run_{dir_name}_{model.replace('.cfg', '').replace('.', '-')}.json"
+
+    # Write the JSON data to the file
+    file_path = path / file_name
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4)    
+    
+    return file_path.resolve()
+
+
+# send also message of how many files were added
+# samplesheet if exist should be smaller
+def update_samplesheet(samplesheet: Samplesheet):
+    dir = samplesheet.get_metadata()["dir"]
+    all_scanned_pod5_files = list_pod5(dir)
+
+    for i,scanned_file_path in enumerate(all_scanned_pod5_files):
+        if samplesheet.file_belongs_to_samplesheet(scanned_file_path):
+            all_scanned_pod5_files.pop(i)
+        else: 
+            parser = prepare_pod5_inspect_argparser()
+            args = parser.parse_args(['debug', scanned_file_path])
+
+            # Redirect stdout in order to have no prints
+            sys.stdout = open(os.devnull, 'w')
+            try :
+                # Check if it is closed
+                inspect_pod5(command=args.command, input_files=args.input_files)
+            except Exception as exc:
+                # This is how we handle this exception THAT IS NOT RAISEED
+                sys.stdout = sys.__stdout__ 
+                print(f"Failed to open file {scanned_file_path} due to {exc}") 
+            else:
+                # But we must reset stdout to its default value every time
+                sys.stdout = sys.__stdout__ 
+                #print('Added ', scanned_file_path , ' to the list')
+                
+                samplesheet.add_file(create_samplesheet_entry(scanned_file_path))
+    samplesheet.update_json_file()

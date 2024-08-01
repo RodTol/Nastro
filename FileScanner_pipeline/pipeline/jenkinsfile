@@ -6,6 +6,8 @@ pipeline {
     }
     parameters {
         string(name: 'pathToDir', defaultValue: '/u/area/jenkins_onpexp/scratch/test_10G_dataset_POD5', description: 'Path to the dir where .pod5 will be written')
+        string(name: 'basecallingModel', defaultValue: 'dna_r10.4.1_e8.2_400bps_sup.cfg', description: 'Basecalling model for the samplesheet')
+        string(name: 'outputLocation', defaultValue: '/orfeo/cephfs/scratch/area/jenkins_onpexp', description: 'Path to the dir where results will be saved')
     }
     stages {
         stage('Pull project repository on the Cluster') {
@@ -40,7 +42,7 @@ pipeline {
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
                             ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
                                 cd ${HOME}/Pipeline_long_reads/FileScanner_pipeline/scan_dir
-                                python3 main.py '${pathToDir}'
+                                python3 main.py '${pathToDir}' '${basecallingModel}' '${outputLocation}'
                             ' && break
                             RETRY_COUNT=$((RETRY_COUNT + 1))
                             echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
