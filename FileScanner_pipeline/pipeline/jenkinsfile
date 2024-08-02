@@ -7,7 +7,7 @@ pipeline {
     parameters {
         string(name: 'pathToDir', defaultValue: '/u/area/jenkins_onpexp/scratch/test_10G_dataset_POD5', description: 'Path to the dir where .pod5 will be written')
         string(name: 'basecallingModel', defaultValue: 'dna_r10.4.1_e8.2_400bps_sup.cfg', description: 'Basecalling model for the samplesheet')
-        string(name: 'outputLocation', defaultValue: '/orfeo/cephfs/scratch/area/jenkins_onpexp', description: 'Path to the dir where results will be saved')
+        string(name: 'outputLocation', defaultValue: '/orfeo/cephfs/scratch/area/jenkins_onpexp/run_TEST', description: 'Path to the BASE dir where results will be saved.')
     }
     stages {
         stage('Pull project repository on the Cluster') {
@@ -32,7 +32,7 @@ pipeline {
                 }    
             }
         }  
-        stage('Scan the dir') {
+        stage('Scan the dir and launch the run') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     /*Look for .pod5 files*/
@@ -41,8 +41,10 @@ pipeline {
                         RETRY_COUNT=0
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
                             ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                                source ~/python_venvs/login_venv_jenkins/bin/activate
                                 cd ${HOME}/Pipeline_long_reads/FileScanner_pipeline/scan_dir
                                 python3 main.py '${pathToDir}' '${basecallingModel}' '${outputLocation}'
+                                deactivate
                             ' && break
                             RETRY_COUNT=$((RETRY_COUNT + 1))
                             echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
