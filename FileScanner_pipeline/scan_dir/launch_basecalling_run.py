@@ -20,7 +20,7 @@ def launch_run(samplesheet: Samplesheet):
             "pathToInputDir" : input_path,
             "pathToOutputDir": output_path,
             "pathToLogsDir": logs_path,
-            "RUN_TESTING_CLEANUP": True
+            "RUN_TESTING_CLEANUP": False
         }    
     
     jenkins = Jenkins_trigger()
