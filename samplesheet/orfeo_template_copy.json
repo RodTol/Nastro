@@ -1,7 +1,8 @@
 {
     "metadata": {
         "dir": "/orfeo/cephfs/scratch/area/jenkins_onpexp/10G_dataset_POD5",
-        "model": "dna_r10.4.1_e8.2_400bps_sup.cfg"
+        "model": "dna_r10.4.1_e8.2_400bps_sup.cfg",
+        "outputLocation": "/u/area/jenkins_onpexp/scratch/TEST"
     },
     "files": 
         [

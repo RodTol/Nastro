@@ -53,6 +53,8 @@ if __name__ == "__main__":
     if (len(run_subset)==0 and run_params.actual_size==0) :
         jenkins_parameter =  {
              "pathToDir": samplesheet.get_metadata()["dir"],
+             "basecallingModel" : samplesheet.get_metadata()["model"],
+             "outputLocation": samplesheet.get_metadata()["outputLocation"]
          }
 
         jenkins = Jenkins_trigger()

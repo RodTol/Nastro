@@ -60,7 +60,8 @@ def list_json(dir):
     json_files = [os.path.join(dir, file) for file in json_files]
     return json_files    
 
-def is_same_samplesheet(path_to_samplesheet, dir, model):
+#TODO: should I not check also the "outputLocation" ?
+def is_same_samplesheet(path_to_samplesheet, dir, model, outputLocation):
     samplesheet = Samplesheet(path_to_samplesheet)
     if Path(samplesheet.get_metadata()["dir"]).resolve() != Path(dir).resolve():
         print(f"{path_to_samplesheet} has a different dir")
@@ -68,14 +69,18 @@ def is_same_samplesheet(path_to_samplesheet, dir, model):
     if samplesheet.get_metadata()["model"] != model:
         print(f"{path_to_samplesheet} has a different model")
         return False
+    if samplesheet.get_metadata()["outputLocation"] != outputLocation:
+        print(f"{path_to_samplesheet} has a different outputLocation")
+        return False    
     return True
 
-def create_blank_samplesheet(dir, model):
+def create_blank_samplesheet(dir, model, outputLocation):
     # Define the structure of the JSON data
     data = {
         "metadata": {
             "dir": dir,
-            "model": model
+            "model": model,
+            "outputLocation": outputLocation
         },
         "files": []
     }
@@ -92,12 +97,11 @@ def create_blank_samplesheet(dir, model):
     
     return file_path.resolve()
 
-
-# send also message of how many files were added
-# samplesheet if exist should be smaller
 def update_samplesheet(samplesheet: Samplesheet):
     dir = samplesheet.get_metadata()["dir"]
     all_scanned_pod5_files = list_pod5(dir)
+    
+    added_files = 0
 
     for i,scanned_file_path in enumerate(all_scanned_pod5_files):
         if samplesheet.file_belongs_to_samplesheet(scanned_file_path):
@@ -119,6 +123,8 @@ def update_samplesheet(samplesheet: Samplesheet):
                 # But we must reset stdout to its default value every time
                 sys.stdout = sys.__stdout__ 
                 #print('Added ', scanned_file_path , ' to the list')
-                
-                samplesheet.add_file(create_samplesheet_entry(scanned_file_path))
+                if samplesheet.add_file(create_samplesheet_entry(scanned_file_path)):
+                    added_files = added_files + 1
+ 
     samplesheet.update_json_file()
+    return added_files

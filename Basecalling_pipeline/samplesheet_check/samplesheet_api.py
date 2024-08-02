@@ -74,7 +74,7 @@ class Samplesheet:
         '''
         Verify the metadata section
         '''
-        required_keys = {"dir", "model"}
+        required_keys = {"dir", "model", "outputLocation"}
         if not required_keys.issubset(metadata.keys()):
             print("Wrong metadata")
             return False
@@ -124,8 +124,10 @@ class Samplesheet:
         '''
         if self._verify_files([file_entry]):
             self.data["files"].append(file_entry)
+            return True
         else:
             print("I wasn't able to append the entry.")
+            return False
 
 
     def file_belongs_to_samplesheet(self, file_path,):
