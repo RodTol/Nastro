@@ -175,7 +175,7 @@ pipeline {
                                 sbatch_script="${logs_dir}/script_${id}.sh"
 
                                 chmod +x ${sbatch_script}
-                                sbatch ${sbatch_script} ${config_path} ${RUN_PARAMS_PATH}
+                                sbatch $SAMPLESHEET ${sbatch_script} ${config_path} ${RUN_PARAMS_PATH}
                             ' && break
                             RETRY_COUNT=$((RETRY_COUNT + 1))
                             echo "Retry $RETRY_COUNT/$MAX_RETRIES..."

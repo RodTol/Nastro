@@ -29,9 +29,10 @@ CYAN="\033[0;36m"
 RESET="\033[0m"
 
 # Input parameters are the config.json and what node I am on the list 
-json_file=$1
-my_index=$2
-run_params_path=$3
+samplesheet=$1
+json_file=$2
+my_index=$3
+run_params_path=$4
 
 # Read from config.json file (necessary)
 model=$(jq -r '.Basecalling.model' "$json_file")
@@ -109,8 +110,8 @@ BC_MANAGER_PID="NULL"
 if ((my_index == host_index)); then
   BC_manager_log_path=${logs_dir}/BCManager_log.txt
   echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") BCM is launching. ${RESET}"
-  echo "SAMPLESHEET" $SAMPLESHEET
-  python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCManagement.py $json_file $my_index $SAMPLESHEET>> "$BC_manager_log_path" 2>&1 &
+  echo "Samplesheet path:" $samplesheet
+  python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCManagement.py $json_file $my_index $samplesheet>> "$BC_manager_log_path" 2>&1 &
   BC_MANAGER_PID=$!
   
   is_ready=$(python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/check_log_file.py $BC_manager_log_path "Press CTRL+C to quit")
@@ -143,6 +144,6 @@ echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") BCP is running. ${RESET}"
 # Start BCController with all the pids
 BC_controller_log_path=${logs_dir}/server_node_$node_name/BCController_log_$node_name.txt
 echo "PIDs: BCM-${BC_MANAGER_PID} BCP-${BC_PROCESSOR_PID} SERVER-${SERVER_PID}"
-python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCController.py $run_params_path $BC_MANAGER_PID $BC_PROCESSOR_PID $SERVER_PID $SAMPLESHEET >> "$BC_controller_log_path" 2>&1 &
+python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCController.py $run_params_path $BC_MANAGER_PID $BC_PROCESSOR_PID $SERVER_PID $samplesheet >> "$BC_controller_log_path" 2>&1 &
 
 wait
