@@ -55,6 +55,7 @@ def create_sbatch_file(path_to_config, path_to_sbatch):
         # Write additional sbatch directives for script execution
         sbatch_file.write('config_file=$1\n')
         sbatch_file.write('run_params_path=$2\n')
+        sbatch_file.write('samplesheet=$3\n')        
         sbatch_file.write("index_host=$(jq -r '.ComputingResources.index_host' ")
         sbatch_file.write('"$config_file")\n')
         sbatch_file.write("echo 'INDEX_HOST' $index_host\n")
@@ -69,7 +70,7 @@ def create_sbatch_file(path_to_config, path_to_sbatch):
             else:
                 sbatch_file.write(f"srun --het-group={i} ")
 
-            sbatch_file.write(f"{data['Slurm']['main_script']} $config_file $((index_host + {i})) $run_params_path &\n")
+            sbatch_file.write(f"{data['Slurm']['main_script']} $samplesheet $config_file $((index_host + {i})) $run_params_path &\n")
 
             # FIXME can I remove it ?
             # Add a sleep command after each srun command except the last one
