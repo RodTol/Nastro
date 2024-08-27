@@ -19,7 +19,7 @@ pipeline {
                         MAX_RETRIES=5
                         RETRY_COUNT=0
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                                 cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline && git pull
                             ' && break
                             RETRY_COUNT=$((RETRY_COUNT + 1))
@@ -45,7 +45,7 @@ pipeline {
                         MAX_RETRIES=5
                         RETRY_COUNT=0
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                                 cd /u/area/jenkins_onpexp/Pipeline_long_reads/samplesheet/
                                 cp orfeo_template_copy.json orfeo_template.json
                                 cd /u/area/jenkins_onpexp/scratch/TEST
@@ -73,7 +73,7 @@ pipeline {
                         MAX_RETRIES=5
                         RETRY_COUNT=0
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                                 cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline
                                 rm -rf __pycache__
                             ' && break
@@ -97,7 +97,7 @@ pipeline {
                         MAX_RETRIES=5
                         RETRY_COUNT=0
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                                 cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/samplesheet_check
                                 python3 main.py '${pathToSamplesheet}'
                             ' && break
@@ -122,7 +122,7 @@ pipeline {
                         MAX_RETRIES=5
                         RETRY_COUNT=0
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                                 source ${HOME}/python_venvs/login_venv_jenkins/bin/activate
                                 cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/subset_creation
 
@@ -153,7 +153,7 @@ pipeline {
                         MAX_RETRIES=5
                         RETRY_COUNT=0
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                                 cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/launch_run
 
                                 export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
@@ -196,7 +196,7 @@ pipeline {
                         MAX_RETRIES=5
                         RETRY_COUNT=0
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                                 cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/monitor_run
                                 export BUILD_NUMBER_LOCAL=\'${BUILD_NUMBER}\'
                                 export LOG_PATH=\'${pathToLogsDir}\'
@@ -223,7 +223,7 @@ pipeline {
                         MAX_RETRIES=5
                         RETRY_COUNT=0
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                                 echo "Ending"                        
                             ' && break
                             RETRY_COUNT=$((RETRY_COUNT + 1))

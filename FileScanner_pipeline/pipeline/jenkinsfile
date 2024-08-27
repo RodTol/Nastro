@@ -17,7 +17,7 @@ pipeline {
                         MAX_RETRIES=5
                         RETRY_COUNT=0
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                                 cd ${HOME}/Pipeline_long_reads/FileScanner_pipeline && git pull
                             ' && break
                             RETRY_COUNT=$((RETRY_COUNT + 1))
@@ -40,7 +40,7 @@ pipeline {
                         MAX_RETRIES=5
                         RETRY_COUNT=0
                         while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                                 source ~/python_venvs/login_venv_jenkins/bin/activate
                                 cd ${HOME}/Pipeline_long_reads/FileScanner_pipeline/scan_dir
                                 python3 main.py '${pathToDir}' '${basecallingModel}' '${outputLocation}'
