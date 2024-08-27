@@ -36,24 +36,13 @@ pipeline {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     /*Look for .pod5 files*/
-                    sh '''
-                        MAX_RETRIES=5
-                        RETRY_COUNT=0
-                        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                                source ~/python_venvs/login_venv_jenkins/bin/activate
-                                cd ${HOME}/Pipeline_long_reads/FileScanner_pipeline/scan_dir
-                                python3 main.py '${pathToDir}' '${basecallingModel}' '${outputLocation}'
-                                deactivate
-                            ' && break
-                            RETRY_COUNT=$((RETRY_COUNT + 1))
-                            echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
-                            sleep 5
-                        done
-                        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
-                            echo "SSH connection failed after $MAX_RETRIES attempts."
-                            exit 1
-                        fi
+                    sh '''                         
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
+                            source ~/python_venvs/login_venv_jenkins/bin/activate
+                            cd ${HOME}/Pipeline_long_reads/FileScanner_pipeline/scan_dir
+                            srun -p EPYC -N 1 -n 1 -c 1 --time=1:0:0 python3 main.py '${pathToDir}' '${basecallingModel}' '${outputLocation}'
+                            deactivate
+                        ' 
                     '''
                 }    
             }
