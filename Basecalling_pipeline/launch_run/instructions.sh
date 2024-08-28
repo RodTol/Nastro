@@ -90,18 +90,26 @@ while true; do
     port_file=$(grep "Starting server on port:" $logs_dir/Run_* | sed 's/.*Starting server on port: //')
     # Handle empty response
     if [ -z "$port_file" ]; then
-        port_file="Port file not found"
-    fi
-    echo $port_file
-    output=$(python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/check_icp_port.py ${port_file})
-    if [[ "$output" == *"True"* ]]; then
-        echo "Connection is up!"
-        break
+        echo "Port string in file not found"
     else
-        #echo "Connection is down."
-        sleep 1
+        echo "Port string found in file: $port_file"
+        break
     fi
+    sleep 1
 done
+
+echo -e "${RED}Looking for ${port_file}${RESET}" 
+
+# while true; do
+#     output=$(python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/check_icp_port.py ${port_file})
+#     if [[ "$output" == *"True"* ]]; then
+#         echo "Connection is up!"
+#         break
+#     else
+#         echo "Connection is down."
+#         sleep 1
+#     fi
+# done
 
 echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") Server is up and running. ${RESET}"
 

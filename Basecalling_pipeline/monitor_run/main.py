@@ -14,15 +14,25 @@ if __name__ == "__main__":
     run_params = runParameters.from_file(sys.argv[1])
     samplesheet = Samplesheet(sys.argv[2])
 
-    expected_time = run_params.actual_size*10/run_params.ideal_size
-    sleeping_time = expected_time/100
-    if sleeping_time < 20:
-        sleeping_time = 20
+    config = ConfigFile(run_params.config_path)
+    n_gpus = config.computing_resources.nodes_gpus
+    total_gpus = int(n_gpus) if isinstance(n_gpus, str) else sum(int(x) for x in n_gpus)
+
+    #TODO get this 4 from the max configuration json 
+    ideal_size = run_params.ideal_size*total_gpus/4
+
+    expected_time = 10*run_params.actual_size/ideal_size
+    sleeping_time = expected_time/5
+    #If too small set to 1 minutes
+    if sleeping_time < 60:
+        sleeping_time = 60
 
     telegram_send_bar("-----BASECALLING-RUN-----")
 
     message = f"""I am watching the run `{run_params.id}`
-This run has a size of `{round(run_params.actual_size,2)} GB`, an excepted one of `{round(run_params.ideal_size,2)} GB`
+This run has a size of `{round(run_params.actual_size,2)} GB`
+Resources: {total_gpus} GPUs
+For a 10 minutes run we have an ideal size of `{round(ideal_size,2)} GB`
 So the expected time is `{round(expected_time,2)} minutes`
 """
     telegram_send_message(message)
