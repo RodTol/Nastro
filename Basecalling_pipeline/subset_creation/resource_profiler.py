@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from Basecalling_pipeline.subset_creation.runParameters import runParameters
@@ -86,30 +87,40 @@ class ResourceTuning:
     def compute_resources(self):
         '''
         For the given run_params return a ComputingResources object
-
-        TODO: create config file with computing profiles. Do not leave it hardcoded inside the code
         '''
         subset_length = self._length_of_subset()
         #sprint("Subset Length: ", subset_length)
         #Standard set of resources
         if self.run_params.actual_size >= self.run_params.ideal_size:
             print("Using profile 1")
-            size1, size2 = split_number(subset_length)
-            return ComputingResources(self.run_config, "0", "42837", ["DGX","DGX"], ["dgx001", "dgx002"],
-                                                        ["10.128.2.161", "10.128.2.162"], ["64", "64"], 
-                                                        ["200GB", "200GB"], ["2", "2"], ["cuda:all", "cuda:all"],
-                                                        [size1, size2])
+            #TODO path and automatize splitting (count how many nodes I have and distribute files)
+            with open('~/Pipeline_long_reads/Basecalling_pipeline/subset_creation/computing_profiles/profile1.json', 'r') as file:
+                profile = json.load(file)
+
+            size1, size2 = split_number(subset_length)                
+            profile["batch_size_list"] = [size1, size2]
+
+            return ComputingResources(self.run_config, profile["index_host"], profile["port"], profile["nodes_queue"],
+                                                        profile["nodes_list"], profile["nodes_ip"], profile["nodes_cpus"], 
+                                                        profile["nodes_mem"], profile["nodes_gpus"], profile["gpus"],
+                                                        profile["batch_size_list"])
         #half the ideal size --> one node 2 dgx (half the resources)
         elif self.run_params.actual_size >= self.run_params.ideal_size/2:
             print("Using profile 2")
-            return ComputingResources(self.run_config, "0", "111", ["DGX"], [""],
-                                                        ["10.128.2.161"], ["64"], 
-                                                        ["200GB"], ["2"], ["cuda:all"],
-                                                        [subset_length])        
+            with open('~/Pipeline_long_reads/Basecalling_pipeline/subset_creation/computing_profiles/profile2.json', 'r') as file:
+                profile = json.load(file)
+
+            return ComputingResources(self.run_config, profile["index_host"], profile["port"], profile["nodes_queue"],
+                                                        profile["nodes_list"], profile["nodes_ip"], profile["nodes_cpus"], 
+                                                        profile["nodes_mem"], profile["nodes_gpus"], profile["gpus"],
+                                                        [subset_length])   
         #for now less than a quarter will use one a100. Maybe for very very less use v100
         else: 
             print("Using profile 3")            
-            return ComputingResources(self.run_config, "0", "42837", ["DGX"], [""],
-                                                                    ["10.128.2.161"], ["32"], 
-                                                                    ["100GB"], ["1"], ["cuda:all"],
-                                                                    [subset_length])               
+            with open('~/Pipeline_long_reads/Basecalling_pipeline/subset_creation/computing_profiles/profile3.json', 'r') as file:
+                profile = json.load(file)
+
+            return ComputingResources(self.run_config, profile["index_host"], profile["port"], profile["nodes_queue"],
+                                                        profile["nodes_list"], profile["nodes_ip"], profile["nodes_cpus"], 
+                                                        profile["nodes_mem"], profile["nodes_gpus"], profile["gpus"],
+                                                        [subset_length])             

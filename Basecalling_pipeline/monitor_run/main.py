@@ -22,7 +22,7 @@ if __name__ == "__main__":
     ideal_size = run_params.ideal_size*total_gpus/4
 
     expected_time = 10*run_params.actual_size/ideal_size
-    sleeping_time = expected_time/5
+    sleeping_time = (expected_time/5)*60
     #If too small set to 1 minutes
     if sleeping_time < 60:
         sleeping_time = 60
