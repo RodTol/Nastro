@@ -119,10 +119,7 @@ pipeline {
                     /*Create from the batch samplesheet the subset to work on for this run
                     of the pipeline. This include input, output, log dirs and the config file*/
                     sh '''
-                        MAX_RETRIES=5
-                        RETRY_COUNT=0
-                        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                                 source ${HOME}/python_venvs/login_venv_jenkins/bin/activate
                                 cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/subset_creation
 
@@ -130,17 +127,8 @@ pipeline {
                                 echo "BUILD NUMBER is:" ${BUILD_NUMBER_LOCAL}
 
                                 python3 main.py '${pathToSamplesheet}' '${pathToInputDir}' '${pathToOutputDir}' '${pathToLogsDir}'
-                                #here stop the pipeline if the script python has set the CLOSE_RUN variable to 1
                                 deactivate                            
-                            ' && break
-                            RETRY_COUNT=$((RETRY_COUNT + 1))
-                            echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
-                            sleep 5
-                        done
-                        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
-                            echo "SSH connection failed after $MAX_RETRIES attempts."
-                            exit 1
-                        fi
+                            ' 
                     '''                    
                 }
             }
@@ -150,10 +138,7 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
                     /*Use the run config to create a sbatch script and launch it*/
                     sh '''
-                        MAX_RETRIES=5
-                        RETRY_COUNT=0
-                        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                                 cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/launch_run
 
                                 export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
@@ -176,15 +161,7 @@ pipeline {
 
                                 chmod +x ${sbatch_script}
                                 sbatch ${sbatch_script} ${config_path} ${RUN_PARAMS_PATH} $SAMPLESHEET
-                            ' && break
-                            RETRY_COUNT=$((RETRY_COUNT + 1))
-                            echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
-                            sleep 5
-                        done
-                        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
-                            echo "SSH connection failed after $MAX_RETRIES attempts."
-                            exit 1
-                        fi
+                            '
                     '''                    
                 }
             }
@@ -220,20 +197,16 @@ pipeline {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     sh '''
-                        MAX_RETRIES=5
-                        RETRY_COUNT=0
-                        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                                echo "Ending"                        
-                            ' && break
-                            RETRY_COUNT=$((RETRY_COUNT + 1))
-                            echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
-                            sleep 5
-                        done
-                        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
-                            echo "SSH connection failed after $MAX_RETRIES attempts."
-                            exit 1
-                        fi
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
+                                echo "Ending" 
+
+                                export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
+                                export LOG_PATH='${pathToLogsDir}'                                
+                                export RUN_PARAMS_PATH="${LOG_PATH}/runParams_build_${BUILD_NUMBER_LOCAL}.txt"
+
+                                id=$(jq -r '.id' $RUN_PARAMS_PATH)                       
+                                mv $RUN_PARAMS_PATH $LOG_PATH/$id
+                            '
                     '''
                 }
             }
