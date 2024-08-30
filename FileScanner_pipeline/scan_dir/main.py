@@ -30,7 +30,7 @@ if __name__ == "__main__":
         print(f"I wasn't able to find any existing samplesheet inside {GREEN}{dir}{RESET}", flush=True)
         #Create a new samplesheet
         samplesheet = Samplesheet(create_blank_samplesheet(dir, model, outputLocation))
-        print("A {GREEN}new samplesheet was created{RESET}", flush=True)
+        print(f"A {GREEN}new samplesheet was created{RESET}", flush=True)
         added_files = update_samplesheet(samplesheet)
     else: 
         for sheet in existing_samplesheet:

@@ -126,6 +126,7 @@ pipeline {
                                 export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
                                 echo "BUILD NUMBER is:" ${BUILD_NUMBER_LOCAL}
 
+                                //Create the runParams file in root logs dir and all the run personal dirs
                                 python3 main.py '${pathToSamplesheet}' '${pathToInputDir}' '${pathToOutputDir}' '${pathToLogsDir}'
                                 deactivate                            
                             ' 
@@ -144,7 +145,11 @@ pipeline {
                                 export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
                                 export LOG_PATH='${pathToLogsDir}'
 
-                                export RUN_PARAMS_PATH="${LOG_PATH}/runParams_build_${BUILD_NUMBER_LOCAL}.txt"
+                                //Once the runParams file is recovered, move it to the run personal log dir
+                                id=$(jq -r '.id' ${LOG_PATH}/runParams_build_${BUILD_NUMBER_LOCAL}.txt)
+                                mv ${LOG_PATH}/runParams_build_${BUILD_NUMBER_LOCAL}.txt ${LOG_PATH}/${id}/runParams_build_${BUILD_NUMBER_LOCAL}.txt 
+
+                                export RUN_PARAMS_PATH="${LOG_PATH}/${id}/runParams_build_${BUILD_NUMBER_LOCAL}.txt"
                                 echo ${RUN_PARAMS_PATH}
 
                                 python3 main.py ${RUN_PARAMS_PATH}
@@ -199,13 +204,6 @@ pipeline {
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                                 echo "Ending" 
-
-                                export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
-                                export LOG_PATH='${pathToLogsDir}'                                
-                                export RUN_PARAMS_PATH="${LOG_PATH}/runParams_build_${BUILD_NUMBER_LOCAL}.txt"
-
-                                id=$(jq -r '.id' $RUN_PARAMS_PATH)                       
-                                mv $RUN_PARAMS_PATH $LOG_PATH/$id
                             '
                     '''
                 }

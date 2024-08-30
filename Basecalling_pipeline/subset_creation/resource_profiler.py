@@ -94,7 +94,7 @@ class ResourceTuning:
         if self.run_params.actual_size >= self.run_params.ideal_size:
             print("Using profile 1")
             #TODO path and automatize splitting (count how many nodes I have and distribute files)
-            with open('~/Pipeline_long_reads/Basecalling_pipeline/subset_creation/computing_profiles/profile1.json', 'r') as file:
+            with open('/u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/subset_creation/computing_profiles/profile1.json', 'r') as file:
                 profile = json.load(file)
 
             size1, size2 = split_number(subset_length)                
@@ -107,7 +107,7 @@ class ResourceTuning:
         #half the ideal size --> one node 2 dgx (half the resources)
         elif self.run_params.actual_size >= self.run_params.ideal_size/2:
             print("Using profile 2")
-            with open('~/Pipeline_long_reads/Basecalling_pipeline/subset_creation/computing_profiles/profile2.json', 'r') as file:
+            with open('/u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/subset_creation/computing_profiles/profile2.json', 'r') as file:
                 profile = json.load(file)
 
             return ComputingResources(self.run_config, profile["index_host"], profile["port"], profile["nodes_queue"],
@@ -117,7 +117,7 @@ class ResourceTuning:
         #for now less than a quarter will use one a100. Maybe for very very less use v100
         else: 
             print("Using profile 3")            
-            with open('~/Pipeline_long_reads/Basecalling_pipeline/subset_creation/computing_profiles/profile3.json', 'r') as file:
+            with open('/u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/subset_creation/computing_profiles/profile3.json', 'r') as file:
                 profile = json.load(file)
 
             return ComputingResources(self.run_config, profile["index_host"], profile["port"], profile["nodes_queue"],
