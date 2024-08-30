@@ -27,15 +27,15 @@ if __name__ == "__main__":
     #Look for existing samplesheet
     existing_samplesheet = list_json(dir)
     if len(existing_samplesheet) == 0:
-        print(f"I wasn't able to find any existing samplesheet inside {GREEN}{dir}{RESET}")
+        print(f"I wasn't able to find any existing samplesheet inside {GREEN}{dir}{RESET}", flush=True)
         #Create a new samplesheet
         samplesheet = Samplesheet(create_blank_samplesheet(dir, model, outputLocation))
-        print("A {GREEN}new samplesheet was created{RESET}")
+        print("A {GREEN}new samplesheet was created{RESET}", flush=True)
         added_files = update_samplesheet(samplesheet)
     else: 
         for sheet in existing_samplesheet:
             if is_same_samplesheet(sheet, dir, model, outputLocation):
-                print(f"An EXISTING samplesheet for {GREEN}{model}{GREEN} was found inside {GREEN}{dir}{RESET}")
+                print(f"An EXISTING samplesheet for {GREEN}{model}{GREEN} was found inside {GREEN}{dir}{RESET}", flush=True)
                 samplesheet = Samplesheet(sheet)
                 added_files = update_samplesheet(samplesheet)
                 samplesheet_not_found = False
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     if samplesheet_not_found :    
         #Create a new samplesheet
         samplesheet = Samplesheet(create_blank_samplesheet(dir, model, outputLocation))
-        print(f"A {GREEN}new samplesheet{RESET} was created")
+        print(f"A {GREEN}new samplesheet{RESET} was created", flush=True)
         added_files = update_samplesheet(samplesheet)
 
     # Get the current date and time

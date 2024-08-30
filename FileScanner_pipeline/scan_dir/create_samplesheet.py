@@ -36,7 +36,7 @@ def inspect_pod5(
         try:
             reader = pod5.Reader(filename)
         except Exception as exc:
-            print(f"Failed to open pod5 file: {filename}: {exc}", file=sys.stderr)
+            print(f"Failed to open pod5 file: {filename}: {exc}", file=sys.stderr, flush=True)
             raise #ONLY DIFFERENCE
 
         kwargs["reader"] = reader
@@ -118,11 +118,11 @@ def update_samplesheet(samplesheet: Samplesheet):
             except Exception as exc:
                 # This is how we handle this exception THAT IS NOT RAISEED
                 sys.stdout = sys.__stdout__ 
-                print(f"Failed to open file {scanned_file_path} due to {exc}") 
+                print(f"Failed to open file {scanned_file_path} due to {exc}", flush=True) 
             else:
                 # But we must reset stdout to its default value every time
                 sys.stdout = sys.__stdout__ 
-                print('Added ', scanned_file_path , ' to the list')
+                print('Added ', scanned_file_path , ' to the list', flush=True)
                 if samplesheet.add_file(create_samplesheet_entry(scanned_file_path)):
                     added_files = added_files + 1
  
