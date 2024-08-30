@@ -36,7 +36,7 @@ For a 10 minutes run we have an ideal size of `{round(ideal_size,2)} GB`
 So the expected time is `{round(expected_time,2)} minutes`
 """
     telegram_send_message(message)
-    telegram_send_message(f"I will send a message each `{sleeping_time}` s")
+    telegram_send_message(f"I will send a message each `{round(sleeping_time, 2)}` s")
 
     original_target_file_indexes = [i for i,sample in enumerate(samplesheet.get_files()) if sample['basecalled']==run_params.id]
     start_size=len(original_target_file_indexes)
