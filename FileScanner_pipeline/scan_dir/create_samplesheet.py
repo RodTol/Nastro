@@ -122,7 +122,7 @@ def update_samplesheet(samplesheet: Samplesheet):
             else:
                 # But we must reset stdout to its default value every time
                 sys.stdout = sys.__stdout__ 
-                #print('Added ', scanned_file_path , ' to the list')
+                print('Added ', scanned_file_path , ' to the list')
                 if samplesheet.add_file(create_samplesheet_entry(scanned_file_path)):
                     added_files = added_files + 1
  
