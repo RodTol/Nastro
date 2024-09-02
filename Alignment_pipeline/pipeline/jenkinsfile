@@ -19,13 +19,13 @@ pipeline {
                 }    
             }
         }  
-        stage('Read samplesheet') {
+        stage('Read runParams') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     /*Look for .pod5 files*/
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
-                            cat '${pathToSamplesheet}'
+                            cat '${pathToRunParams}'
                         '
                     '''
                 }    

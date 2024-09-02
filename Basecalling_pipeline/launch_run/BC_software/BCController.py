@@ -106,7 +106,7 @@ class BCController:
         except Exception as e:
             print(f"An error occurred: {e}", flush=True)
     
-    def _launching_file_scanner(self):
+    def _launching_basecalling_pipeline(self):
         # Only the BCM hosting will launch the run
         jenkins_parameter =  {
             "pathToSamplesheet": self.samplesheet_path,
@@ -119,14 +119,20 @@ class BCController:
         print(jenkins_parameter, flush=True)
         self.jenkins.start_job("tolloi/Pipeline_long_reads/basecalling_pipeline", "kuribo", jenkins_parameter)            
 
+    def _launching_alignment_pipeline(self):
+        jenkins_parameter =  {
+            "pathToRunParams": self.run_params_path
+        }
+        print(jenkins_parameter, flush=True)
+        self.jenkins.start_job("tolloi/Pipeline_long_reads/alignment_pipeline", "incal", jenkins_parameter)        
+
     def _shutdown_BCsoftware(self):
         print("Shutting down\n", flush=True)
         if self.BCM_pid != 'NULL':
             self._kill_process(self.BCM_pid) # BCM
 
-            self._launching_file_scanner()
-
-            #TODO Alignment pipeline launching 
+            self._launching_basecalling_pipeline()
+            self._launching_alignment_pipeline()
 
         self._kill_process(self.Dorado_pid) # Dorado
         sys.exit(0) # BCC
