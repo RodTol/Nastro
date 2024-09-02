@@ -5,27 +5,16 @@ pipeline {
             }
     }
     parameters {
-        string(name: 'pathToSamplesheet', defaultValue: '/u/area/jenkins_onpexp/Pipeline_long_reads/samplesheet/orfeo_template.json', description: 'Path to the samplesheet of the work batch')
+        string(name: 'pathToRunParams', defaultValue: '', description: 'Path to the runParams file with all meta data about the run')
     }
     stages {
         stage('Pull project repository on the Cluster') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     sh '''
-                        MAX_RETRIES=5
-                        RETRY_COUNT=0
-                        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
-                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline && git pull
-                            ' && break
-                            RETRY_COUNT=$((RETRY_COUNT + 1))
-                            echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
-                            sleep 5
-                        done
-                        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
-                            echo "SSH connection failed after $MAX_RETRIES attempts."
-                            exit 1
-                        fi
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline && git pull
+                        ' 
                     '''
                 }    
             }
@@ -35,20 +24,9 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     /*Look for .pod5 files*/
                     sh '''
-                        MAX_RETRIES=5
-                        RETRY_COUNT=0
-                        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-                            ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
-                                cat '${pathToSamplesheet}'
-                            ' && break
-                            RETRY_COUNT=$((RETRY_COUNT + 1))
-                            echo "Retry $RETRY_COUNT/$MAX_RETRIES..."
-                            sleep 5
-                        done
-                        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
-                            echo "SSH connection failed after $MAX_RETRIES attempts."
-                            exit 1
-                        fi
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
+                            cat '${pathToSamplesheet}'
+                        '
                     '''
                 }    
             }
