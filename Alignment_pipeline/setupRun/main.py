@@ -17,7 +17,7 @@ def create_dir(path):
         print("Directory '%s' can not be created" % path)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 4:
         print("Usage: python3 main.py path/to/samplesheet.json path/to/runparams path/to/merged_fastq")
         sys.exit(1)
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     al_run_config.alignment = Alignment(al_run_config, merged_file,
                                          f"{bam_output_dir}/run_{run_params.id}.bam", run_params.logs_dir, "")
     
-    #al_run_config.computing_resources = ResourceTuner().compute_resources()
+    al_run_config.computing_resources = ResourceTuner(run_params, al_run_config, size).compute_resources()
     
     #Create sbatch file for the run in the logs dir
 
