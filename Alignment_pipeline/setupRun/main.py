@@ -46,6 +46,8 @@ if __name__ == "__main__":
 
     run_slurm_output = os.path.join(run_params.logs_dir, "%x-%j_al.out")
     run_slurm_error = os.path.join(run_params.logs_dir, "%x-%j_al.err")
+    home_dir = os.getenv('HOME')
+    supervisor_script_path = os.path.join(home_dir, 'Pipeline_long_reads/Alignment_pipeline/launch_run/al_instructions.sh')
     al_run_config.slurm = Slurm(al_run_config, run_slurm_output , run_slurm_error, "")
 
     al_run_config.alignment = Alignment(al_run_config, merged_file,
