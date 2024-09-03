@@ -31,8 +31,8 @@ pipeline {
                             run_id=$(jq -r '.id' "${params}")
                             output_dir=$(jq -r '.output_dir' "${params}")
                             
-                            fastq_dir="$1/pass"
-                            merged_fastq="run_${2}_merged.fastq"
+                            fastq_dir="${output_dir}/pass"
+                            merged_fastq="run_${run_id}_merged.fastq"
 
                             srun -p EPYC -N 1 -c 2 --time=1:0:0 /usr/bin/cat ${fastq_dir}/*.fastq > ${output_dir}/${merged_fastq}
                             
