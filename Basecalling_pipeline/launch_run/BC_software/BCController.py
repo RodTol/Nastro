@@ -121,6 +121,7 @@ class BCController:
 
     def _launching_alignment_pipeline(self):
         jenkins_parameter =  {
+            "pathToSamplesheet": self.samplesheet_path,
             "pathToRunParams": self.run_params_path
         }
         print(jenkins_parameter, flush=True)
