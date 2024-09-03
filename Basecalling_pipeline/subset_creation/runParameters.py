@@ -2,7 +2,8 @@ import os
 import json 
 
 class runParameters:
-    def __init__(self, id, input_dir, output_dir, logs_dir, basecalling_model, ideal_size=None, actual_size=None, run_config_path=None):
+    def __init__(self, id, input_dir, output_dir, logs_dir, basecalling_model,
+                  ideal_size=None, actual_size=None, run_config_path=None, al_config_path=None):
         self.id = id
         self.input_dir = input_dir
         self.output_dir = output_dir
@@ -11,6 +12,7 @@ class runParameters:
         self.ideal_size = ideal_size
         self.actual_size = actual_size
         self.config_path = run_config_path
+        self.al_config_path = al_config_path
 
     def __str__(self):
         return (f"runParameters:\n"
@@ -21,7 +23,9 @@ class runParameters:
                 f"  Basecalling Model: {self.basecalling_model}\n"
                 f"  Ideal size: {self.ideal_size}\n"
                 f"  Actual size: {self.actual_size}\n"
-                f"  Config file: {self.config_path}")
+                f"  Config file: {self.config_path}\n"
+                f"  AL-Config file: {self.al_config_path}")
+    
 
     def create_run_input_symlinks(self, files_list):
         '''
@@ -45,7 +49,8 @@ class runParameters:
             'basecalling_model': self.basecalling_model,
             'ideal_size': self.ideal_size,
             'actual_size': self.actual_size,
-            'config_path': self.config_path
+            'config_path': self.config_path,
+            'al_config_path': self.al_config_path
         }
 
     def write_to_file(self, file_path):
@@ -71,7 +76,8 @@ class runParameters:
                 basecalling_model=data.get('basecalling_model'),
                 ideal_size=data.get('ideal_size'),
                 actual_size=data.get('actual_size'),
-                run_config_path=data.get('config_path')
+                run_config_path=data.get('config_path'),
+                al_config_path=data.get('al_config_path')
             )
 
     def update_from_file(self, file_path):
@@ -87,7 +93,9 @@ class runParameters:
             self.basecalling_model = data.get('basecalling_model', self.basecalling_model)
             self.ideal_size = data.get('ideal_size', self.ideal_size)
             self.actual_size = data.get('actual_size', self.actual_size)
-            self.config_path = data.get('config_path', self.config_path)            
+            self.config_path = data.get('config_path', self.config_path)
+            self.al_config_path = data.get('al_config_path', self.al_config_path)            
+
 
 
 def create_symlink(target_path, link_directory, link_name=None):
