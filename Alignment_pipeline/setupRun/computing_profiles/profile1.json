@@ -1,0 +1,6 @@
+{
+    "node_queue": "EPYC",
+    "node_name": "",
+    "node_cpus": "32",
+    "node_mem": "200GB"
+}
