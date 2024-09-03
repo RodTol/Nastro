@@ -27,7 +27,7 @@ pipeline {
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.80 '
                             cd /u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/setupRun
 
-                            //Merge fastq
+                            #Merge fastq
                             run_id=$(jq -r '.id' "${pathToRunParams}")
                             output_dir=$(jq -r '.output_dir' "${pathToRunParams}")
                             
