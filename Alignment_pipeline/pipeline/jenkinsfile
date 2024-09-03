@@ -20,7 +20,7 @@ pipeline {
                 }    
             }
         }  
-        stage('Setup the run') {
+        stage('Setup and launch the run') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     sh '''
@@ -43,12 +43,12 @@ pipeline {
                 }    
             }
         }    
-        stage('Launch the alignment run') {
+        stage('Monitoring') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81'
-                            #sbatch the run in the log dir
+                            echo "hello"
                         '
                     '''
                 }    
