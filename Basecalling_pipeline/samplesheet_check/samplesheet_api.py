@@ -53,7 +53,7 @@ class Samplesheet:
             This function will check if all the elements have the same 4 
             keys. Note that I do not check the values for any of the keys
             '''
-            required_keys = {"name", "path", "size(GB)", "basecalled", "aligned"}
+            required_keys = {"name", "path", "size(GB)", "basecalled", "aligned", "run_id"}
 
             # Check if elements is a list
             if not isinstance(elements, list):
@@ -154,6 +154,13 @@ class Samplesheet:
                 return False
         return True
 
+    def  get_run_id(self, name):
+        self.data = self.read_file()            
+        for entry in self.data["files"]:
+            if entry["name"] == name:
+                return entry["run_id"]
+        print(f"I wasn't able to find {name}")
+        return False      
 
 def create_samplesheet_entry(file_path):
     '''
@@ -168,7 +175,8 @@ def create_samplesheet_entry(file_path):
             "path": file_path,
             "size(GB)": round(file_size, 2),  # Round to 2 decimal places
             "basecalled": False,  
-            "aligned": False 
+            "aligned": False,
+            "run_id": ""
         }
 
         return entry

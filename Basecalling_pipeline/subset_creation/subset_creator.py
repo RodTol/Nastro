@@ -48,6 +48,7 @@ class Subsetter:
                 subset.append(row.to_dict())
                 #Update 
                 self.dataframe.loc[i, 'basecalled'] = run_id
+                self.dataframe.loc[i, 'run_id'] = run_id
                 cumulative_size += file_size
             else: 
                 # Here we can modify the handling of this situation

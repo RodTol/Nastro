@@ -132,6 +132,7 @@ class BCController:
             self._kill_process(self.BCM_pid) # BCM
 
             self._launching_basecalling_pipeline()
+            print("-----------------")
             self._launching_alignment_pipeline()
 
         self._kill_process(self.Dorado_pid) # Dorado
