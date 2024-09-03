@@ -28,8 +28,8 @@ pipeline {
                             cd /u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/setupRun
 
                             //Merge fastq
-                            run_id=$(jq -r '.id' "${pathToRunParams}'")
-                            output_dir=$(jq -r '.output_dir' "${pathToRunParams}'")
+                            run_id=$(jq -r '.id' "${pathToRunParams}")
+                            output_dir=$(jq -r '.output_dir' "${pathToRunParams}")
                             
                             fastq_dir="$1/pass"
                             merged_fastq="run_${2}_merged.fastq"
