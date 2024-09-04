@@ -49,7 +49,19 @@ pipeline {
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                             cd /u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/launch_run/
+
+                            //Create sbatch file
                             python3 main.py '${pathToRunParams}'
+
+                            //Recover values to launch it
+                            params='${pathToRunParams}'
+                            id=$(jq -r '.id' "${params}")
+                            logs_dir=$(jq -r '.logs_dir' "${params}")
+                            al_config=$(jq -r '.al_config_path' "${params}")
+
+                            sbatch_script="${logs_dir}/al_script_${id}.sh"
+
+                            sbatch $sbatch_script $al_config  
                         '
                     '''
                 }    
