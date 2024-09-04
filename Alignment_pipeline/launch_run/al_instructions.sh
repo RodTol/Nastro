@@ -35,20 +35,22 @@ id=$(jq -r '.General.name' "$al_config")
 fastq_file=$(jq -r '.Alignment.input_file' "$al_config")
 bam_file=$(jq -r '.Alignment.output_file' "$al_config")
 ref_genome=$(jq -r '.Alignment.reference_genome' "$al_config")
+logs_dir=$(jq -r '.Alignment.logs_dir' "$al_config")
 
 dorado aligner $ref_genome $fastq_file > $bam_file
 
 if [ $? -ne 0 ]; then
     echo "An error occurred while running the command."
-    python3 ${HOME}/Pipeline_long_reads/Alignment_pipeline/launch_run/update_samplesheet.py $samplesheet $id Error
+    python3 ${HOME}/Pipeline_long_reads/Alignment_pipeline/launch_run/update_samplesheet.py $samplesheet $id "Error"
     exit 1
 else
     echo "The command ran successfully."
     module load samtools
+    cd $logs_dir
     samtools flagstat $bam_file > al_basic_report_${id}.txt
     module load purge
 
-    python3 ${HOME}/Pipeline_long_reads/Alignment_pipeline/launch_run/update_samplesheet.py $samplesheet $id True
+    python3 ${HOME}/Pipeline_long_reads/Alignment_pipeline/launch_run/update_samplesheet.py $samplesheet $id "True"
 fi
 
 

@@ -5,6 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from Basecalling_pipeline.subset_creation.runParameters import runParameters
 from Basecalling_pipeline.samplesheet_check.samplesheet_api import Samplesheet
 from Basecalling_pipeline.subset_creation.config_file_api import ConfigFile
+from Basecalling_pipeline.monitor_run.bot_telegram import telegram_send_bar
 
 from al_config_file_api import *
 from profiler import ResourceTuner
@@ -55,7 +56,8 @@ if __name__ == "__main__":
     al_run_config.alignment = Alignment(al_run_config, merged_file, f"{bam_output_dir}/run_{run_params.id}.bam",
                                          run_params.logs_dir, ref_genome, "")
     
-    al_run_config.computing_resources = ResourceTuner(run_params, al_run_config, size).compute_resources()
+    resourcetuner = ResourceTuner(run_params, al_run_config, size)
+    al_run_config.computing_resources = resourcetuner.compute_resources()
 
     #Update samplesheet aligned variables with run_id
     for file in samplesheet.get_files():
@@ -63,3 +65,14 @@ if __name__ == "__main__":
             file["aligned"] = run_params.id
     
     samplesheet.update_json_file()
+
+    normalized_ideal_size = resourcetuner.ideal_size*float(al_run_config.computing_resources.node_cpus)/32
+    expected_time = 10*size/normalized_ideal_size
+
+    message = f"""I am watching the AL-run `{run_params.id}`
+The fastq file has a size of `{round(size,2)} GB`
+Resources: {al_run_config.computing_resources.node_cpus} CPUs
+For a 10 minutes run we have an ideal size of `{normalized_ideal_size} GB`
+So the expected time is `{round(expected_time,2)} minutes`
+"""
+    telegram_send_bar(message)        

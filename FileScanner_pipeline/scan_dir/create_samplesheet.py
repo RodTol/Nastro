@@ -5,6 +5,7 @@ import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from Basecalling_pipeline.samplesheet_check.samplesheet_api import Samplesheet
 from Basecalling_pipeline.samplesheet_check.samplesheet_api import create_samplesheet_entry
+from Basecalling_pipeline.monitor_run.bot_telegram import telegram_send_bar
 
 from pathlib import Path
 from typing import Callable, Dict, List
@@ -97,7 +98,7 @@ def create_blank_samplesheet(dir, model, outputLocation):
     
     return file_path.resolve()
 
-def update_samplesheet(samplesheet: Samplesheet):
+def update_samplesheet(samplesheet: Samplesheet, bar=None):
     dir = samplesheet.get_metadata()["dir"]
     all_scanned_pod5_files = list_pod5(dir)
     
@@ -106,6 +107,9 @@ def update_samplesheet(samplesheet: Samplesheet):
     for i,scanned_file_path in enumerate(all_scanned_pod5_files):
         if samplesheet.file_belongs_to_samplesheet(scanned_file_path):
             all_scanned_pod5_files.pop(i)
+            #Increase beacuse already added
+            if bar!=None:
+                bar.increase(1)
         else: 
             parser = prepare_pod5_inspect_argparser()
             args = parser.parse_args(['debug', scanned_file_path])
@@ -123,6 +127,10 @@ def update_samplesheet(samplesheet: Samplesheet):
                 # But we must reset stdout to its default value every time
                 sys.stdout = sys.__stdout__ 
                 print('Added ', scanned_file_path , ' to the list', flush=True)
+                if bar!=None:
+                    #Increase beacuse new file
+                    bar.increase(1)
+                    telegram_send_bar(bar.progress_bar)
                 if samplesheet.add_file(create_samplesheet_entry(scanned_file_path)):
                     added_files = added_files + 1
  

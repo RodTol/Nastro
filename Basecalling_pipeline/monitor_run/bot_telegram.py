@@ -34,7 +34,7 @@ def telegram_send_bar(message):
     chat_id = "-4531622913"
     
     # Escape special characters for Telegram MarkdownV2
-    escape_chars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+    escape_chars = ['_', '*', '[', ']', '(', ')', '~', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
     for char in escape_chars:
         message = message.replace(char, '\\' + char)
     

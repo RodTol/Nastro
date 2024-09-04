@@ -25,6 +25,7 @@ class ResourceTuner:
         self.al_run_config = al_run_config        
 
         self.fastq_size = merged_fastq_size
+        self.ideal_size = float(IDEAL_SIZE_GB)
 
     #TODO path are for orfeo
     def compute_resources(self):

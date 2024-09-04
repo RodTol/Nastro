@@ -8,7 +8,6 @@ from Basecalling_pipeline.subset_creation.runParameters import runParameters
 from Basecalling_pipeline.samplesheet_check.samplesheet_api import Samplesheet
 
 from bot_telegram import *
-from progress_bar import *
 
 if __name__ == "__main__":
     run_params = runParameters.from_file(sys.argv[1])
@@ -41,9 +40,9 @@ I will send a message each {round(sleeping_time, 2)} s
     original_target_file_indexes = [i for i,sample in enumerate(samplesheet.get_files()) if sample['basecalled']==run_params.id]
     start_size=len(original_target_file_indexes)    
 
-    processed_file_indexes_new = []
-    processed_file_indexes_old = []
-    target_file_indexes = start_size
+    #TODO maybe a better tracking of the processing speed ?
+    #maybe by looking at output dir ?
+    target_file_indexes = original_target_file_indexes
 
     #Start the loop
     while len(target_file_indexes) > 0:
@@ -52,17 +51,17 @@ I will send a message each {round(sleeping_time, 2)} s
         samplesheet.data = samplesheet.read_file()
         #Get the ones that still needs to be processed
         target_file_indexes = [i for i,sample in enumerate(samplesheet.get_files()) if sample['basecalled']==run_params.id]
-        current_size=len(target_file_indexes)
+        target_current_size=len(target_file_indexes)
         #Get the ones processed in this cycle
         processed_file_indexes = [i for i in original_target_file_indexes if i not in target_file_indexes]
         print("File processati", [samplesheet.data["files"][i]["name"] for i in processed_file_indexes])
         
         message = f"""I processed in this cycle {len(processed_file_indexes)} files, so
-{current_size} files are still being processed;
+{target_current_size} files are still being processed;
 The batch was made of {start_size} files;
         """
         telegram_send_message(message)
 
-    message = f""" Basecalling was finished. This is the updated samplesheet
+    message = f""" Basecalling was finished; This is the updated samplesheet
     """
     telegram_send_file(sys.argv[2], message)
