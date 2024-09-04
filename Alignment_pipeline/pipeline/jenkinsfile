@@ -62,8 +62,8 @@ pipeline {
                             al_config=$(jq -r '.al_config_path' "${params}")
 
                             sbatch_script="${logs_dir}/al_script_${id}.sh"
-
-                            sbatch $sbatch_script $al_config  
+                            chmod +x ${sbatch_script}
+                            sbatch $sbatch_script $al_config '${pathToSamplesheet}'
                         '
                     '''
                 }    

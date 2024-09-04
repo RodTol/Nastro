@@ -36,6 +36,7 @@ def create_sbatch_file(path_to_config, path_to_sbatch):
 
         # Write additional sbatch directives for script execution
         sbatch_file.write('config=$1\n')
+        sbatch_file.write('samplesheet=$2\n')
         sbatch_file.write("\n")
 
         sbatch_file.write(f"{data['Slurm']['main_script']} $config \n")
