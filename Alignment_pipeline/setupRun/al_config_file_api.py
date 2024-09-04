@@ -8,11 +8,12 @@ from Basecalling_pipeline.subset_creation.config_file_api import General
 from Basecalling_pipeline.subset_creation.config_file_api import Slurm
 
 class Alignment:
-    def __init__(self, config, input_file: str, output_file: str, logs_dir: str, additional_flags: str):
+    def __init__(self, config, input_file: str, output_file: str, logs_dir: str, reference_genome: str, additional_flags: str):
         self.config = config
         self._input_file = input_file
         self._output_file = output_file
         self._logs_dir = logs_dir
+        self._reference_genome = reference_genome
         self._additional_flags = additional_flags
 
     @property
@@ -41,6 +42,15 @@ class Alignment:
     def logs_dir(self, value):
         self._logs_dir = value
         self.config.data['Alignment']['logs_dir'] = value
+
+    @property
+    def reference_genome(self):
+        return self._reference_genome
+
+    @reference_genome.setter
+    def reference_genome(self, value):
+        self._reference_genome = value
+        self.config.data['Alignment']['reference_genome'] = value        
 
     @property
     def additional_flags(self):
@@ -241,6 +251,7 @@ def check_config_json_structure(path_to_json):
             "input_file": str,
             "output_file": str,
             "logs_dir": str,
+            "reference_genome": str,
             "additional_flags": str
         },
         "ComputingResources": {
