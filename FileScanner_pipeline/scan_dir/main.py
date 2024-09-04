@@ -53,7 +53,8 @@ if __name__ == "__main__":
     current_datetime = datetime.now()
     # Format the datetime to [DD/Mon/YYYY HH:MM:SS]
     formatted_datetime = current_datetime.strftime("%d/%b/%Y %H:%M:%S")   
-    message = f"Scan of {dir} at {formatted_datetime} added {added_files} files to {samplesheet.file_path}"
+    message = f"-----SCAN-RUN-----
+    Scan of `{dir}` at {formatted_datetime} added `{added_files}` files to `{samplesheet.file_path}`"
     telegram_send_bar(message)
     
     if added_files>0:

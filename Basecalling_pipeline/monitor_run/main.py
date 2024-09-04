@@ -34,54 +34,34 @@ This run has a size of `{round(run_params.actual_size,2)} GB`
 Resources: {total_gpus} GPUs
 For a 10 minutes run we have an ideal size of `{round(ideal_size,2)} GB`
 So the expected time is `{round(expected_time,2)} minutes`
+I will send a message each {round(sleeping_time, 2)} s
 """
     telegram_send_message(message)
-    telegram_send_message(f"I will send a message each `{round(sleeping_time, 2)}` s")
 
     original_target_file_indexes = [i for i,sample in enumerate(samplesheet.get_files()) if sample['basecalled']==run_params.id]
-    start_size=len(original_target_file_indexes)
+    start_size=len(original_target_file_indexes)    
 
-    bar = CustomPercentProgressBar(length=50,
-                            left_limit='[',
-                            right_limit=']',
-                            head_repr='>',
-                            empty_repr=' ',
-                            filled_repr='=',
-                            start=0,
-                            scale_start=0,
-                            scale_end=run_params.actual_size)
-    
     processed_file_indexes_new = []
     processed_file_indexes_old = []
+    target_file_indexes = start_size
 
-    telegram_send_bar(bar.progress_bar)
-    target_file_indexes = original_target_file_indexes
+    #Start the loop
     while len(target_file_indexes) > 0:
         sleep(sleeping_time)
         #Update
         samplesheet.data = samplesheet.read_file()
+        #Get the ones that still needs to be processed
         target_file_indexes = [i for i,sample in enumerate(samplesheet.get_files()) if sample['basecalled']==run_params.id]
         current_size=len(target_file_indexes)
-
-        processed_file_indexes_old = processed_file_indexes_new
-        processed_file_indexes_new = [i for i in original_target_file_indexes if samplesheet.data["files"][i]['basecalled']==True]
-
-        cycle_processed = [item for item in processed_file_indexes_new if item not in processed_file_indexes_old]
-        print("File processati", [samplesheet.data["files"][i]["name"] for i in cycle_processed])
+        #Get the ones processed in this cycle
+        processed_file_indexes = [i for i in original_target_file_indexes if i not in target_file_indexes]
+        print("File processati", [samplesheet.data["files"][i]["name"] for i in processed_file_indexes])
         
-        message = f"""I processed in this cycle {len(cycle_processed)} files, so
+        message = f"""I processed in this cycle {len(processed_file_indexes)} files, so
 {current_size} files are still being processed;
-The batch is made of {start_size} files;
+The batch was made of {start_size} files;
         """
         telegram_send_message(message)
-
-        if (len(cycle_processed)>0):
-            processed_bytes = 0
-            for i in cycle_processed:
-                processed_bytes += samplesheet.data["files"][i]['size(GB)']
-
-            bar.increase(processed_bytes)
-        telegram_send_bar(bar.progress_bar)
 
     message = f""" Basecalling was finished. This is the updated samplesheet
     """
