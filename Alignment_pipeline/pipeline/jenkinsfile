@@ -23,6 +23,8 @@ pipeline {
         stage('Setup the run') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
+                    /*TODO: parallelize the cat by creating N workers on tot_file/N 
+                    This could be mandatory but for now it takes 2-3 minutes*/
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                             cd /u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/setupRun
@@ -50,10 +52,10 @@ pipeline {
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                             cd /u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/launch_run/
 
-                            //Create sbatch file
+                            #Create sbatch file
                             python3 main.py '${pathToRunParams}'
 
-                            //Recover values to launch it
+                            #Recover values to launch it
                             params='${pathToRunParams}'
                             id=$(jq -r '.id' "${params}")
                             logs_dir=$(jq -r '.logs_dir' "${params}")

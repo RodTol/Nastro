@@ -29,7 +29,7 @@ if __name__ == "__main__":
     create_dir(bam_output_dir)
 
     #Get merged file's size
-    size = os.path.getsize(merged_file)
+    size = os.path.getsize(merged_file)/(1024**3)
     print(f"Size of the merged file: {size}", flush=True)
     
     #Create config file
@@ -46,9 +46,9 @@ if __name__ == "__main__":
 
     run_slurm_output = os.path.join(run_params.logs_dir, "%x-%j_al.out")
     run_slurm_error = os.path.join(run_params.logs_dir, "%x-%j_al.err")
-    home_dir = os.getenv('HOME')
-    supervisor_script_path = os.path.join(home_dir, 'Pipeline_long_reads/Alignment_pipeline/launch_run/al_instructions.sh')
-    al_run_config.slurm = Slurm(al_run_config, run_slurm_output , run_slurm_error, "")
+    #TODO absolute path
+    supervisor_script_path = '/u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/launch_run/al_instructions.sh'
+    al_run_config.slurm = Slurm(al_run_config, run_slurm_output , run_slurm_error, supervisor_script_path)
 
     #TODO should ref_genome be a pipeline parameters, maybe even part of the samplesheet as it is the model ?
     ref_genome = '/orfeo/cephfs/scratch/area/jenkins_onpexp/GRCh38.p14_genomic.fna'
@@ -57,7 +57,9 @@ if __name__ == "__main__":
     
     al_run_config.computing_resources = ResourceTuner(run_params, al_run_config, size).compute_resources()
 
-
-
-
-
+    #Update samplesheet aligned variables with run_id
+    for file in samplesheet.get_files():
+        if file["run_id"] == run_params.id:
+            file["aligned"] = run_params.id
+    
+    samplesheet.update_json_file()

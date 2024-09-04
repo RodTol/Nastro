@@ -70,6 +70,7 @@ class Alignment:
             "input_file": self._input_file,
             "output_file": self._output_file,
             "logs_dir": self._logs_dir,
+            "reference_genome": self._reference_genome,
             "additional_flags": self._additional_flags
         }                
     

@@ -29,7 +29,7 @@ class ResourceTuner:
     #TODO path are for orfeo
     def compute_resources(self):
         if self.fastq_size >= IDEAL_SIZE_GB:
-            print(f"Ideal size: {IDEAL_SIZE_GB}; actual size: {self.fastq_size}")
+            print(f"Ideal size: {IDEAL_SIZE_GB}; actual size: {self.fastq_size:.2f}")
             print("Using profile 1")
             
             with open('/u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/setupRun/computing_profiles/profile1.json', 'r') as file:
@@ -39,7 +39,7 @@ class ResourceTuner:
                                       profile["node_name"], profile["node_cpus"],
                                       profile["node_mem"])          
         elif self.fastq_size >= IDEAL_SIZE_GB/2:
-            print(f"Ideal size: {IDEAL_SIZE_GB}; actual size: {self.fastq_size}")
+            print(f"Ideal size: {IDEAL_SIZE_GB}; actual size: {self.fastq_size:.2f}")
             print("Using profile 2")
             
             with open('/u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/setupRun/computing_profiles/profile2.json', 'r') as file:
@@ -49,7 +49,7 @@ class ResourceTuner:
                                       profile["node_name"], profile["node_cpus"],
                                       profile["node_mem"])
         else:
-            print(f"Ideal size: {IDEAL_SIZE_GB}; actual size: {self.fastq_size}")
+            print(f"Ideal size: {IDEAL_SIZE_GB}; actual size: {self.fastq_size:.2f}")
             print("Using profile 3")
             
             with open('/u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/setupRun/computing_profiles/profile3.json', 'r') as file:
