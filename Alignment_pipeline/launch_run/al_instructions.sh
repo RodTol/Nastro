@@ -40,14 +40,15 @@ dorado aligner $ref_genome $fastq_file > $bam_file
 
 if [ $? -ne 0 ]; then
     echo "An error occurred while running the command."
-    # You can handle the error here, e.g., exit the script, log the error, etc.
+    python3 ${HOME}/Pipeline_long_reads/Alignment_pipeline/launch_run/update_samplesheet.py $samplesheet $id Error
     exit 1
 else
     echo "The command ran successfully."
+    module load samtools
+    samtools flagstat $bam_file > al_basic_report_${id}.txt
+    module load purge
+
+    python3 ${HOME}/Pipeline_long_reads/Alignment_pipeline/launch_run/update_samplesheet.py $samplesheet $id True
 fi
 
-module load samtools
-samtools flagstat $bam_file > al_basic_report_${id}.txt
-module load purge
 
-python3 ${HOME}/Pipeline_long_reads/Alignment_pipeline/launch_run/update_samplesheet.py $samplesheet $id
