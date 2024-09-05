@@ -10,6 +10,6 @@ if __name__ == "__main__":
 
     telegram_send_bar("-----ALIGNMENT-RUN-----")
     #TODO maybe add a time expectation
-    message = """Merging the .fastq files from {dir}
+    message = f"""Merging the .fastq files from {dir}
 """
-    telegram_send_message(message)
+    telegram_send_bar(message)
