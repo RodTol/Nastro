@@ -13,13 +13,18 @@ if __name__ == "__main__":
     status = sys.argv[3]
     path_to_report = sys.argv[4]
 
-    for file in samplehseet.get_files():
-        if file["aligned"] == id:
-            file["aligned"] = status
-    
+    if status=="Correct":
+        for file in samplehseet.get_files():
+            if file["aligned"] == id:
+                file["aligned"] = True
+    else:
+        for file in samplehseet.get_files():
+            if file["aligned"] == id:
+                file["aligned"] = "Failed"
+                
     samplehseet.update_json_file()
     
-    if status==True:
+    if status=="Correct":
         telegram_send_bar(f"Run {id} has succesfully completed the alignment")
     else:
         telegram_send_bar(f"Something went wrong in run {id}")
