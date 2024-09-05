@@ -39,7 +39,7 @@ pipeline {
                             python3 startup_message.py $fastq_dir 
 
                             max_workers=10
-                            srun -p EPYC -N 1 -c $max_workers --mem=50GB --output=merging.out--time=1:0:0 merge_fastq.sh ${fastq_dir} ${output_dir}/${merged_fastq} $max_workers
+                            srun -p EPYC -N 1 -c $max_workers --mem=50GB --output=merging.out --time=1:0:0 merge_fastq.sh ${fastq_dir} ${output_dir}/${merged_fastq} $max_workers
                             
                             python3 main.py '${pathToSamplesheet}' '${pathToRunParams}' ${output_dir}/${merged_fastq}
 

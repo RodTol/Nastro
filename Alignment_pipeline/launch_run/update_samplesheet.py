@@ -14,13 +14,13 @@ if __name__ == "__main__":
     path_to_report = sys.argv[4]
 
     if status=="Correct":
-        for file in samplehseet.get_files():
+        for i,file in enumerate(samplehseet.get_files()):
             if file["aligned"] == id:
-                file["aligned"] = True
+                samplehseet.data["files"][i]["aligned"] = True
     else:
-        for file in samplehseet.get_files():
+        for i,file in enumerate(samplehseet.get_files()):
             if file["aligned"] == id:
-                file["aligned"] = "Failed"
+                samplehseet.data["files"][i]["aligned"] = "Failed"
                 
     samplehseet.update_json_file()
     
