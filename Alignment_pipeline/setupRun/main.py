@@ -1,5 +1,7 @@
 import os
 import sys
+from datetime import datetime
+
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from Basecalling_pipeline.subset_creation.runParameters import runParameters
@@ -69,7 +71,12 @@ if __name__ == "__main__":
     normalized_ideal_size = resourcetuner.ideal_size*float(al_run_config.computing_resources.node_cpus)/32
     expected_time = 10*size/normalized_ideal_size
 
-    message = f"""I am watching the AL-run `{run_params.id}`
+    # Get the current date and time
+    current_datetime = datetime.now()
+    # Format the datetime to [DD/Mon/YYYY HH:MM:SS]
+    formatted_datetime = current_datetime.strftime("%d/%b/%Y %H:%M:%S")   
+    message = f"""Merging completed at {formatted_datetime}
+I am watching the AL-run `{run_params.id}`
 The fastq file has a size of `{round(size,2)} GB`
 Resources: {al_run_config.computing_resources.node_cpus} CPUs
 For a 10 minutes run we have an ideal size of `{normalized_ideal_size} GB`

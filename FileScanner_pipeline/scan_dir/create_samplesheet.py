@@ -110,6 +110,8 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None):
             #Increase beacuse already added
             if bar!=None:
                 bar.increase(1)
+                if i==len(all_scanned_pod5_files)-1:
+                    telegram_send_bar(bar.progress_bar)
         else: 
             parser = prepare_pod5_inspect_argparser()
             args = parser.parse_args(['debug', scanned_file_path])
@@ -133,6 +135,6 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None):
                     telegram_send_bar(bar.progress_bar)
                 if samplesheet.add_file(create_samplesheet_entry(scanned_file_path)):
                     added_files = added_files + 1
- 
+
     samplesheet.update_json_file()
     return added_files

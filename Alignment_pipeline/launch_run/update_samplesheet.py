@@ -19,7 +19,7 @@ if __name__ == "__main__":
     
     samplehseet.update_json_file()
     
-    if status=="True":
+    if status==True:
         telegram_send_bar(f"Run {id} has succesfully completed the alignment")
     else:
         telegram_send_bar(f"Something went wrong in run {id}")

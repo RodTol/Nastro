@@ -18,7 +18,6 @@ if __name__ == "__main__":
     dir = sys.argv[1]
     model = sys.argv[2]
     outputLocation = sys.argv[3]
-    #TODO is correct here. If it already exist nothing happen, otherwise we are ok
     os.makedirs(outputLocation, exist_ok=True)
 
     message = f"""-----SCAN-RUN-----
@@ -73,6 +72,8 @@ I am going to scan `{dir}`
     message = f"""Scan of `{dir}` at {formatted_datetime} added `{added_files}` files to `{samplesheet.file_path}`
     """
     telegram_send_bar(message)
-    
+    message = f"""{os.path.basename(samplesheet.file_path)} has now {len(samplesheet.get_files())} files
+    """
+    telegram_send_bar(message)
     if added_files>0:
         launch_run(samplesheet)

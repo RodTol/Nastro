@@ -35,7 +35,7 @@ For a 10 minutes run we have an ideal size of `{round(ideal_size,2)} GB`
 So the expected time is `{round(expected_time,2)} minutes`
 I will send a message each {round(sleeping_time, 2)} s
 """
-    telegram_send_message(message)
+    telegram_send_bar(message)
 
     original_target_file_indexes = [i for i,sample in enumerate(samplesheet.get_files()) if sample['basecalled']==run_params.id]
     start_size=len(original_target_file_indexes)    
@@ -60,8 +60,7 @@ I will send a message each {round(sleeping_time, 2)} s
 {target_current_size} files are still being processed;
 The batch was made of {start_size} files;
         """
-        telegram_send_message(message)
+        telegram_send_bar(message)
 
-    message = f""" Basecalling was finished; This is the updated samplesheet
-    """
+    message = f""" Basecalling was finished; This is the updated samplesheet"""
     telegram_send_file(sys.argv[2], message)
