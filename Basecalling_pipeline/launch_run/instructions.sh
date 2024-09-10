@@ -139,7 +139,8 @@ BC_processor_log_path="${logs_dir}/BCProcessor_log_$node_name.txt"
 exec python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/BC_software/BCProcessors.py $json_file $my_index $dorado_port >> $BC_processor_log_path 2>&1 &
 BC_PROCESSOR_PID=$!
 
-is_ready=$(python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/check_log_file.py $BC_processor_log_path "ONT basecaller supervisor version 7.1.4+d7df870c0")
+#TODO the version hardcoded is ridicolous XD
+is_ready=$(python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/check_log_file.py $BC_processor_log_path "ONT basecaller supervisor version 7.4.12+0e5e75c49")
 if [[ "$is_ready" == *"True"* ]]; then
     echo "BCP is connected!"
     break

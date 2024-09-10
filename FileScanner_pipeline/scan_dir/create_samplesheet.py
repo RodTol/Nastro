@@ -5,7 +5,7 @@ import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from Basecalling_pipeline.samplesheet_check.samplesheet_api import Samplesheet
 from Basecalling_pipeline.samplesheet_check.samplesheet_api import create_samplesheet_entry
-from Basecalling_pipeline.monitor_run.bot_telegram import telegram_send_bar
+from Basecalling_pipeline.monitor_run.bot_telegram import Telegram_bar
 
 from pathlib import Path
 from typing import Callable, Dict, List
@@ -98,7 +98,7 @@ def create_blank_samplesheet(dir, model, outputLocation):
     
     return file_path.resolve()
 
-def update_samplesheet(samplesheet: Samplesheet, bar=None):
+def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
     dir = samplesheet.get_metadata()["dir"]
     all_scanned_pod5_files = list_pod5(dir)
     
@@ -111,7 +111,7 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None):
             if bar!=None:
                 bar.increase(1)
                 if i==len(all_scanned_pod5_files)-1:
-                    telegram_send_bar(bar.progress_bar)
+                    telegram_bar.telegram_send_bar(bar.progress_bar)
         else: 
             parser = prepare_pod5_inspect_argparser()
             args = parser.parse_args(['debug', scanned_file_path])
@@ -132,7 +132,7 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None):
                 if bar!=None:
                     #Increase beacuse new file
                     bar.increase(1)
-                    telegram_send_bar(bar.progress_bar)
+                    telegram_bar.telegram_send_bar(bar.progress_bar)
                 if samplesheet.add_file(create_samplesheet_entry(scanned_file_path)):
                     added_files = added_files + 1
 

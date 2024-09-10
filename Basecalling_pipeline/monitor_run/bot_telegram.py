@@ -48,3 +48,34 @@ def telegram_send_bar(message):
         error_message = f'Failed to send message. Status code: {results.status_code}, Response: {results.text}'
         print(error_message)       
 
+class Telegram_bar:
+    def __init__(self):
+        self.last_message_id = None  # Store message ID per instance
+
+    def telegram_send_bar(self, message):
+        token = str(os.environ.get('BC_TOKEN_BOT'))
+        chat_id = "-4531622913"
+        
+        # Escape special characters for Telegram MarkdownV2
+        escape_chars = ['_', '*', '[', ']', '(', ')', '~', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+        for char in escape_chars:
+            message = message.replace(char, '\\' + char)
+        
+        if self.last_message_id is None:
+            # Send new message
+            url_req = f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&text={message}&parse_mode=MarkdownV2"
+            results = requests.get(url_req)
+            
+            if results.status_code == 200:
+                self.last_message_id = results.json()['result']['message_id']
+            else:
+                error_message = f'Failed to send message. Status code: {results.status_code}, Response: {results.text}'
+                print(error_message)
+        else:
+            # Update existing message
+            url_req = f"https://api.telegram.org/bot{token}/editMessageText?chat_id={chat_id}&message_id={self.last_message_id}&text={message}&parse_mode=MarkdownV2"
+            results = requests.get(url_req)
+            
+            if results.status_code != 200:
+                error_message = f'Failed to update message. Status code: {results.status_code}, Response: {results.text}'
+                print(error_message)
