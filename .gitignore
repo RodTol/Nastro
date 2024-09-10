@@ -172,3 +172,4 @@ Basecalling_pipeline/monitor_run/monitor.out
 **/orfeo_template.json
 data_flow/data_flow.err
 data_flow/data_flow.out
+Alignment_pipeline/setupRun/merging.out
