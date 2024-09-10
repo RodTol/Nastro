@@ -8,23 +8,23 @@ from Basecalling_pipeline.monitor_run.bot_telegram import telegram_send_file
 
 
 if __name__ == "__main__":
-    samplehseet = Samplesheet(sys.argv[1])
+    samplesheet = Samplesheet(sys.argv[1])
     id = sys.argv[2]
     status = sys.argv[3]
     path_to_report = sys.argv[4]
 
     if status=="Correct":
         telegram_send_bar(f"Run {id} has succesfully completed the alignment")
-        for i,file in enumerate(samplehseet.get_files()):
-            if file["aligned"] == id:
-                samplehseet.data["files"][i]["aligned"] = True        
+        for entry in samplesheet.get_files():
+            if entry["run_id"] == id:
+                entry["aligned"] = True      
     else:
         telegram_send_bar(f"Something went wrong in run {id}")
-        for i,file in enumerate(samplehseet.get_files()):
-            if file["aligned"] == id:
-                samplehseet.data["files"][i]["aligned"] = "Failed"   
+        for entry in samplesheet.get_files():
+            if entry["run_id"] == id:
+                entry["aligned"] = "Failed"    
 
-    samplehseet.update_json_file()
+    samplesheet.update_json_file()
 
-    telegram_send_file(samplehseet.file_path, "This is the updated samplesheet")
+    telegram_send_file(samplesheet.file_path, "This is the updated samplesheet")
     if path_to_report: telegram_send_file(path_to_report, "and a basic report on the alignment")
