@@ -29,7 +29,8 @@ pipeline {
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                             source ~/python_venvs/login_venv_jenkins/bin/activate
                             cd ${HOME}/Pipeline_long_reads/FileScanner_pipeline/scan_dir
-                            srun -p EPYC -N 1 -n 1 -c 1 --time=1:0:0 --output='${outputLocation}'/$(date +%Y%m%d_%H%M%S)_scan.log \
+                            mkdir -p '${outputLocation}'/scan_logs
+                            srun -p EPYC -N 1 -n 1 -c 1 --time=1:0:0 --output='${outputLocation}'/scan_logs/$(date +%Y%m%d_%H%M%S)_scan.log \
                             --job-name=dir_scanning python3 main.py '${pathToDir}' '${basecallingModel}' '${outputLocation}'
                             deactivate
                         ' 
