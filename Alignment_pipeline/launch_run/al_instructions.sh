@@ -29,9 +29,9 @@ CYAN="\033[0;36m"
 RESET="\033[0m"  
 
 al_config=$1
-samplesheet=$2
+id=$2
+samplesheet=$3
 
-id=$(jq -r '.General.name' "$al_config")
 fastq_file=$(jq -r '.Alignment.input_file' "$al_config")
 bam_file=$(jq -r '.Alignment.output_file' "$al_config")
 ref_genome=$(jq -r '.Alignment.reference_genome' "$al_config")
@@ -49,8 +49,10 @@ else
     cd $logs_dir
     samtools flagstat $bam_file > al_basic_report_${id}.txt
     module purge
-
     python3 ${HOME}/Pipeline_long_reads/Alignment_pipeline/launch_run/update_samplesheet.py $samplesheet $id "Correct" $logs_dir/al_basic_report_${id}.txt
+
+    echo "Launching the analysis pipeline"
+    python3 ${HOME}/Pipeline_long_reads/Alignment_pipeline/launch_run/launch_analysis_pipeline.py $samplesheet
 fi
 
 
