@@ -6,6 +6,7 @@ pipeline {
     }
     parameters {
         string(name: 'pathToSamplesheet', defaultValue: '', description: 'Path to the samplesheet of the work batch')
+        string(name: 'RunId', defaultValue: '', description: 'Id of the run that is launching this analysis')
     }
     stages {
         stage('Pull project repository on the Cluster') {
@@ -13,23 +14,35 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                                cd ${HOME}/Pipeline_long_reads/Analysis_pipeline && git pull
-                            '
+                            cd ${HOME}/Pipeline_long_reads/Analysis_pipeline && git pull
+                        '
                     '''
                 }    
             }
         }  
-        stage('Merge the files and create the reports') {
+        stage('Merge the files') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
-                    /*Look for .pod5 files*/
                     sh '''                         
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                            echo "Hello world"
+                            cd ${HOME}/Pipeline_long_reads/Analysis_pipeline/mergeFiles
+                            python3 main.py '${pathToSamplesheet}' '${RunId}'
                         ' 
                     '''
                 }    
             }
         }          
+        stage('Create the reports') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
+                    sh '''                         
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
+                            cd ${HOME}/Pipeline_long_reads/Analysis_pipeline/report_creation
+                            sbatch main.sh '${pathToSamplesheet}'
+                        ' 
+                    '''
+                }    
+            }
+        }        
     }
 }
