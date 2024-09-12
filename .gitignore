@@ -173,3 +173,5 @@ Basecalling_pipeline/monitor_run/monitor.out
 data_flow/data_flow.err
 data_flow/data_flow.out
 Alignment_pipeline/setupRun/merging.out
+Analysis_pipeline/report_creation/report.err
+Analysis_pipeline/report_creation/report.out
