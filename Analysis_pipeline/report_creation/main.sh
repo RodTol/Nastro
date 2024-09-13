@@ -9,7 +9,7 @@
 #SBATCH --output=report.out
 #SBATCH --error=report.err 
 
-
+#TODO env variables are forced
 send_telegram() {
   local file_path="$1"
   local caption="${2:-}"

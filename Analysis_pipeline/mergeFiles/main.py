@@ -33,6 +33,7 @@ if __name__ == "__main__":
     #TODO DO i live the path like this ?
     if check_Renamefiles_in_directory(output_dir):
         print("Results file are already present!")
+
         cat_command = f"cat {output_dir}/output/{id}/run_{id}_merged.fastq {pathToFinalBasecalling} > {pathToFinalBasecalling}"
         samtools_command = f"samtools merge -o {pathToFinalAlignment} {pathToFinalAlignment} {output_dir}/output/{id}/bam/run_{id}.bam"
 

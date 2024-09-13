@@ -26,7 +26,7 @@ pipeline {
                     sh '''                         
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                             cd ${HOME}/Pipeline_long_reads/Analysis_pipeline/mergeFiles
-                            python3 main.py '${pathToSamplesheet}' '${RunId}'
+                            srun -p EPYC -N 1 -c 2 --time=1:0:0 --mem=30GB bash main.sh '${pathToSamplesheet}' '${RunId}'
                         ' 
                     '''
                 }    
