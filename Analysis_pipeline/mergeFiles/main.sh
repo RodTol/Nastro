@@ -17,9 +17,26 @@ check_ResultsFiles_in_directory() {
     fi
 }
 
+send_message() {
+  local message="$1"
+  local chat_id="$CHAT_ID"
+  local token="$BC_TOKEN_BOT"
+
+  # Escape special characters for Markdown
+  local escaped_message
+  escaped_message=$(printf '%s' "$message" | sed 's/[][\.*^$]/\\&/g; s/_/\\_/g; s/`/\\`/g; s/*/\\*/g; s/~(?!\()/\\~/g; s/\n/\\n/g;')
+
+  curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
+    -d "chat_id=$chat_id" \
+    -d "text=$escaped_message" \
+    -d "parse_mode=MarkdownV2"
+}
+
 # Get samplesheet path and id from arguments
 samplesheet_path="$1"
 id="$2"
+
+send_message("-----ALIGNMENT-RUN-----\n Started analysis run for $id")
 
 # Assuming you have a command line tool or another way to extract metadata from the samplesheet
 output_dir=$(jq -r '.metadata.outputLocation' "$samplesheet_path")
@@ -56,6 +73,6 @@ else
     echo "First time creating Results file"
 
     # Move the initial .fastq and .bam files to final locations
-    mv "$output_dir/output/$id/run_${id}_merged.fastq" "$pathToFinalBasecalling"
-    mv "$output_dir/output/$id/bam/run_${id}.bam" "$pathToFinalAlignment"
+    cp "$output_dir/output/$id/run_${id}_merged.fastq" "$pathToFinalBasecalling"
+    cp "$output_dir/output/$id/bam/run_${id}.bam" "$pathToFinalAlignment"
 fi

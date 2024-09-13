@@ -175,3 +175,4 @@ data_flow/data_flow.out
 Alignment_pipeline/setupRun/merging.out
 Analysis_pipeline/report_creation/report.err
 Analysis_pipeline/report_creation/report.out
+Analysis_pipeline/mergeFiles/tmp.fastq

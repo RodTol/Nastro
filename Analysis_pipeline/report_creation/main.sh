@@ -10,7 +10,7 @@
 #SBATCH --error=report.err 
 
 #TODO env variables are forced
-send_telegram() {
+send_files() {
   local file_path="$1"
   local caption="${2:-}"
   if [[ -z "$caption" ]]; then
@@ -46,5 +46,5 @@ wait
 echo "Report creation is completed"
 
 current_time=$(date +"%Y-%m-%d %H:%M:%S")
-send_telegram("${output_dir}/basecalling_report/NanoPlot-report.html", "Basecalling report at $current_time, for run $id")
-send_telegram("${output_dir}/alignment_report/report.pdf", "Alignment report at $current_time, for run $id")
+send_files("${output_dir}/basecalling_report/NanoPlot-report.html", "Basecalling report at $current_time, for run $id")
+send_files("${output_dir}/alignment_report/report.pdf", "Alignment report at $current_time, for run $id")
