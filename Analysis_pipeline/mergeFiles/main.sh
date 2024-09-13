@@ -17,26 +17,28 @@ check_ResultsFiles_in_directory() {
     fi
 }
 
-send_message() {
-  local message="$1"
-  local chat_id="$CHAT_ID"
-  local token="$BC_TOKEN_BOT"
+send_telegram_message() {
+    local MESSAGE="$1"
+    
+    # Encode newline characters
+    local PARSED_MESSAGE=$(echo "$MESSAGE" | sed ':a;N;$!ba;s/\n/%0A/g')
 
-  # Escape special characters for Markdown
-  local escaped_message
-  escaped_message=$(printf '%s' "$message" | sed 's/[][\.*^$]/\\&/g; s/_/\\_/g; s/`/\\`/g; s/*/\\*/g; s/~(?!\()/\\~/g; s/\n/\\n/g;')
-
-  curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
-    -d "chat_id=$chat_id" \
-    -d "text=$escaped_message" \
-    -d "parse_mode=MarkdownV2"
+    # Send the message via Telegram API
+    curl -s -X POST "https://api.telegram.org/bot$BC_TOKEN_BOT/sendMessage" \
+        -d "chat_id=$CHAT_ID" \
+        -d "text=$PARSED_MESSAGE" \
+        -d "parse_mode=Markdown"
 }
 
 # Get samplesheet path and id from arguments
 samplesheet_path="$1"
 id="$2"
 
-send_message("-----ALIGNMENT-RUN-----\n Started analysis run for $id")
+module load samtools
+
+send_telegram_message "-----ALIGNMENT-RUN----- 
+Started analysis run for $id"
+echo ""
 
 # Assuming you have a command line tool or another way to extract metadata from the samplesheet
 output_dir=$(jq -r '.metadata.outputLocation' "$samplesheet_path")
