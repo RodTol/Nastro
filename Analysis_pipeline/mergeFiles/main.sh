@@ -36,7 +36,7 @@ id="$2"
 
 module load samtools
 
-send_telegram_message "-----ALIGNMENT-RUN----- 
+send_telegram_message "-----ANALYSIS-RUN----- 
 Started analysis run for $id"
 echo ""
 
@@ -52,7 +52,7 @@ if check_ResultsFiles_in_directory "$output_dir"; then
 
     # Concatenate fastq files
     cat_command="cat $output_dir/output/$id/run_${id}_merged.fastq $pathToFinalBasecalling > tmp.fastq"
-    samtools_command="samtools merge -o $pathToFinalAlignment $pathToFinalAlignment $output_dir/output/$id/bam/run_${id}.bam"
+    samtools_command="samtools merge -f -o $pathToFinalAlignment $pathToFinalAlignment $output_dir/output/$id/bam/run_${id}.bam"
 
     # Execute the cat command
     if eval "$cat_command"; then
@@ -71,10 +71,15 @@ if check_ResultsFiles_in_directory "$output_dir"; then
         exit 1
     fi
 
+    send_telegram_message "File already present. I successfully merged the files for $id"
+
 else
     echo "First time creating Results file"
 
     # Move the initial .fastq and .bam files to final locations
     cp "$output_dir/output/$id/run_${id}_merged.fastq" "$pathToFinalBasecalling"
     cp "$output_dir/output/$id/bam/run_${id}.bam" "$pathToFinalAlignment"
+
+    send_telegram_message "No file was present. I successfully moved the files for $id"
+
 fi
