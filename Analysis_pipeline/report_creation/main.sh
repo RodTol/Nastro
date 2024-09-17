@@ -41,6 +41,7 @@ send_files() {
 
 
 samplesheet=$1
+id="$2"
 output_dir=$(jq -r '.metadata.outputLocation' "$samplesheet")
 
 source ~/python_venvs/NanoPlot_venv/bin/activate
@@ -49,10 +50,10 @@ module load samtools
 
 cd $output_dir
 
-mkdir basecalling_report
+mkdir -p basecalling_report
 NanoPlot  -t 12 --huge -o $output_dir/basecalling_report --fastq_rich BasecallingResults.fastq &
 
-mkdir alignment_report
+mkdir -p alignment_report
 samtools sort AlignmentResults.bam -o SortedAlignmentResults.bam
 qualimap bamqc -bam SortedAlignmentResults.bam -outdir $output_dir/alignment_report -nt 12 -outformat PDF --java-mem-size=10G &
 
@@ -60,5 +61,9 @@ wait
 echo "Report creation is completed"
 
 current_time=$(date +"%Y-%m-%d %H:%M:%S")
-send_files("${output_dir}/basecalling_report/NanoPlot-report.html", "Basecalling report at $current_time, for run $id")
-send_files("${output_dir}/alignment_report/report.pdf", "Alignment report at $current_time, for run $id")
+basecalling_report="${output_dir}/basecalling_report/NanoPlot-report.html"
+alignment_report="${output_dir}/alignment_report/report.pdf"
+
+# Send the reports
+send_files "$basecalling_report" "Basecalling report generated at $current_time, for run $id"
+send_files "$alignment_report" "Alignment report generated at $current_time, for run $id"

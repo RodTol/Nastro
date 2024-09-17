@@ -38,7 +38,7 @@ pipeline {
                     sh '''                         
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                             cd ${HOME}/Pipeline_long_reads/Analysis_pipeline/report_creation
-                            sbatch main.sh '${pathToSamplesheet}'
+                            sbatch main.sh '${pathToSamplesheet}' '${RunId}'
                         ' 
                     '''
                 }    
