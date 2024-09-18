@@ -131,7 +131,7 @@ class BCController:
         }
         #print("Launching a new run with the following parameters:", flush=True)
         print(jenkins_parameter, flush=True)
-        self.jenkins.start_job("tolloi/Nastro/basecalling_pipeline", "kuribo", jenkins_parameter)            
+        self.jenkins.start_job("tolloi/Pipeline_long_reads/basecalling_pipeline", "kuribo", jenkins_parameter)            
 
     def _launching_alignment_pipeline(self):
         jenkins_parameter =  {
@@ -139,7 +139,7 @@ class BCController:
             "pathToRunParams": self.run_params_path
         }
         print(jenkins_parameter, flush=True)
-        self.jenkins.start_job("tolloi/Nastro/alignment_pipeline", "incal", jenkins_parameter)        
+        self.jenkins.start_job("tolloi/Pipeline_long_reads/alignment_pipeline", "incal", jenkins_parameter)        
 
     def _shutdown_BCsoftware(self):
         print("Shutting down\n", flush=True)

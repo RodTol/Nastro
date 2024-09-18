@@ -72,7 +72,7 @@ if __name__ == "__main__":
          }
 
         jenkins = Jenkins_trigger()
-        jenkins.start_job('tolloi/Nastro/FileScanner', 'akira', jenkins_parameter)
+        jenkins.start_job('tolloi/Pipeline_long_reads/FileScanner', 'akira', jenkins_parameter)
         jenkins.stop_job('Nastro/job/basecalling_pipeline/', jenkins_build_id)
         sys.exit(0)
 

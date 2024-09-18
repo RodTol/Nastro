@@ -26,4 +26,4 @@ if __name__ == "__main__":
     }
 
     jenkins = Jenkins_trigger()
-    jenkins.start_job('tolloi/Nastro/analysis_pipeline', 'manwe', jenkins_parameter)
+    jenkins.start_job('tolloi/Pipeline_long_reads/analysis_pipeline', 'manwe', jenkins_parameter)
