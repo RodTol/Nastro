@@ -72,8 +72,8 @@ if __name__ == "__main__":
          }
 
         jenkins = Jenkins_trigger()
-        jenkins.start_job('tolloi/Pipeline_long_reads/FileScanner', 'akira', jenkins_parameter)
-        jenkins.stop_job('Pipeline_long_reads/job/basecalling_pipeline/', jenkins_build_id)
+        jenkins.start_job('tolloi/Nastro/FileScanner', 'akira', jenkins_parameter)
+        jenkins.stop_job('Nastro/job/basecalling_pipeline/', jenkins_build_id)
         sys.exit(0)
 
     #Create input dir for the run
@@ -113,10 +113,10 @@ if __name__ == "__main__":
     #Slurm
     run_slurm_output = os.path.join(run_params.logs_dir, "%x-%j.out")
     run_slurm_error = os.path.join(run_params.logs_dir, "%x-%j.err")
-    run_config.slurm = Slurm(run_config, run_slurm_output , run_slurm_error, "${HOME}/Pipeline_long_reads/Basecalling_pipeline/launch_run/instructions.sh")
+    run_config.slurm = Slurm(run_config, run_slurm_output , run_slurm_error, "${HOME}/Nastro/Basecalling_pipeline/launch_run/instructions.sh")
     #Basecalling
     home_dir = os.getenv('HOME')
-    supervisor_script_path = os.path.join(home_dir, 'Pipeline_long_reads/Basecalling_pipeline/launch_run/supervisor.sh')
+    supervisor_script_path = os.path.join(home_dir, 'Nastro/Basecalling_pipeline/launch_run/supervisor.sh')
 
     # Assign the constructed path to your attribute
     run_config.basecalling = Basecalling(run_config, run_params.basecalling_model, run_params.input_dir,

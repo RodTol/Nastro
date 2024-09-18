@@ -69,7 +69,7 @@ class Jenkins_trigger:
     def stop_job(self, job_name, build_number):
         # Construct the URL to stop the build
         crumb_header = self._get_jenkins_crumb()
-        # Note that job name must be correct (example: "Pipeline_long_reads/job/basecalling_pipeline/")
+        # Note that job name must be correct (example: "Nastro/job/basecalling_pipeline/")
         stop_url = f'{self.jenkins_url}/job/{self.username}/job/{job_name}/{build_number}/stop'  
         print('Stop url:  ', stop_url)
         try:

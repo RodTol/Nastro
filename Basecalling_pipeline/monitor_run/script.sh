@@ -32,7 +32,7 @@ source ~/python_venvs/orfeo_telegram_on_epyc/bin/activate
 
 deactivate
 
-python3 ${HOME}/Pipeline_long_reads/Basecalling_pipeline/monitor_run/main.py ${RUN_PARAMS_PATH} ${pathToSamplesheet} 
+python3 ${HOME}/Nastro/Basecalling_pipeline/monitor_run/main.py ${RUN_PARAMS_PATH} ${pathToSamplesheet} 
 
 # Kill the Python process
 #kill $python_pid

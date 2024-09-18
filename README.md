@@ -2,7 +2,7 @@
   <img src="docs/assets/logo-area.png" alt="Area logo" width="200"/>
 </p>
 
-# Pipeline_long_reads 🧬 
+# Nastro 🧬 
 Pipeline developed for the analysis of long-reads data (in particular produced by ONT hardware) by Rodolfo Tolloi at Area Science Park
 
 # Roadmap

@@ -64,7 +64,7 @@ if __name__ == "__main__":
     run_slurm_output = os.path.join(run_params.logs_dir, "%x-%j_al.out")
     run_slurm_error = os.path.join(run_params.logs_dir, "%x-%j_al.err")
     #TODO absolute path
-    supervisor_script_path = '/u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/launch_run/al_instructions.sh'
+    supervisor_script_path = '/u/area/jenkins_onpexp/Nastro/Alignment_pipeline/launch_run/al_instructions.sh'
     al_run_config.slurm = Slurm(al_run_config, run_slurm_output , run_slurm_error, supervisor_script_path)
 
     #TODO should ref_genome be a pipeline parameters, maybe even part of the samplesheet as it is the model ?

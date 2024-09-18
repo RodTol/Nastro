@@ -5,7 +5,7 @@ pipeline {
             }
     }
     parameters {
-        string(name: 'pathToSamplesheet', defaultValue: '/u/area/jenkins_onpexp/Pipeline_long_reads/samplesheet/orfeo_template.json', description: 'Path to the samplesheet of the work batch')
+        string(name: 'pathToSamplesheet', defaultValue: '/u/area/jenkins_onpexp/Nastro/samplesheet/orfeo_template.json', description: 'Path to the samplesheet of the work batch')
         string(name: 'pathToInputDir', defaultValue: '/u/area/jenkins_onpexp/scratch/TEST/input', description: 'Path to where the dir with symlinks will be stored. Root for each run input dir')
         string(name: 'pathToOutputDir', defaultValue: '/u/area/jenkins_onpexp/scratch/TEST/output', description: 'Path to where the output of the batch will be stored. Root for each run')
         string(name: 'pathToLogsDir', defaultValue: '/u/area/jenkins_onpexp/scratch/TEST/logs', description: 'Path to where the logs of the batch will be stored. Root for each run')
@@ -16,7 +16,7 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline && git pull
+                                cd /u/area/jenkins_onpexp/Nastro/Basecalling_pipeline && git pull
                             '
                     '''
                 }    
@@ -28,7 +28,7 @@ pipeline {
                     /*Check if all the trash is removed in the correct way*/                                       
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline
+                                cd /u/area/jenkins_onpexp/Nastro/Basecalling_pipeline
                                 rm -rf __pycache__
                             '
                     '''
@@ -41,7 +41,7 @@ pipeline {
                     /*Check if the samplesheet is correct*/
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/samplesheet_check
+                                cd /u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/samplesheet_check
                                 python3 main.py '${pathToSamplesheet}'
                             '
                     '''
@@ -56,7 +56,7 @@ pipeline {
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                                 source ${HOME}/python_venvs/login_venv_jenkins/bin/activate
-                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/subset_creation
+                                cd /u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/subset_creation
 
                                 export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
                                 echo "BUILD NUMBER is:" ${BUILD_NUMBER_LOCAL}
@@ -75,7 +75,7 @@ pipeline {
                     /*Use the run config to create a sbatch script and launch it*/
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/launch_run
+                                cd /u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/launch_run
 
                                 export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
                                 export LOG_PATH='${pathToLogsDir}'
@@ -112,7 +112,7 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                                cd /u/area/jenkins_onpexp/Pipeline_long_reads/Basecalling_pipeline/monitor_run
+                                cd /u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/monitor_run
 
                                 export BUILD_NUMBER_LOCAL='${BUILD_NUMBER}'
                                 export LOG_PATH='${pathToLogsDir}'

@@ -47,7 +47,7 @@ class ResourceTuner:
             print(f"Ideal size: {IDEAL_SIZE_GB}; actual size: {self.fastq_size:.2f}")
             print("Using profile 1")
             
-            with open('/u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/setupRun/computing_profiles/profile1.json', 'r') as file:
+            with open('/u/area/jenkins_onpexp/Nastro/Alignment_pipeline/setupRun/computing_profiles/profile1.json', 'r') as file:
                 profile = json.load(file)
 
             return ComputingResources(self.al_run_config, profile["node_queue"],
@@ -57,7 +57,7 @@ class ResourceTuner:
             print(f"Ideal size: {IDEAL_SIZE_GB}; actual size: {self.fastq_size:.2f}")
             print("Using profile 2")
             
-            with open('/u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/setupRun/computing_profiles/profile2.json', 'r') as file:
+            with open('/u/area/jenkins_onpexp/Nastro/Alignment_pipeline/setupRun/computing_profiles/profile2.json', 'r') as file:
                 profile = json.load(file)
 
             return ComputingResources(self.al_run_config, profile["node_queue"],
@@ -67,7 +67,7 @@ class ResourceTuner:
             print(f"Ideal size: {IDEAL_SIZE_GB}; actual size: {self.fastq_size:.2f}")
             print("Using profile 3")
             
-            with open('/u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/setupRun/computing_profiles/profile3.json', 'r') as file:
+            with open('/u/area/jenkins_onpexp/Nastro/Alignment_pipeline/setupRun/computing_profiles/profile3.json', 'r') as file:
                 profile = json.load(file)
 
             return ComputingResources(self.al_run_config, profile["node_queue"],

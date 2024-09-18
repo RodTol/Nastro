@@ -5,7 +5,7 @@ pipeline {
             }
     }
     parameters {
-        string(name: 'pathToSamplesheet', defaultValue: '/u/area/jenkins_onpexp/Pipeline_long_reads/samplesheet/orfeo_template.json', description: 'Path to the samplesheet of the work batch')
+        string(name: 'pathToSamplesheet', defaultValue: '/u/area/jenkins_onpexp/Nastro/samplesheet/orfeo_template.json', description: 'Path to the samplesheet of the work batch')
         string(name: 'pathToRunParams', defaultValue: '', description: 'Path to the runParams file with all meta data about the run')
     }
     stages {
@@ -14,7 +14,7 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline && git pull
+                            cd /u/area/jenkins_onpexp/Nastro/Alignment_pipeline && git pull
                         ' 
                     '''
                 }    
@@ -27,7 +27,7 @@ pipeline {
                     This could be mandatory but for now it takes 2-3 minutes*/
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/setupRun
+                            cd /u/area/jenkins_onpexp/Nastro/Alignment_pipeline/setupRun
                             params='${pathToRunParams}'
                             #Merge fastq
                             run_id=$(jq -r '.id' "${params}")
@@ -53,7 +53,7 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                            cd /u/area/jenkins_onpexp/Pipeline_long_reads/Alignment_pipeline/launch_run/
+                            cd /u/area/jenkins_onpexp/Nastro/Alignment_pipeline/launch_run/
 
                             #Create sbatch file
                             python3 main.py '${pathToRunParams}'

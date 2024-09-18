@@ -1,17 +1,17 @@
 # Standard, just the inputs
 {
-    "pathToSamplesheet" : "/u/area/jenkins_onpexp/Pipeline_long_reads/samplesheet/orfeo_template.json",
+    "pathToSamplesheet" : "/u/area/jenkins_onpexp/Nastro/samplesheet/orfeo_template.json",
     "pathToInputDir" :"/u/area/jenkins_onpexp/scratch/TEST/input",
     "pathToOutputDir" :"/u/area/jenkins_onpexp/scratch/TEST/output",
     "pathToLogsDir": "/u/area/jenkins_onpexp/scratch/TEST/logs",
     "basecallingModel": "dna_r10.4.1_e8.2_400bps_hac.cfg",
-    "codeDir": "/u/area/jenkins_onpexp/Pipeline_long_reads"
+    "codeDir": "/u/area/jenkins_onpexp/Nastro"
 }
 
 #Alternative with root dir where to create input, output and logs
 {
-    "pathToSamplesheet" : "/u/area/jenkins_onpexp/Pipeline_long_reads/samplesheet/orfeo_template.json",
+    "pathToSamplesheet" : "/u/area/jenkins_onpexp/Nastro/samplesheet/orfeo_template.json",
     "pathToRootDir":"/u/area/jenkins_onpexp/scratch/TEST/", 
     "basecallingModel": "dna_r10.4.1_e8.2_400bps_hac.cfg",
-    "codeDir": "/u/area/jenkins_onpexp/Pipeline_long_reads"
+    "codeDir": "/u/area/jenkins_onpexp/Nastro"
 }

@@ -16,8 +16,8 @@
 
 #SBATCH --job-name=data_flow
 #SBATCH --time=06:00:00
-#SBATCH --output=/u/area/jenkins_onpexp/Pipeline_long_reads/data_flow/data_flow.out
-#SBATCH --error=/u/area/jenkins_onpexp/Pipeline_long_reads/data_flow/data_flow.err
+#SBATCH --output=/u/area/jenkins_onpexp/Nastro/data_flow/data_flow.out
+#SBATCH --error=/u/area/jenkins_onpexp/Nastro/data_flow/data_flow.err
 #SBATCH -A lage
 #SBATCH -p EPYC
 #SBATCH --nodes=1
