@@ -135,6 +135,10 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
                 # This is how we handle this exception THAT IS NOT RAISEED
                 sys.stdout = sys.__stdout__ 
                 print(f"Failed to open file {scanned_file_path} due to {exc}", flush=True) 
+                if bar!=None:
+                    #Increase beacuse file was read but not added
+                    bar.increase(1)  
+                    telegram_bar.telegram_send_bar(bar.progress_bar)              
             else:
                 # But we must reset stdout to its default value every time
                 sys.stdout = sys.__stdout__ 
