@@ -24,7 +24,7 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=10GB
 
-source=/orfeo/cephfs/scratch/area/jenkins_onpexp/CliveOME
-dest=$1
+source=$1
+dest=$2
 
 python3 /u/area/jenkins_onpexp/BC-pipelines/simulation-pipeline/utility/data_flow_emulator.py $source $dest
