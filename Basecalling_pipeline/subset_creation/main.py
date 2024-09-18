@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
         jenkins = Jenkins_trigger()
         jenkins.start_job('tolloi/Pipeline_long_reads/FileScanner', 'akira', jenkins_parameter)
-        jenkins.stop_job('Nastro/job/basecalling_pipeline/', jenkins_build_id)
+        jenkins.stop_job('Pipeline_long_reads/job/basecalling_pipeline/', jenkins_build_id)
         sys.exit(0)
 
     #Create input dir for the run
