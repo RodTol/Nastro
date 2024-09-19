@@ -11,14 +11,14 @@
 
 #SBATCH --job-name=mergeFiles
 #SBATCH --time=02:00:00
-#SBATCH --output=${PWD}/merge.out
-#SBATCH --error=${PWD}/merge.err
-#SBATCH -A lade
+#SBATCH --output=merge.out
+#SBATCH --error=merge.err
+#SBATCH -A lage
 #SBATCH -p EPYC
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=30GB
+#SBATCH --mem=60GB
 
 # Function to check for specific files in a directory
 check_ResultsFiles_in_directory() {
@@ -71,13 +71,13 @@ if check_ResultsFiles_in_directory "$output_dir"; then
     echo "Results file are already present!"
 
     # Concatenate fastq files
-    cat_command="cat $output_dir/output/$id/run_${id}_merged.fastq $pathToFinalBasecalling > tmp.fastq"
-    samtools_command="samtools merge -f -o $pathToFinalAlignment $pathToFinalAlignment $output_dir/output/$id/bam/run_${id}.bam"
+    cat_command="cat $output_dir/output/$id/run_${id}_merged.fastq $pathToFinalBasecalling > $output_dir/tmp.fastq"
+    samtools_command="samtools merge -f -o $output_dir/tmp.bam $pathToFinalAlignment $output_dir/output/$id/bam/run_${id}.bam"
 
     # Execute the cat command
     if eval "$cat_command"; then
         echo "Successfully concatenated fastq files"
-        mv tmp.fastq $pathToFinalBasecalling
+        mv $output_dir/tmp.fastq $pathToFinalBasecalling
     else
         echo "Error concatenating fastq files"
         exit 1
@@ -86,6 +86,7 @@ if check_ResultsFiles_in_directory "$output_dir"; then
     # Execute the samtools merge command
     if eval "$samtools_command"; then
         echo "Successfully merged BAM files"
+	mv $output_dir/tmp.bam $pathToFinalAlignment
     else
         echo "Error merging BAM files"
         exit 1
