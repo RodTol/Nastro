@@ -77,7 +77,7 @@ if check_ResultsFiles_in_directory "$output_dir"; then
     # Execute the cat command
     if eval "$cat_command"; then
         echo "Successfully concatenated fastq files"
-        mv $output_dir/tmp.fastq $pathToFinalBasecalling
+        rsync -a --info=progress2 --remove-source-files $output_dir/tmp.fastq $pathToFinalBasecalling/
     else
         echo "Error concatenating fastq files"
         exit 1
@@ -86,7 +86,7 @@ if check_ResultsFiles_in_directory "$output_dir"; then
     # Execute the samtools merge command
     if eval "$samtools_command"; then
         echo "Successfully merged BAM files"
-	mv $output_dir/tmp.bam $pathToFinalAlignment
+        rsync -a --info=progress2 --remove-source-files $output_dir/tmp.bam $pathToFinalAlignment/
     else
         echo "Error merging BAM files"
         exit 1
