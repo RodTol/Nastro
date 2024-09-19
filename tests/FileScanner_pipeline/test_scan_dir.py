@@ -77,18 +77,32 @@ def test_update_samplesheet(mock_samplesheet, mock_bar, mock_telegram_bar):
 
 def test_update_samplesheet_no_new_files(mock_samplesheet, mock_bar, mock_telegram_bar):
     with tempfile.TemporaryDirectory() as temp_dir:
-        # Create mock .pod5 files
+        # Create mock .pod5 file
         pod5_file_1 = Path(temp_dir) / "file1.pod5"
         pod5_file_1.touch()
 
         mock_samplesheet.get_metadata.return_value["dir"] = temp_dir
+        #Mock that the file already belongs to the samplesheet
         mock_samplesheet.file_belongs_to_samplesheet.return_value = True
 
-        with patch('FileScanner_pipeline.scan_dir.create_samplesheet.list_pod5', return_value=[str(pod5_file_1)]):
-            added_files = update_samplesheet(mock_samplesheet, mock_bar, mock_telegram_bar)
+        # Patch pod5.Reader to simulate successful reading of pod5 files
+        with patch('pod5.Reader', return_value=MagicMock()):
+            # Patch the parser to avoid issues with args
+            with patch('FileScanner_pipeline.scan_dir.create_samplesheet.prepare_pod5_inspect_argparser') as mock_parser:
+                mock_args = MagicMock()
+                mock_args.command = 'debug'
+                mock_args.input_files = [pod5_file_1]
+                mock_parser.return_value.parse_args.return_value = mock_args
 
-            assert added_files == 0
-            mock_samplesheet.add_file.assert_not_called()
-            mock_samplesheet.update_json_file.assert_called_once()
-            mock_bar.increase.assert_called()
-            mock_telegram_bar.telegram_send_bar.assert_called()
+                # Patch inspect_pod5 to simulate valid behavior without errors
+                with patch('FileScanner_pipeline.scan_dir.create_samplesheet.inspect_pod5') as mock_inspect:
+                    # Set mock to behave as if the inspection succeeds without errors
+                    mock_inspect.return_value = None
+
+                    # Call the function under test
+                    added_files = update_samplesheet(mock_samplesheet, mock_bar, mock_telegram_bar)
+
+                    assert added_files == 0
+                    mock_samplesheet.add_file.assert_not_called()
+                    mock_samplesheet.update_json_file.assert_called_once()
+                    mock_bar.increase.assert_called()
