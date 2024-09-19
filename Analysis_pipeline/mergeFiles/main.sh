@@ -9,6 +9,16 @@
 #__maintainer__  =
 #__status__      ="Development"
 
+#SBATCH --job-name=mergeFiles
+#SBATCH --time=02:00:00
+#SBATCH --output=${PWD}/merge.out
+#SBATCH --error=${PWD}/merge.err
+#SBATCH -A lade
+#SBATCH -p EPYC
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=30GB
 
 # Function to check for specific files in a directory
 check_ResultsFiles_in_directory() {

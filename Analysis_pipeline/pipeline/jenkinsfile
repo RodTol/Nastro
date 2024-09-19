@@ -26,7 +26,7 @@ pipeline {
                     sh '''                         
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                             cd ${HOME}/Nastro/Analysis_pipeline/mergeFiles
-                            srun -p EPYC -N 1 -c 2 --time=1:0:0 --mem=30GB bash main.sh '${pathToSamplesheet}' '${RunId}'
+                            sbatch main.sh '${pathToSamplesheet}' '${RunId}'
                         ' 
                     '''
                 }    
