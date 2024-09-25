@@ -104,7 +104,7 @@ class ResourceTuning:
         if self.run_params.actual_size >= self.run_params.ideal_size:
             print("Using profile 1")
             #TODO path and automatize splitting (count how many nodes I have and distribute files)
-            with open('/u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/subset_creation/computing_profiles/profile1.json', 'r') as file:
+            with open('/u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/subset_creation/computing_profiles/profile0.json', 'r') as file:
                 profile = json.load(file)
 
             size1, size2 = split_number(subset_length)                

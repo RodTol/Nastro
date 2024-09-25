@@ -1,0 +1,28 @@
+{
+    "index_host": "0",
+    "port": "42837",
+    "nodes_queue": [
+        "DGX"
+    ],
+    "nodes_list": [
+        ""
+    ],
+    "nodes_ip": [
+        ""
+    ],
+    "nodes_cpus": [
+        "64"
+    ],
+    "nodes_mem": [
+        "200GB"
+    ],
+    "nodes_gpus": [
+        "4"
+    ],
+    "gpus": [
+        "cuda:all"
+    ],
+    "batch_size_list": [
+        100
+    ]
+}
