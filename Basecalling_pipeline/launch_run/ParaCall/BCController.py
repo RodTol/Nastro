@@ -70,6 +70,16 @@ class BCController:
         print(f"My PIDs:\n BCM_pid={self.BCM_pid}\n BCP_pid={self.BCP_pid}\n Dorado_pid={self.Dorado_pid}", flush=True)
 
     def _get_assigned_reads(self):
+        """
+        Retrieve the indices of reads assigned to the current run.
+
+        This method iterates over the files listed in the samplesheet and checks if 
+        the "basecalled" attribute matches the current run name. If a match is found, 
+        the index of the entry is added to the list of assigned reads.
+
+        Returns:
+            list: A list of indices corresponding to the reads assigned to the current run.
+        """
         assigned_reads = []
         for i, entry in enumerate(self.samplesheet.get_files()):
             if entry["basecalled"] == self.run_name:
@@ -142,9 +152,9 @@ class BCController:
         if self.BCM_pid != 'NULL':
             self._kill_process(self.BCM_pid) # BCM
 
-            self._launching_basecalling_pipeline()
-            print("-----------------")
             self._launching_alignment_pipeline()
+            print("-----------------")
+            self._launching_basecalling_pipeline()
 
         self._kill_process(self.Dorado_pid) # Dorado
         sys.exit(0) # BCC
