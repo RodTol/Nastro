@@ -45,4 +45,6 @@ ont_basecaller_supervisor --num_clients $num_clients \
 --input_path $input_dir \
 --save_path $output_dir \
 --config $model \
---port $port 
+--port $port \
+--compress_fastq
+#--bam_out
