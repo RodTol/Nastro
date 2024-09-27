@@ -243,7 +243,8 @@ class BCWorkloadState:
 
             shutil.rmtree(full_job_input_dir)
             log_full_job_output_dir = os.path.join(self.OUTPUTDIR, bc_work.job_output_dir.replace("TMPOUTPUT", "LOGOUTPUT"))
-            os.rename(full_job_output_dir, log_full_job_output_dir)
+            #os.rename(full_job_output_dir, log_full_job_output_dir) problem with existing dir
+            shutil.move(full_job_output_dir, log_full_job_output_dir) #rewrite destination dir
         else:
             print("ATTENTION! UNKNOWN STATE FROM CLIENT! " + jobstate)
             unknown_full_job_input_dir = os.path.join(self.INPUTDIR, bc_work.job_input_dir.replace("ASSIGNED","UNKNOWN"))
