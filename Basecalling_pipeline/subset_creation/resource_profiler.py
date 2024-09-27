@@ -115,7 +115,7 @@ class ResourceTuning:
                                                         profile["nodes_mem"], profile["nodes_gpus"], profile["gpus"],
                                                         profile["batch_size_list"])
         #half the ideal size --> one node 2 dgx (half the resources)
-        elif self.run_params.actual_size >= self.run_params.ideal_size/2:
+        elif self.run_params.actual_size >= self.run_params.ideal_size/4:
             print("Using profile 2")
             with open('/u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/subset_creation/computing_profiles/profile2.json', 'r') as file:
                 profile = json.load(file)
