@@ -25,7 +25,6 @@ class Subsetter:
         samplesheet = Samplesheet(input_file) 
         self.samplesheet = samplesheet
         #Only the files and not the metadata
-        self.dataframe = pd.DataFrame(samplesheet.get_files())
 
     def create_subset(self, run_id, target_size=0.8):
         '''
@@ -39,7 +38,8 @@ class Subsetter:
 
         It will return a list of dict. 
         '''
-        all_non_basecalled_files = self.dataframe[self.dataframe['basecalled'] == False]
+        dataframe = pd.DataFrame(self.samplesheet.get_files())
+        all_non_basecalled_files = dataframe[dataframe['basecalled'] == False]
         #cast to object type beacuse I will have both booleans and strings
         all_non_basecalled_files['basecalled'] = all_non_basecalled_files['basecalled'].astype(object)
 
@@ -57,8 +57,8 @@ class Subsetter:
                 #Add
                 subset.append(row.to_dict())
                 #Update 
-                self.dataframe.loc[i, 'basecalled'] = run_id
-                self.dataframe.loc[i, 'run_id'] = run_id
+                dataframe.loc[i, 'basecalled'] = run_id
+                dataframe.loc[i, 'run_id'] = run_id
                 cumulative_size += file_size
             else: 
                 # Here we can modify the handling of this situation
@@ -68,7 +68,7 @@ class Subsetter:
                 break
 
         #Update the samplesheet file (every file was verified)
-        self.samplesheet.data["files"] = self.dataframe.to_dict(orient='records')
+        self.samplesheet.data["files"] = dataframe.to_dict(orient='records')
         self.samplesheet.update_json_file()
 
         return subset, cumulative_size
