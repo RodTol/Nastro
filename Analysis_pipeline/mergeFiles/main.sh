@@ -55,6 +55,7 @@ samplesheet_path="$1"
 id="$2"
 
 module load samtools
+source ~/python_venvs/fastcat/bin/activate
 
 send_telegram_message "-----ANALYSIS-RUN----- 
 Started analysis run for $id"
@@ -71,12 +72,13 @@ if check_ResultsFiles_in_directory "$output_dir"; then
     echo "Results file are already present!"
 
     # Concatenate fastq files
-    cat_command="cat $output_dir/output/$id/run_${id}_merged.fastq $pathToFinalBasecalling > $output_dir/tmp.fastq"
+    cat_command="fastcat $output_dir/output/$id/run_${id}_merged.fastq $pathToFinalBasecalling > $output_dir/tmp.fastq"
     samtools_command="samtools merge -f -o $output_dir/tmp.bam $pathToFinalAlignment $output_dir/output/$id/bam/run_${id}.bam"
 
     # Execute the cat command
     if eval "$cat_command"; then
         echo "Successfully concatenated fastq files"
+        #Rename
         rsync -a --info=progress2 --remove-source-files $output_dir/tmp.fastq $pathToFinalBasecalling
     else
         echo "Error concatenating fastq files"
@@ -86,6 +88,7 @@ if check_ResultsFiles_in_directory "$output_dir"; then
     # Execute the samtools merge command
     if eval "$samtools_command"; then
         echo "Successfully merged BAM files"
+        #Rename
         rsync -a --info=progress2 --remove-source-files $output_dir/tmp.bam $pathToFinalAlignment
     else
         echo "Error merging BAM files"
