@@ -74,7 +74,8 @@ if __name__ == "__main__":
     #Update samplesheet aligned variables with run_id
     for file in samplesheet.get_files():
         if file["run_id"] == run_params.id:
-            file["aligned"] = run_params.id
+            if file["aligned"] == True or file["aligned"] == "true":
+                file["aligned"] = run_params.id
     
     samplesheet.update_json_file()
 
