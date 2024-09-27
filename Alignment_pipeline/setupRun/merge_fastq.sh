@@ -9,6 +9,10 @@
 #__maintainer__  =
 #__status__      ="Development"
 
+# ---------------------------------------
+# THIS SCRIPT IS NOT USED IN THE PIPELINE
+# ---------------------------------------
+
 
 # Check input arguments
 if [[ $# -ne 3 ]]; then
