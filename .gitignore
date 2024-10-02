@@ -176,3 +176,5 @@ Analysis_pipeline/report_creation/report.out
 Analysis_pipeline/mergeFiles/tmp.fastq
 Analysis_pipeline/mergeFiles/merge.err
 Analysis_pipeline/mergeFiles/merge.out
+Alignment_pipeline/setupRun/merge_fastcat.err
+Alignment_pipeline/setupRun/merge_fastcat.out
