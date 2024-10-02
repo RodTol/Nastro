@@ -107,8 +107,9 @@ class ResourceTuning:
             with open('/u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/subset_creation/computing_profiles/profile0.json', 'r') as file:
                 profile = json.load(file)
 
-            size1, size2 = split_number(subset_length)                
-            profile["batch_size_list"] = [size1, size2]
+            #size1, size2 = split_number(subset_length)                
+            #profile["batch_size_list"] = [size1, size2]
+            profile["batch_size_list"] = subset_length
 
             return ComputingResources(self.run_config, profile["index_host"], profile["port"], profile["nodes_queue"],
                                                         profile["nodes_list"], profile["nodes_ip"], profile["nodes_cpus"], 
