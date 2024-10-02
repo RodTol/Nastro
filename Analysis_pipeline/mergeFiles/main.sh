@@ -55,7 +55,7 @@ samplesheet_path="$1"
 id="$2"
 
 module load samtools
-source ~/python_venvs/fastcat/bin/activate
+conda activate fastcat
 
 send_telegram_message "-----ANALYSIS-RUN----- 
 Started analysis run for $id"
