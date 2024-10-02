@@ -42,8 +42,7 @@ pipeline {
                             #srun -p EPYC -N 1 -c $max_workers --mem=50GB --output=merging.out --time=1:0:0 merge_fastq.sh ${fastq_dir} ${output_dir}/${merged_fastq} $max_workers
                             
                             #Use fastcat
-                            conda activate fastcat
-                            srun -p EPYC -N 1 -c 4 --mem=50GB --output=merging.out --time=1:0:0 fastcat ${fastq_dir} > ${output_dir}/${merged_fastq}
+                            sbatch merge_fastcat.sh ${fastq_dir} ${output_dir}/${merged_fastq}
 
                             python3 main.py '${pathToSamplesheet}' '${pathToRunParams}' ${output_dir}/${merged_fastq}
 
