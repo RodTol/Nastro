@@ -72,9 +72,10 @@ if __name__ == "__main__":
     al_run_config.computing_resources = resourcetuner.compute_resources()
 
     #Update samplesheet aligned variables with run_id
-    for file in samplesheet.get_files():
-        if file["run_id"] == run_params.id:
-            file["aligned"] = run_params.id
+    # for file in samplesheet.get_files():
+    #     if file["run_id"] == run_params.id:
+    #         print(file)
+    #         file["aligned"] = run_params.id
     
     samplesheet.update_json_file()
 
