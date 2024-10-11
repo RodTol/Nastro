@@ -101,6 +101,7 @@ class ResourceTuning:
         subset_length = self._length_of_subset()
         #sprint("Subset Length: ", subset_length)
         #Standard set of resources
+        #TODO add available resource check ?
         if self.run_params.actual_size >= self.run_params.ideal_size:
             print("Using profile 1")
             #TODO path and automatize splitting (count how many nodes I have and distribute files)
@@ -109,12 +110,11 @@ class ResourceTuning:
 
             #size1, size2 = split_number(subset_length)                
             #profile["batch_size_list"] = [size1, size2]
-            profile["batch_size_list"] = subset_length
 
             return ComputingResources(self.run_config, profile["index_host"], profile["port"], profile["nodes_queue"],
                                                         profile["nodes_list"], profile["nodes_ip"], profile["nodes_cpus"], 
                                                         profile["nodes_mem"], profile["nodes_gpus"], profile["gpus"],
-                                                        profile["batch_size_list"])
+                                                        [subset_length])
         #half the ideal size --> one node 2 dgx (half the resources)
         elif self.run_params.actual_size >= self.run_params.ideal_size/4:
             print("Using profile 2")
