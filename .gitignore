@@ -178,3 +178,5 @@ Analysis_pipeline/mergeFiles/merge.err
 Analysis_pipeline/mergeFiles/merge.out
 Alignment_pipeline/setupRun/merge_fastcat.err
 Alignment_pipeline/setupRun/merge_fastcat.out
+Nastro.json
+Nastro.sqlite
