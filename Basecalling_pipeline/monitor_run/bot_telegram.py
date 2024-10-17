@@ -13,7 +13,7 @@ import requests
 
 def telegram_send_file(path_to_file, caption) :
     token = str(os.environ.get('BC_TOKEN_BOT'))
-    chat_id = "-4531622913"
+    chat_id = "-4523992444"
     url = f"https://api.telegram.org/bot{token}/sendDocument"
     files = {'document': open(path_to_file, 'rb')}
     data = {'chat_id': chat_id,'caption': caption}
@@ -28,7 +28,7 @@ def telegram_send_file(path_to_file, caption) :
 
 def telegram_send_message(message) :
     token = str(os.environ.get('BC_TOKEN_BOT'))
-    chat_id = "-4531622913"
+    chat_id = "-4523992444"
     url_req = "https://api.telegram.org/bot" + token + "/sendMessage" + "?chat_id=" + chat_id + "&text=" + message + "&parse_mode=MarkdownV2"
     results = requests.get(url_req)
     
@@ -41,7 +41,7 @@ def telegram_send_message(message) :
 
 def telegram_send_bar(message):
     token = str(os.environ.get('BC_TOKEN_BOT'))
-    chat_id = "-4531622913"
+    chat_id = "-4523992444"
     
     # Escape special characters for Telegram MarkdownV2
     escape_chars = ['_', '*', '[', ']', '(', ')', '~', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
@@ -64,7 +64,7 @@ class Telegram_bar:
 
     def telegram_send_bar(self, message):
         token = str(os.environ.get('BC_TOKEN_BOT'))
-        chat_id = "-4531622913"
+        chat_id = "-4523992444"
         
         # Escape special characters for Telegram MarkdownV2
         escape_chars = ['_', '*', '[', ']', '(', ')', '~', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
