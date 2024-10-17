@@ -43,3 +43,4 @@ dorado_basecall_server \
 --log_path $log_path \
 --device $gpus_settings \
 --port $port 
+#--num_dorado_worker_threads
