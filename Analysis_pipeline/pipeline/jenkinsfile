@@ -26,6 +26,7 @@ pipeline {
                     sh '''                         
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                             cd ${HOME}/Nastro/Analysis_pipeline/mergeFiles
+                            conda activate fastcat
                             sbatch main.sh '${pathToSamplesheet}' '${RunId}'
                         ' 
                     '''

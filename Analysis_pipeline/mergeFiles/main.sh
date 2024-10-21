@@ -55,6 +55,7 @@ samplesheet_path="$1"
 id="$2"
 
 module load samtools
+source ~/.bashrc
 conda activate fastcat
 
 send_telegram_message "-----ANALYSIS-RUN----- 
