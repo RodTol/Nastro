@@ -50,7 +50,7 @@ mkdir -p basecalling_report
 NanoPlot  -t 12 --huge -o $output_dir/basecalling_report --fastq_rich BasecallingResults.fastq &
 
 mkdir -p alignment_report
-samtools sort AlignmentResults.bam -o SortedAlignmentResults.bam
+samtools sort $output_dir/AlignmentResults.bam -o $output_dir/SortedAlignmentResults.bam
 #qualimap bamqc -bam SortedAlignmentResults.bam -outdir $output_dir/alignment_report -nt 12 -outformat PDF --java-mem-size=10G &
 NanoPlot  -t 8 -o $output_dir/alignment_report --bam SortedAlignmentResults.bam &
 
