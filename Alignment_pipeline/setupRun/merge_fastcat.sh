@@ -17,7 +17,6 @@ source ~/.bashrc
 conda activate fastcat
 
 echo "Starting job on $(date)"
-
 fastcat --histograms=${output_dir}/fastcat_histograms $fastq_pass_dir > $merged_fastq_path
 
 echo "Job finished on $(date)"

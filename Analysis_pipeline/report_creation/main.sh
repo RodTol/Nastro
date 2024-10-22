@@ -51,6 +51,7 @@ NanoPlot  -t 12 --huge -o $output_dir/basecalling_report --fastq_rich Basecallin
 
 mkdir -p alignment_report
 samtools sort $output_dir/AlignmentResults.bam -o $output_dir/SortedAlignmentResults.bam
+
 #qualimap bamqc -bam SortedAlignmentResults.bam -outdir $output_dir/alignment_report -nt 12 -outformat PDF --java-mem-size=10G &
 NanoPlot  -t 8 -o $output_dir/alignment_report --bam SortedAlignmentResults.bam &
 
@@ -59,9 +60,11 @@ echo "Report creation is completed"
 
 current_time=$(date +"%Y-%m-%d %H:%M:%S")
 basecalling_report="${output_dir}/basecalling_report/NanoPlot-report.html"
+
 #alignment_report="${output_dir}/alignment_report/report.pdf"
 alignment_report="${output_dir}/alignment_report/NanoPlot-report.html"
 
 # Send the reports
 send_files "$basecalling_report" "Basecalling report generated at $current_time, for run $id"
 send_files "$alignment_report" "Alignment report generated at $current_time, for run $id"
+send_telegram_message "---- run $id FINISHED ----"
