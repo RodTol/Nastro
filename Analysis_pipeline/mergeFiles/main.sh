@@ -72,8 +72,11 @@ pathToFinalAlignment="$output_dir/AlignmentResults.bam"
 if check_ResultsFiles_in_directory "$output_dir"; then
     echo "Results file are already present!"
 
+    #Remove fastcat histograms
+    rm -rf $output_dir/histograms
+
     # Concatenate fastq files
-    cat_command="fastcat --histograms=/dev/null $output_dir/output/$id/run_${id}_merged.fastq $pathToFinalBasecalling > $output_dir/tmp.fastq"
+    cat_command="fastcat --histograms=$output_dir/histograms -o $output_dir/output/$id/run_${id}_merged.fastq $pathToFinalBasecalling > $output_dir/tmp.fastq"
     samtools_command="samtools merge -f -o $output_dir/tmp.bam $pathToFinalAlignment $output_dir/output/$id/bam/run_${id}.bam"
 
     # Execute the cat command
