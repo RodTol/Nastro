@@ -4,7 +4,7 @@ import csv
 import subprocess
 import sys
 
-def log_gpu_usage(log_file, interval=1):
+def log_gpu_usage(log_file, interval=2):
     # Create the log file and write the header if it doesn't exist
     file_exists = os.path.isfile(log_file)
     with open(log_file, 'a') as f:
