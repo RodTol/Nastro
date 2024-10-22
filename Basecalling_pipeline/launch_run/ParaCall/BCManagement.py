@@ -209,7 +209,7 @@ class BCWorkloadState:
             failed_full_job_output_dir = os.path.join(self.OUTPUTDIR, bc_work.job_output_dir.replace("TMPOUTPUT","FAILEDOUTPUT"))
 
             #Update the samplesheet
-            self.samplesheet.data = samplesheet.read_file()
+            self.samplesheet.data = self.samplesheet.read_file()
             #Insert the update
             for entry in self.samplesheet.get_files():
                 if entry["path"] in input_files:
@@ -237,7 +237,7 @@ class BCWorkloadState:
                     os.rename(entry.path, dst)  # it will move the fastq file to the final destination
             
             #Update the samplesheet
-            self.samplesheet.data = samplesheet.read_file()
+            self.samplesheet.data = self.samplesheet.read_file()
             #Insert the update
             for entry in self.samplesheet.get_files():
                 if entry["path"] in input_files:
