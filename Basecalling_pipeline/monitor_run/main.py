@@ -15,6 +15,7 @@ from time import sleep
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from Basecalling_pipeline.subset_creation.config_file_api import *
 from Basecalling_pipeline.subset_creation.runParameters import runParameters
+from Basecalling_pipeline.subset_creation.resource_profiler import IDEAL_RUN_TIME
 from Basecalling_pipeline.samplesheet_check.samplesheet_api import Samplesheet
 
 from bot_telegram import *
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     #TODO get this 4 from the max configuration json 
     ideal_size = run_params.ideal_size*total_gpus/4
 
-    expected_time = 10*run_params.actual_size/ideal_size
+    expected_time = IDEAL_RUN_TIME*run_params.actual_size/ideal_size
     sleeping_time = (expected_time/5)*60
     #If too small set to 1 minutes
     if sleeping_time < 60:

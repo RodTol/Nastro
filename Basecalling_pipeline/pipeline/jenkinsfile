@@ -22,19 +22,6 @@ pipeline {
                 }    
             }
         }      
-        stage('Cleanup software dir') {
-            steps {    
-                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {     
-                    /*Check if all the trash is removed in the correct way*/                                       
-                    sh '''
-                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                                cd /u/area/jenkins_onpexp/Nastro/Basecalling_pipeline
-                                rm -rf __pycache__
-                            '
-                    '''
-                }
-            }
-        }
         stage('Read and check the samplesheet') {
             steps {    
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {                                            
