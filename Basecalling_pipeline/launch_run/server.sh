@@ -37,6 +37,9 @@ echo -e "${GREEN}Port: $port ${RESET}"
 #In case dorado is not added to PATH
 #dorado_server_path=
 
+#Collect the GPU performance data
+python3 ${HOME}/Nastro/GPU_log/gpu_log_collector.py $log_path/gpu_utilization.csv &
+
 #Launching the dorado basecaller server
 dorado_basecall_server \
 --config $model \

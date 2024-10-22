@@ -141,7 +141,6 @@ if ((my_index == host_index)); then
       sleep 1
   fi
   echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") BCM is up and running. ${RESET}"
-    
 fi
 
 # Start BCProcessor. Remember to give the port to its dorado engine
