@@ -28,7 +28,7 @@ fast_v100_speed_GB = float('1.18e-02')*conversion_rate_Gbases_to_GB
 hac_v100_speed_GB = float('2.01e-03')*conversion_rate_Gbases_to_GB
 sup_v100_speed_GB = float('3.79e-04')*conversion_rate_Gbases_to_GB
 
-#TODO maybe make this time an input from config file ?
+#TODO IMPORTANT maybe make this time an input from config file ?
 IDEAL_RUN_TIME = 40 
 #For 2 nodes with 2 dgx that will take IDEAL_RUN_TIME mins
 FAST_IDEAL_SIZE_GB = 4*fast_a100_speed_GB*IDEAL_RUN_TIME*60
