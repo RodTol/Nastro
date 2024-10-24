@@ -173,6 +173,51 @@ class Samplesheet:
                 return entry["run_id"]
         print(f"I wasn't able to find {name}")
         return False      
+    
+    def summary_runs(self):
+        self.data = self.read_file()
+        runs_id = []
+        for entry in self.data["files"]:
+            if entry["run_id"] not in runs_id:
+                runs_id.append(entry["run_id"])                
+
+        # Create a list to store our table rows
+        table = []
+        
+        # Add header row
+        table.append(f"{'Run ID':<10} {'Basecalled':<20} {'Aligned':<20}")
+        table.append("-" * 50)  # Separator line
+
+        for run in runs_id:
+            status = self.status_run(run)
+            file_to_do = status[0]
+            file_basecalled = status[2]
+            file_aligned = status[3]
+            
+            # Add a row for each run
+            table.append(f"{run:<10} {file_basecalled}/{file_to_do:<20} {file_aligned}/{file_to_do:<20}")
+
+        # Join all rows into a single string
+        return "\n".join(table)
+
+    def status_run(self, run_id):
+        self.data = self.read_file()
+        file_to_do = 0
+        file_done = 0
+        file_basecalled = 0
+        file_aligned = 0
+        for entry in self.data["files"]:
+            if entry["run_id"] == run_id:
+                file_to_do = file_to_do + 1
+                if entry["basecalled"] == "True" and entry["aligned"] == "True":
+                    file_done = file_done + 1
+                elif entry["basecalled"] == "True" and entry["aligned"] == "False":
+                    file_aligned = file_basecalled + 1                    
+                elif entry["basecalled"] == "False" and entry["aligned"] == "False":
+                    file_aligned = file_aligned + 1
+                else:
+                    return "Unknown"
+        return [file_to_do, file_done, file_basecalled, file_aligned]
 
 def create_samplesheet_entry(file_path):
     '''
