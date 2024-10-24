@@ -41,9 +41,7 @@ echo -e "${GREEN}Port: $port ${RESET}"
 python3 ${HOME}/Nastro/GPU_log/gpu_log_collector.py $log_path/gpu_utilization.csv &
 
 #Launching Orfeo bot
-source ~/python_venvs/orfeo_telegram_on_epyc/bin/activate
-python3 /u/area/jenkins_onpexp/LTS_tolloi/Orfeo_bot/main.py ${pathToSamplesheet} &
-deactivate
+python3 /u/area/jenkins_onpexp/LTS_tolloi/Orfeo_bot/main.py $SAMPLESHEET &
 
 #Launching the dorado basecaller server
 dorado_basecall_server \
