@@ -111,6 +111,7 @@ class Samplesheet:
         '''
         Return the metadata section of the JSON file
         '''
+        self.data = self.read_file()
         return self.data.get("metadata", {})
 
     def set_metadata(self, metadata):
@@ -126,6 +127,7 @@ class Samplesheet:
         '''
         Return the files section of the JSON file
         '''
+        self.data = self.read_file()
         return self.data.get("files", [])
 
     def add_file(self, file_entry):
