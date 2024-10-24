@@ -14,12 +14,12 @@ import json
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from Basecalling_pipeline.subset_creation.runParameters import runParameters
+from Basecalling_pipeline.subset_creation.resource_profiler import IDEAL_RUN_TIME
 from al_config_file_api import ComputingResources
 from al_config_file_api import AlConfigFile
 
 
 cpus_32_speed = 0.02987 # in GB/s
-IDEAL_RUN_TIME = 10 
 IDEAL_SIZE_GB = cpus_32_speed*IDEAL_RUN_TIME*60 #around 17.9 GB
 
 
