@@ -180,3 +180,5 @@ Alignment_pipeline/setupRun/merge_fastcat.err
 Alignment_pipeline/setupRun/merge_fastcat.out
 Nastro.json
 Nastro.sqlite
+Analysis_pipeline/mergeFiles/fastcat-histograms/length.hist
+Analysis_pipeline/mergeFiles/fastcat-histograms/quality.hist
