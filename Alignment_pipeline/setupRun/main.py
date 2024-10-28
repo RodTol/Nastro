@@ -77,8 +77,7 @@ if __name__ == "__main__":
     #     if file["run_id"] == run_params.id:
     #         print(file)
     #         file["aligned"] = run_params.id
-    
-    samplesheet.update_json_file()
+    #samplesheet.update_json_file()
 
     normalized_ideal_size = resourcetuner.ideal_size*float(al_run_config.computing_resources.node_cpus)/32
     expected_time = IDEAL_RUN_TIME*size/normalized_ideal_size
