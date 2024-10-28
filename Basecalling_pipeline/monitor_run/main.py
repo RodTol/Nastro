@@ -42,7 +42,7 @@ if __name__ == "__main__":
     message = f"""I am watching the run `{run_params.id}`
 This run has a size of `{round(run_params.actual_size,2)} GB`
 Resources: {total_gpus} GPUs
-For a 10 minutes run we have an ideal size of `{round(ideal_size,2)} GB`
+For a {IDEAL_RUN_TIME} minutes run we have an ideal size of `{round(ideal_size,2)} GB`
 So the expected time is `{round(expected_time,2)} minutes`
 I will send a message each {round(sleeping_time, 2)} s
 """

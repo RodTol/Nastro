@@ -18,6 +18,7 @@ from Basecalling_pipeline.subset_creation.runParameters import runParameters
 from Basecalling_pipeline.samplesheet_check.samplesheet_api import Samplesheet
 from Basecalling_pipeline.subset_creation.config_file_api import ConfigFile
 from Basecalling_pipeline.monitor_run.bot_telegram import telegram_send_bar
+from Basecalling_pipeline.subset_creation.resource_profiler import IDEAL_RUN_TIME
 
 from al_config_file_api import *
 from profiler import ResourceTuner
@@ -80,7 +81,7 @@ if __name__ == "__main__":
     samplesheet.update_json_file()
 
     normalized_ideal_size = resourcetuner.ideal_size*float(al_run_config.computing_resources.node_cpus)/32
-    expected_time = 10*size/normalized_ideal_size
+    expected_time = IDEAL_RUN_TIME*size/normalized_ideal_size
 
     # Get the current date and time
     current_datetime = datetime.now()
@@ -90,7 +91,7 @@ if __name__ == "__main__":
 I am watching the AL-run `{run_params.id}`
 The fastq file has a size of `{round(size,2)} GB`
 Resources: {al_run_config.computing_resources.node_cpus} CPUs
-For a 10 minutes run we have an ideal size of `{normalized_ideal_size} GB`
+For a {IDEAL_RUN_TIME} minutes run we have an ideal size of `{normalized_ideal_size} GB`
 So the expected time is `{round(expected_time,2)} minutes`
 """
     telegram_send_bar(message)        
