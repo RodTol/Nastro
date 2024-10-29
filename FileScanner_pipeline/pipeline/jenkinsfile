@@ -30,7 +30,7 @@ pipeline {
                             source ~/python_venvs/login_venv_jenkins/bin/activate
                             cd ${HOME}/Nastro/FileScanner_pipeline/scan_dir
                             mkdir -p '${outputLocation}'/scan_logs
-                            srun -p EPYC -N 1 -n 1 -c 1 --time=1:0:0 --output='${outputLocation}'/scan_logs/$(date +%Y%m%d_%H%M%S)_scan.log \
+                            srun -p EPYC -N 1 -n 1 -c 1 --time=2:0:0 --output='${outputLocation}'/scan_logs/$(date +%Y%m%d_%H%M%S)_scan.log \
                             --job-name=dir_scanning python3 main.py '${pathToDir}' '${basecallingModel}' '${outputLocation}'
                             deactivate
                         ' 
