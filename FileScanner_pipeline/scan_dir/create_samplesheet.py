@@ -148,7 +148,10 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
                     bar.increase(1)
                     telegram_bar.telegram_send_bar(bar.progress_bar)
                 if samplesheet.add_file(create_samplesheet_entry(scanned_file_path)):
+                    # Update the samplesheet since some operation my have been performed in this time
+                    samplesheet.data = samplesheet.read_file() 
                     added_files = added_files + 1
 
     samplesheet.update_json_file()
     return added_files
+

@@ -49,6 +49,9 @@ cd $output_dir
 mkdir -p basecalling_report
 NanoPlot  -t 12 --huge -o $output_dir/basecalling_report --fastq_rich BasecallingResults.fastq &
 
+#Wait for some seconds to avoid not found error
+sleep 5
+
 mkdir -p alignment_report
 samtools sort $output_dir/AlignmentResults.bam -o $output_dir/SortedAlignmentResults.bam
 

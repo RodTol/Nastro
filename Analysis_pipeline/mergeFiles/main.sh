@@ -83,7 +83,8 @@ if check_ResultsFiles_in_directory "$output_dir"; then
     if eval "$cat_command"; then
         echo "Successfully concatenated fastq files"
         #Rename
-        rsync -a --info=progress2 --remove-source-files $output_dir/tmp.fastq $pathToFinalBasecalling
+        #rsync -a --info=progress2 --remove-source-files $output_dir/tmp.fastq $pathToFinalBasecalling
+        mv $output_dir/tmp.fastq $pathToFinalBasecalling
     else
         echo "Error concatenating fastq files"
         exit 1
@@ -93,7 +94,8 @@ if check_ResultsFiles_in_directory "$output_dir"; then
     if eval "$samtools_command"; then
         echo "Successfully merged BAM files"
         #Rename
-        rsync -a --info=progress2 --remove-source-files $output_dir/tmp.bam $pathToFinalAlignment
+        #rsync -a --info=progress2 --remove-source-files $output_dir/tmp.bam $pathToFinalAlignment
+        mv $output_dir/tmp.bam $pathToFinalAlignment
     else
         echo "Error merging BAM files"
         exit 1
@@ -108,6 +110,6 @@ else
     cp "$output_dir/output/$id/run_${id}_merged.fastq" "$pathToFinalBasecalling"
     cp "$output_dir/output/$id/bam/run_${id}.bam" "$pathToFinalAlignment"
 
-    send_telegram_message "No file was present. I successfully moved the files for $id"
+    send_telegram_message "No file was present. I successfully copied the files for $id"
 
 fi
