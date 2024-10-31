@@ -143,13 +143,14 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
                 # But we must reset stdout to its default value every time
                 sys.stdout = sys.__stdout__ 
                 print('Added ', scanned_file_path , ' to the list', flush=True)
+                # Let's get the latest version of samplesheet before updating
+                samplesheet.data = samplesheet.read_file()
                 if bar!=None:
                     #Increase beacuse new file
                     bar.increase(1)
                     telegram_bar.telegram_send_bar(bar.progress_bar)
                 if samplesheet.add_file(create_samplesheet_entry(scanned_file_path)):
                     # Update the samplesheet since some operation my have been performed in this time
-                    samplesheet.data = samplesheet.read_file() 
                     added_files = added_files + 1
 
     samplesheet.update_json_file()
