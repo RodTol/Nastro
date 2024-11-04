@@ -182,8 +182,5 @@ Analysis_pipeline/mergeSummaryTelemetry/merge_*
 Analysis_pipeline/basecalling_report/basecall_report_*
 Analysis_pipeline/alignment_report/al_report_*
 
-Analysis_pipeline/mergeFiles/fastcat-histograms/length.hist
-Analysis_pipeline/mergeFiles/fastcat-histograms/quality.hist
-
 Nastro.json
 Nastro.sqlite
