@@ -11,8 +11,8 @@
 
 #SBATCH --job-name=mergeSummary
 #SBATCH --time=02:00:00
-#SBATCH --output=merge_sum%j.out
-#SBATCH --error=merge_sum%j.err
+#SBATCH --output=merge_sum_%j.out
+#SBATCH --error=merge_sum_%j.err
 #SBATCH -A lage
 #SBATCH -p EPYC
 #SBATCH --nodes=1
@@ -65,6 +65,24 @@ pathToFinalTelemetry="$output_dir/sequencing_telemetry.js"
 # Check if the result files already exist in the directory
 if check_ResultsFiles_in_directory "$output_dir"; then
     echo "Results file are already present!"
+
+    #Go into LOGOUTPUT directory
+    cd "$output_dir/output/$id/LOGOUTPUT_"* || { echo "Directory not found"; exit 1; }
+
+    # Merge the sequencing file inside the LOGOUTPUT
+    awk 'FNR==1 && NR!=1 {next} {print}' sequencing_summary_*.txt > merged_sequencing_summary.txt
+
+    # Merge the telemetry file inside LOGOUTPUT
+    jq -s 'add' sequencing_telemetry_*.js > merged_sequencing_telemetry.js
+
+    # Merge them with the already present files
+    awk 'FNR==1 && NR!=1 {next} {print}' merged_sequencing_summary.txt > $pathToFinalSummary 
+    jq -s 'add' merged_sequencing_telemetry.js > $pathToFinalTelemetry
+
+    # Cleanup
+    rm merged_sequencing_summary.txt
+    rm merged_sequencing_telemetry.js
+
 else
     echo "First time creating Results file"
 
@@ -81,7 +99,7 @@ else
     mv merged_sequencing_summary.txt "$pathToFinalSummary"
     mv merged_sequencing_telemetry.js "$pathToFinalTelemetry"
 
-    send_telegram_message "No file was present. I successfully merged the .txt and .js file for $id and
-     moved them inside final output dir"
+    send_telegram_message "No file was present. I successfully merged the .txt and .js file for $id and \
+    moved them inside final output dir"
 
 fi
