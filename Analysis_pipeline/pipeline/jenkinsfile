@@ -32,18 +32,42 @@ pipeline {
                     '''
                 }    
             }
-        }          
-        stage('Create the reports') {
+        }  
+        stage('Merge summary and telemetry files') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     sh '''                         
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                            cd ${HOME}/Nastro/Analysis_pipeline/report_creation
+                            cd ${HOME}/Nastro/Analysis_pipeline/mergeSummaryTelemetry
                             sbatch main.sh '${pathToSamplesheet}' '${RunId}'
                         ' 
                     '''
                 }    
             }
-        }        
+        }
+        stage('Create the basecalling report') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
+                    sh '''                         
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
+                            cd ${HOME}/Nastro/Analysis_pipeline/basecalling_report
+                            sbatch main.sh '${pathToSamplesheet}' '${RunId}'
+                        ' 
+                    '''
+                }    
+            }
+        }    
+        stage('Create the alignment report') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
+                    sh '''                         
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
+                            cd ${HOME}/Nastro/Analysis_pipeline/alignment_report
+                            sbatch main.sh '${pathToSamplesheet}' '${RunId}'
+                        ' 
+                    '''
+                }    
+            }
+        }      
     }
 }
