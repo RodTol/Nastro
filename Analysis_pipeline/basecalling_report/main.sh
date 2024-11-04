@@ -42,6 +42,8 @@ output_dir=$(jq -r '.metadata.outputLocation' "$samplesheet")
 source ~/.bashrc
 conda activate toulligqc
 
+send_telegram_message "Basecall-report is generating for run $id"
+
 cd $output_dir
 
 toulligqc --report-name after_run_$id \
