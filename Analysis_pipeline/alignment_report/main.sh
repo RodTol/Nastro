@@ -43,7 +43,7 @@ source ~/.bashrc
 conda activate pycoQC
 module load samtools
 
-send_telegram_message "Al-report is generating for run $id"
+send_telegram_message "ANALYSIS - Al-report is generating for run $id"
 
 cd $output_dir
 

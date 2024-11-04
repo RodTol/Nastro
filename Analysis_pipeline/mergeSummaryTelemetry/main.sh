@@ -84,7 +84,7 @@ if check_ResultsFiles_in_directory "$output_dir"; then
     rm merged_sequencing_telemetry.js
 
     send_telegram_message "File were already present. Run $id .txt and .js file are merged into the \
-    final one inside the output dir"
+final one inside the output dir"
 
 else
     echo "First time creating Results file"
@@ -103,6 +103,6 @@ else
     mv merged_sequencing_telemetry.js "$pathToFinalTelemetry"
 
     send_telegram_message "No file was present. I successfully merged the .txt and .js file for $id and \
-    moved them inside final output dir"
+moved them inside final output dir"
 
 fi
