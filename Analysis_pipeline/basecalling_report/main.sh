@@ -44,7 +44,7 @@ conda activate toulligqc
 
 cd $output_dir
 
-$ toulligqc --report-name after_run_$id \
+toulligqc --report-name after_run_$id \
             --telemetry-source $output_dir/sequencing_telemetry.js \
             --sequencing-summary-source $output_dir/sequencing_summary.txt \
             --html-report-path report_basecalling.html
