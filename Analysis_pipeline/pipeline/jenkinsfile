@@ -25,11 +25,12 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
                     sh '''                         
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
-                            cd ${HOME}/Nastro/Analysis_pipeline/mergeFiles
+
+                            cd "${HOME}/Nastro/Analysis_pipeline/mergeFiles"
                             conda activate fastcat
 
                             # Submit the job and capture the job ID
-                            job_id=$(sbatch main.sh '${pathToSamplesheet}' '${RunId}' | awk '{print $NF}')
+                            job_id=$(sbatch main.sh "${pathToSamplesheet}" "${RunId}" | awk '{print $NF}')
 
                             # Check if job submission was successful
                             if [[ -z "$job_id" ]]; then
@@ -59,7 +60,7 @@ pipeline {
                             cd ${HOME}/Nastro/Analysis_pipeline/mergeSummaryTelemetry
 
                             # Submit the job and capture the job ID
-                            job_id=$(sbatch main.sh '${pathToSamplesheet}' '${RunId}' | awk '{print $NF}')
+                            job_id=$(sbatch main.sh "${pathToSamplesheet}" "${RunId}" | awk '{print $NF}')
 
                             # Check if job submission was successful
                             if [[ -z "$job_id" ]]; then
