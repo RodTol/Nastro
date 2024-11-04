@@ -27,7 +27,25 @@ pipeline {
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                             cd ${HOME}/Nastro/Analysis_pipeline/mergeFiles
                             conda activate fastcat
-                            sbatch main.sh '${pathToSamplesheet}' '${RunId}'
+
+                            # Submit the job and capture the job ID
+                            job_id=$(sbatch main.sh '${pathToSamplesheet}' '${RunId}' | awk '{print $NF}')
+
+                            # Check if job submission was successful
+                            if [[ -z "$job_id" ]]; then
+                            echo "Failed to submit the job."
+                            exit 1
+                            fi
+
+                            echo "Submitted job with ID: $job_id"
+
+                            # Wait for the job to complete
+                            while squeue -j "$job_id" > /dev/null 2>&1; do
+                            echo "Waiting for job $job_id to complete..."
+                            sleep 10  # Adjust the interval as needed
+                            done
+
+                            echo "Job $job_id has completed."
                         ' 
                     '''
                 }    
@@ -39,7 +57,25 @@ pipeline {
                     sh '''                         
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                             cd ${HOME}/Nastro/Analysis_pipeline/mergeSummaryTelemetry
-                            sbatch main.sh '${pathToSamplesheet}' '${RunId}'
+
+                            # Submit the job and capture the job ID
+                            job_id=$(sbatch main.sh '${pathToSamplesheet}' '${RunId}' | awk '{print $NF}')
+
+                            # Check if job submission was successful
+                            if [[ -z "$job_id" ]]; then
+                            echo "Failed to submit the job."
+                            exit 1
+                            fi
+
+                            echo "Submitted job with ID: $job_id"
+
+                            # Wait for the job to complete
+                            while squeue -j "$job_id" > /dev/null 2>&1; do
+                            echo "Waiting for job $job_id to complete..."
+                            sleep 10  # Adjust the interval as needed
+                            done
+
+                            echo "Job $job_id has completed."                            
                         ' 
                     '''
                 }    

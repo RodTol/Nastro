@@ -49,7 +49,7 @@ cd $output_dir
 
 #Sort the alignment file
 #TODO hardcoded. Make it dependable on the env variable for the number of process
-samtools sort --threads 24 -o SortedAlignmentResults.bam $output_dir/AlignmentResults.bam 
+samtools sort --threads 24 -o SortedAlignmentResults.bam.bai $output_dir/AlignmentResults.bam 
 
 #Create the report 
 pycoQC -f sequencing_summary.txt -a SortedAlignmentResults.bam -o report_alignment.html
