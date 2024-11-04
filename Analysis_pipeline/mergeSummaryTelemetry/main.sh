@@ -11,8 +11,8 @@
 
 #SBATCH --job-name=mergeSummary
 #SBATCH --time=02:00:00
-#SBATCH --output=merge_%j.out
-#SBATCH --error=merge_%j.err
+#SBATCH --output=merge_sum%j.out
+#SBATCH --error=merge_sum%j.err
 #SBATCH -A lage
 #SBATCH -p EPYC
 #SBATCH --nodes=1
@@ -69,7 +69,7 @@ else
     echo "First time creating Results file"
 
     #Go into LOGOUTPUT directory
-    cd "$output_dir/output/$id/LOGOUTPUT_*" || { echo "Directory not found"; exit 1; }
+    cd "$output_dir/output/$id/LOGOUTPUT_"* || { echo "Directory not found"; exit 1; }
 
     # Merge the sequencing file inside the LOGOUTPUT
     awk 'FNR==1 && NR!=1 {next} {print}' sequencing_summary_*.txt > merged_sequencing_summary.txt
