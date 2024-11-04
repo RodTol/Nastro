@@ -39,4 +39,4 @@ if __name__ == "__main__":
     samplesheet.update_json_file()
 
     telegram_send_file(samplesheet.file_path, "This is the updated samplesheet")
-    if path_to_report: telegram_send_file(path_to_report, "and a basic report on the alignment")
+    #if path_to_report: telegram_send_file(path_to_report, "and a basic report on the alignment")

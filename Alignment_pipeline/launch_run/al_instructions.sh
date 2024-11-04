@@ -57,7 +57,7 @@ else
     echo "The command ran successfully."
     module load samtools
     cd $logs_dir
-    samtools flagstat $bam_file > al_basic_report_${id}.txt
+    #samtools flagstat $bam_file > al_basic_report_${id}.txt
     module purge
     python3 ${HOME}/Nastro/Alignment_pipeline/launch_run/update_samplesheet.py $samplesheet $id "Correct" $logs_dir/al_basic_report_${id}.txt
 

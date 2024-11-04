@@ -77,7 +77,7 @@ if check_ResultsFiles_in_directory "$output_dir"; then
 
     # Concatenate fastq files
     cat_command="fastcat --histograms=$output_dir/histograms $output_dir/output/$id/run_${id}_merged.fastq $pathToFinalBasecalling > $output_dir/tmp.fastq"
-    samtools_command="samtools merge -f -o $output_dir/tmp.bam $pathToFinalAlignment $output_dir/output/$id/bam/run_${id}.bam"
+    samtools_command="samtools merge -f -o $output_dir/tmp.bam $pathToFinalAlignment $output_dir/output/$id/run_${id}.bam"
 
     # Execute the cat command
     if eval "$cat_command"; then
@@ -108,7 +108,7 @@ else
 
     # Move the initial .fastq and .bam files to final locations
     cp "$output_dir/output/$id/run_${id}_merged.fastq" "$pathToFinalBasecalling"
-    cp "$output_dir/output/$id/bam/run_${id}.bam" "$pathToFinalAlignment"
+    cp "$output_dir/output/$id/run_${id}.bam" "$pathToFinalAlignment"
 
     send_telegram_message "No file was present. I successfully copied the files for $id"
 

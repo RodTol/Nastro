@@ -23,13 +23,6 @@ from Basecalling_pipeline.subset_creation.resource_profiler import IDEAL_RUN_TIM
 from al_config_file_api import *
 from profiler import ResourceTuner
 
-def create_dir(path):
-    try: 
-        os.makedirs(path, exist_ok = True) 
-        #print("Directory '%s' created successfully" % path) 
-    except OSError as error: 
-        print("Directory '%s' can not be created" % path)
-
 if __name__ == "__main__":
     if len(sys.argv) != 4:
         print("Usage: python3 main.py path/to/samplesheet.json path/to/runparams path/to/merged_fastq")
@@ -38,9 +31,6 @@ if __name__ == "__main__":
     samplesheet = Samplesheet(sys.argv[1])
     run_params = runParameters.from_file(sys.argv[2])
     merged_file = sys.argv[3]
-
-    bam_output_dir = os.path.join(run_params.output_dir, "bam")
-    create_dir(bam_output_dir)
 
     #Get merged file's size
     size = os.path.getsize(merged_file)/(1024**3)
@@ -66,18 +56,11 @@ if __name__ == "__main__":
 
     #TODO should ref_genome be a pipeline parameters, maybe even part of the samplesheet as it is the model ?
     ref_genome = '/orfeo/cephfs/scratch/area/jenkins_onpexp/GRCh38.p14_genomic.fna'
-    al_run_config.alignment = Alignment(al_run_config, merged_file, f"{bam_output_dir}/run_{run_params.id}.bam",
+    al_run_config.alignment = Alignment(al_run_config, merged_file, f"run_{run_params.id}.bam",
                                          run_params.logs_dir, ref_genome, "")
     
     resourcetuner = ResourceTuner(run_params, al_run_config, size)
     al_run_config.computing_resources = resourcetuner.compute_resources()
-
-    #Update samplesheet aligned variables with run_id
-    # for file in samplesheet.get_files():
-    #     if file["run_id"] == run_params.id:
-    #         print(file)
-    #         file["aligned"] = run_params.id
-    #samplesheet.update_json_file()
 
     normalized_ideal_size = resourcetuner.ideal_size*float(al_run_config.computing_resources.node_cpus)/32
     expected_time = IDEAL_RUN_TIME*size/normalized_ideal_size
