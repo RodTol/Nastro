@@ -60,9 +60,9 @@ send_telegram_message "ANALYSIS - Basecall-report is generating for run $id"
 cd $output_dir
 
 toulligqc --report-name after_run_$id \
-            --telemetry-source $output_dir/sequencing_telemetry.js \
-            --sequencing-summary-source $output_dir/sequencing_summary.txt \
-            --html-report-path report_basecalling.html
+          --telemetry-source $output_dir/sequencing_telemetry.js \
+          --sequencing-summary-source $output_dir/sequencing_summary.txt \
+          --html-report-path report_basecalling.html
 
 echo "Basecalling report creation is completed"
 
