@@ -35,6 +35,19 @@ send_files() {
   fi
 }
 
+send_telegram_message() {
+    local MESSAGE="$1"
+    
+    # Encode newline characters
+    local PARSED_MESSAGE=$(echo "$MESSAGE" | sed ':a;N;$!ba;s/\n/%0A/g')
+
+    # Send the message via Telegram API
+    curl -s -X POST "https://api.telegram.org/bot$BC_TOKEN_BOT/sendMessage" \
+        -d "chat_id=$CHAT_ID" \
+        -d "text=$PARSED_MESSAGE" \
+        -d "parse_mode=Markdown"
+}
+
 samplesheet=$1
 id="$2"
 output_dir=$(jq -r '.metadata.outputLocation' "$samplesheet")
