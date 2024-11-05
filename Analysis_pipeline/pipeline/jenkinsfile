@@ -30,7 +30,7 @@ pipeline {
                             conda activate fastcat
 
                             # Submit the job and capture the job ID
-                            job_id=$(sbatch main.sh "${pathToSamplesheet}" "${RunId}" | awk "{print $4}")
+                            job_id=$(sbatch main.sh '${pathToSamplesheet}' '${RunId}' | awk "{print $4}")
 
                             # Check if job submission was successful
                             if [[ -z "$job_id" ]]; then
@@ -60,7 +60,7 @@ pipeline {
                             cd ${HOME}/Nastro/Analysis_pipeline/mergeSummaryTelemetry
 
                             # Submit the job and capture the job ID
-                            job_id=$(sbatch main.sh "${pathToSamplesheet}" "${RunId}" | awk "{print $4}")
+                            job_id=$(sbatch main.sh '${pathToSamplesheet}' '${RunId}' | awk "{print $4}")
                             
                             # Check if job submission was successful
                             if [[ -z "$job_id" ]]; then
