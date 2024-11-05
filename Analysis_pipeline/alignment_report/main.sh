@@ -65,7 +65,7 @@ cd $output_dir
 samtools sort --threads 24 -o SortedAlignmentResults.bam.bai $output_dir/AlignmentResults.bam 
 
 #Create the report 
-pycoQC -f sequencing_summary.txt -a SortedAlignmentResults.bam -o report_alignment.html
+pycoQC -f sequencing_summary.txt -a SortedAlignmentResults.bam.bai -o report_alignment.html
 
 echo "Alignment report creation is completed"
 
