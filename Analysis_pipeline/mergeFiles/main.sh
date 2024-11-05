@@ -11,8 +11,8 @@
 
 #SBATCH --job-name=mergeFiles
 #SBATCH --time=02:00:00
-#SBATCH --output=merge_%j.out
-#SBATCH --error=merge_%j.err
+#SBATCH --output=merge.out
+#SBATCH --error=merge.err
 #SBATCH -A lage
 #SBATCH -p EPYC
 #SBATCH --nodes=1

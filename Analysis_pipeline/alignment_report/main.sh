@@ -16,8 +16,8 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=24
 #SBATCH --mem=60GB
-#SBATCH --output=al_report_%j.out
-#SBATCH --error=al_report_%j.err 
+#SBATCH --output=al_report.out
+#SBATCH --error=al_report.err 
 
 #TODO env variables are forced
 send_files() {

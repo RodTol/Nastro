@@ -11,8 +11,8 @@
 
 #SBATCH --job-name=mergeSummary
 #SBATCH --time=02:00:00
-#SBATCH --output=merge_sum_%j.out
-#SBATCH --error=merge_sum_%j.err
+#SBATCH --output=merge_sum.out
+#SBATCH --error=merge_sum.err
 #SBATCH -A lage
 #SBATCH -p EPYC
 #SBATCH --nodes=1
