@@ -33,11 +33,3 @@ Nastro supports an asynchronous flow, where each processing step runs independen
 The pipeline was developed with flexibility and customization at its core. The personalized samplesheet and metadata collection process simplify integration into data management systems, promoting FAIR data handling principles by design.
 
 ## Get Started
-Visit our [GitHub repository](#) to access the source code, installation instructions, and comprehensive documentation to deploy Nastro in your computational environment.
-
-## Acknowledgments
-Nastro was developed in collaboration with **Area Science Park's Orfeo cluster** to support advanced genomics and epigenomics research. Special thanks to our team for creating **ParallelCall** and ensuring its seamless integration into the pipeline.
-
----
-
-Nastro aims to transform how sequencing data is processed, making ultra-rapid, real-time genomics analysis accessible and customizable for research projects worldwide.
