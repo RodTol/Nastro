@@ -11,13 +11,13 @@
         ""
     ],
     "nodes_cpus": [
-        "32"
+        "256"
     ],
     "nodes_mem": [
-        "100GB"
+        "500GB"
     ],
     "nodes_gpus": [
-        "1"
+        "8"
     ],
     "gpus": [
         "cuda:all"
