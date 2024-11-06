@@ -76,7 +76,8 @@ if check_ResultsFiles_in_directory "$output_dir"; then
     rm -rf $output_dir/histograms
 
     cat_command="fastcat --histograms=$output_dir/histograms $output_dir/output/$id/run_${id}_merged.fastq $pathToFinalBasecalling > $output_dir/tmp.fastq"
-    samtools_command="samtools merge -f -o $output_dir/tmp.bam $pathToFinalAlignment $output_dir/output/$id/run_${id}.bam"
+    #TODO make samtools command use a dynamic value for the number of threads
+    samtools_command="samtools merge -f -@ 4 -o $output_dir/tmp.bam $pathToFinalAlignment $output_dir/output/$id/run_${id}.bam"
 
     # TODO maybe run in parallel the 2 commands ?
     # Execute the cat command
