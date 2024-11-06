@@ -106,11 +106,11 @@ class ResourceTuning:
 
         #TODO maybe add DGX status to be sure what profile is better ?
         profiles = [
-            (self.run_params.ideal_size/8, f'{base_profile_path}/profile1.json'),
-            (self.run_params.ideal_size/4, f'{base_profile_path}/profile2.json'),
-            (self.run_params.ideal_size/2, f'{base_profile_path}/profile2_2.json'),
-            (self.run_params.ideal_size/1.5, f'{base_profile_path}/profile4.json'),
             (self.run_params.ideal_size, f'{base_profile_path}/profile4_4.json')
+            (self.run_params.ideal_size/1.5, f'{base_profile_path}/profile4.json'),
+            (self.run_params.ideal_size/2, f'{base_profile_path}/profile2_2.json'),
+            (self.run_params.ideal_size/4, f'{base_profile_path}/profile2.json'),
+            (0, f'{base_profile_path}/profile1.json'),
         ]
 
         for size_threshold, profile_path in profiles:
