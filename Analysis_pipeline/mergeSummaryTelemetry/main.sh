@@ -76,8 +76,12 @@ if check_ResultsFiles_in_directory "$output_dir"; then
     jq -s 'add' sequencing_telemetry_*.js > merged_sequencing_telemetry.js
 
     # Merge them with the already present files
-    awk 'FNR==1 && NR!=1 {next} {print}' merged_sequencing_summary.txt > $pathToFinalSummary 
-    jq -s 'add' merged_sequencing_telemetry.js > $pathToFinalTelemetry
+    awk 'FNR==1 && NR!=1 {next} {print}' merged_sequencing_summary.txt $pathToFinalSummary  > tmp_sequencing_summary.txt
+    jq -s 'add' merged_sequencing_telemetry.js $pathToFinalTelemetry > tmp_sequencing_telemetry.js
+
+    # Rename
+    mv tmp_sequencing_summary.txt $pathToFinalSummary
+    mv tmp_sequencing_telemetry.js $pathToFinalTelemetry
 
     # Cleanup
     rm merged_sequencing_summary.txt
