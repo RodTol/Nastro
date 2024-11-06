@@ -16,8 +16,8 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=24
 #SBATCH --mem=60GB
-#SBATCH --output=basecall_report.out
-#SBATCH --error=basecall_report.err 
+#SBATCH --output=basecall_report_%j.out
+#SBATCH --error=basecall_report_%j.err 
 
 #TODO env variables are forced
 send_files() {
@@ -58,6 +58,9 @@ conda activate toulligqc
 send_telegram_message "ANALYSIS - Basecall-report is generating for run $id"
 
 cd $output_dir
+
+#Remove old report to avoid errors
+rm -f report_basecalling.html
 
 toulligqc --report-name after_run_$id \
           --telemetry-source $output_dir/sequencing_telemetry.js \

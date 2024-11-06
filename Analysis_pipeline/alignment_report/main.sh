@@ -16,8 +16,8 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=24
 #SBATCH --mem=60GB
-#SBATCH --output=al_report.out
-#SBATCH --error=al_report.err 
+#SBATCH --output=al_report_%j.out
+#SBATCH --error=al_report_%j.err 
 
 #TODO env variables are forced
 send_files() {
@@ -59,6 +59,9 @@ module load samtools
 send_telegram_message "ANALYSIS - Al-report is generating for run $id"
 
 cd $output_dir
+
+#Remove old report to avoid errors 
+rm -f report_alignment.html
 
 #Sort the alignment file
 #TODO hardcoded. Make it dependable on the env variable for the number of process
