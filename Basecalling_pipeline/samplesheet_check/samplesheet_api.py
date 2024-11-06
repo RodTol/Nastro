@@ -218,6 +218,15 @@ class Samplesheet:
                 else:
                     return "Unknown"
         return [file_to_do, file_done, file_basecalled, file_aligned]
+    
+    def list_files(self):
+        self.data = self.read_file()
+        files = []
+        for entry in self.data["files"]:
+            files.append(entry["name"])
+        
+        sorted_filenames = sorted(files, key=lambda x: int(x.split('_')[-1].split('.')[0]))
+        return sorted_filenames
 
 def create_samplesheet_entry(file_path):
     '''

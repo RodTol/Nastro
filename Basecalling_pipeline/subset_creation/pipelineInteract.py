@@ -14,7 +14,7 @@ from requests.auth import HTTPBasicAuth
 class Jenkins_trigger:
 
     def __init__(self): 
-
+        #TODO mask the credentials
         self.jenkins_url='http://jenkins-sandbox.rd.areasciencepark.it:8080'
         self.username ="tolloi"
         self.password = "Alfredo95"
