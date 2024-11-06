@@ -115,7 +115,7 @@ class ResourceTuning:
 
         for size_threshold, profile_path in profiles:
             if self.run_params.actual_size >= size_threshold:
-                print(f"Using profile {profile_path.split('profile')[1].split('.')[0]}")
+                print(f"Using profile {profile_path}")
                 with open(profile_path, 'r') as file:
                     profile = json.load(file)
 
