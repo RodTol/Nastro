@@ -130,5 +130,3 @@ class ResourceTuning:
                     profile["nodes_list"], profile["nodes_ip"], profile["nodes_cpus"], profile["nodes_mem"],
                     profile["nodes_gpus"], profile["gpus"], profile["batch_size_list"]
                 )
-
-        raise ValueError("No valid profile found for the given run parameters.")         
