@@ -30,10 +30,10 @@ sup_v100_speed_GB = float('3.79e-04')*conversion_rate_Gbases_to_GB
 
 #TODO IMPORTANT maybe make this time an input from config file ?
 IDEAL_RUN_TIME = 30
-#For 2 nodes with 2 dgx that will take IDEAL_RUN_TIME mins
-FAST_IDEAL_SIZE_GB = 4*fast_a100_speed_GB*IDEAL_RUN_TIME*60
-HAC_IDEAL_SIZE_GB = 4*hac_a100_speed_GB*IDEAL_RUN_TIME*60
-SUP_IDEAL_SIZE_GB = 4*sup_a100_speed_GB*IDEAL_RUN_TIME*60
+#For 2 nodes with 4 dgx that will take IDEAL_RUN_TIME mins
+FAST_IDEAL_SIZE_GB = 8*fast_a100_speed_GB*IDEAL_RUN_TIME*60
+HAC_IDEAL_SIZE_GB = 8*hac_a100_speed_GB*IDEAL_RUN_TIME*60
+SUP_IDEAL_SIZE_GB = 8*sup_a100_speed_GB*IDEAL_RUN_TIME*60
 
 
 def choose_ideal_size(model):
@@ -94,44 +94,41 @@ class ResourceTuning:
         dir = self.run_params.input_dir
         return count_pod5_files(dir)
 
+
     def compute_resources(self):
         '''
-        For the given run_params return a ComputingResources object
+        For the given run_params, return a ComputingResources object. profile 1 is the weakest profile
+        while 4_4 is the strongest profile. The profiles are based on the number of nodes and the number of
+        gpus assigned to it
         '''
         subset_length = self._length_of_subset()
-        #sprint("Subset Length: ", subset_length)
-        #Standard set of resources
-        #TODO add available resource check ?
-        if self.run_params.actual_size >= self.run_params.ideal_size:
-            print("Using profile 1")
-            #TODO path and automatize splitting (count how many nodes I have and distribute files)
-            with open('/u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/subset_creation/computing_profiles/profile0.json', 'r') as file:
-                profile = json.load(file)
+        base_profile_path = '/u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/subset_creation/computing_profiles'
 
-            #size1, size2 = split_number(subset_length)                
-            #profile["batch_size_list"] = [size1, size2]
+        #TODO maybe add DGX status to be sure what profile is better ?
+        profiles = [
+            (self.run_params.ideal_size/8, f'{base_profile_path}/profile1.json'),
+            (self.run_params.ideal_size/4, f'{base_profile_path}/profile2.json'),
+            (self.run_params.ideal_size/2, f'{base_profile_path}/profile2_2.json'),
+            (self.run_params.ideal_size/1.5, f'{base_profile_path}/profile4.json'),
+            (self.run_params.ideal_size, f'{base_profile_path}/profile4_4.json')
+        ]
 
-            return ComputingResources(self.run_config, profile["index_host"], profile["port"], profile["nodes_queue"],
-                                                        profile["nodes_list"], profile["nodes_ip"], profile["nodes_cpus"], 
-                                                        profile["nodes_mem"], profile["nodes_gpus"], profile["gpus"],
-                                                        [subset_length])
-        #half the ideal size --> one node 2 dgx (half the resources)
-        elif self.run_params.actual_size >= self.run_params.ideal_size/4:
-            print("Using profile 2")
-            with open('/u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/subset_creation/computing_profiles/profile2.json', 'r') as file:
-                profile = json.load(file)
+        for size_threshold, profile_path in profiles:
+            if self.run_params.actual_size >= size_threshold:
+                print(f"Using profile {profile_path.split('profile')[1].split('.')[0]}")
+                with open(profile_path, 'r') as file:
+                    profile = json.load(file)
 
-            return ComputingResources(self.run_config, profile["index_host"], profile["port"], profile["nodes_queue"],
-                                                        profile["nodes_list"], profile["nodes_ip"], profile["nodes_cpus"], 
-                                                        profile["nodes_mem"], profile["nodes_gpus"], profile["gpus"],
-                                                        [subset_length])   
-        #for now less than a quarter will use one a100. Maybe for very very less use v100
-        else: 
-            print("Using profile 3")            
-            with open('/u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/subset_creation/computing_profiles/profile3.json', 'r') as file:
-                profile = json.load(file)
+                if len(profile["nodes_queue"]) >= 2:
+                    size1, size2 = split_number(subset_length)                
+                    profile["batch_size_list"] = [size1, size2]
+                else:
+                    profile["batch_size_list"] = [subset_length]
 
-            return ComputingResources(self.run_config, profile["index_host"], profile["port"], profile["nodes_queue"],
-                                                        profile["nodes_list"], profile["nodes_ip"], profile["nodes_cpus"], 
-                                                        profile["nodes_mem"], profile["nodes_gpus"], profile["gpus"],
-                                                        [subset_length])             
+                return ComputingResources(
+                    self.run_config, profile["index_host"], profile["port"], profile["nodes_queue"],
+                    profile["nodes_list"], profile["nodes_ip"], profile["nodes_cpus"], profile["nodes_mem"],
+                    profile["nodes_gpus"], profile["gpus"], profile["batch_size_list"]
+                )
+
+        raise ValueError("No valid profile found for the given run parameters.")         
