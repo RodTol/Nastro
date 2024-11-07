@@ -64,47 +64,67 @@ pathToFinalTelemetry="$output_dir/sequencing_telemetry.js"
 
 # Check if the result files already exist in the directory
 if check_ResultsFiles_in_directory "$output_dir"; then
-    echo "Results file are already present!"
+    echo "Results files are already present!"
 
-    #Go into LOGOUTPUT directory
-    cd "$output_dir/output/$id/LOGOUTPUT_"* || { echo "Directory not found"; exit 1; }
+    # Iterate over each LOGOUTPUT_* directory
+    for log_dir in "$output_dir/output/$id/LOGOUTPUT_"*; do
+        if [ -d "$log_dir" ]; then
+            echo "Processing $log_dir"
 
-    # Merge the sequencing file inside the LOGOUTPUT
-    awk 'FNR==1 && NR!=1 {next} {print}' sequencing_summary_*.txt > merged_sequencing_summary.txt
+            # Merge the sequencing file inside the current LOGOUTPUT directory
+            awk 'FNR==1 && NR!=1 {next} {print}' $log_dir/sequencing_summary_*.txt > $log_dir/merged_sequencing_summary.txt
+            # Merge the telemetry file inside the current LOGOUTPUT directory
+            jq -s 'add' $log_dir/sequencing_telemetry_*.js > $log_dir/merged_sequencing_telemetry.js
 
-    # Merge the telemetry file inside LOGOUTPUT
-    jq -s 'add' sequencing_telemetry_*.js > merged_sequencing_telemetry.js
+            # Append the merged sequencing summary/telemetry and the final one into the tmp sequencing summary
+            awk 'FNR==1 && NR!=1 {next} {print}' $logs_dir/merged_sequencing_summary.txt $pathToFinalSummary  > $output_dir/tmp_sequencing_summary.txt
+            jq -s 'add' $logs_dir/merged_sequencing_telemetry.js $pathToFinalTelemetry > $output_dir/tmp_sequencing_telemetry.js
 
-    # Merge them with the already present files
-    awk 'FNR==1 && NR!=1 {next} {print}' merged_sequencing_summary.txt $pathToFinalSummary  > tmp_sequencing_summary.txt
-    jq -s 'add' merged_sequencing_telemetry.js $pathToFinalTelemetry > tmp_sequencing_telemetry.js
+            # Rename the tmp to the final one
+            mv $output_dir/tmp_sequencing_summary.txt $pathToFinalSummary
+            mv $output_dir/tmp_sequencing_telemetry.js $pathToFinalTelemetry
 
-    # Rename
-    mv tmp_sequencing_summary.txt $pathToFinalSummary
-    mv tmp_sequencing_telemetry.js $pathToFinalTelemetry
+            # Cleanup
+            rm $log_dir/merged_sequencing_summary.txt
+            rm $log_dir/merged_sequencing_telemetry.js
 
-    # Cleanup
-    rm merged_sequencing_summary.txt
-    rm merged_sequencing_telemetry.js
+        else
+            echo "Directory not found: $log_dir"
+        fi
+    done
 
-    send_telegram_message "File were already present. Run $id .txt and .js file are merged into the \
-final one inside the output dir"
+    # Send a notification
+    send_telegram_message "Files were already present. Run $id .txt and .js files are merged into the final one inside the output dir"
 
 else
     echo "First time creating Results file"
 
-    #Go into LOGOUTPUT directory
-    cd "$output_dir/output/$id/LOGOUTPUT_"* || { echo "Directory not found"; exit 1; }
+    # Iterate over each LOGOUTPUT_* directory
+    for log_dir in "$output_dir/output/$id/LOGOUTPUT_"*; do
+        if [ -d "$log_dir" ]; then
+            echo "Processing $log_dir"
 
-    # Merge the sequencing file inside the LOGOUTPUT
-    awk 'FNR==1 && NR!=1 {next} {print}' sequencing_summary_*.txt > merged_sequencing_summary.txt
+            # Merge the sequencing file inside the current LOGOUTPUT directory
+            awk 'FNR==1 && NR!=1 {next} {print}' $log_dir/sequencing_summary_*.txt > $log_dir/merged_sequencing_summary.txt
+            # Merge the telemetry file inside the current LOGOUTPUT directory
+            jq -s 'add' $log_dir/sequencing_telemetry_*.js > $log_dir/merged_sequencing_telemetry.js
 
-    # Merge the telemetry file inside LOGOUTPUT
-    jq -s 'add' sequencing_telemetry_*.js > merged_sequencing_telemetry.js
-    
-    # Move them
-    mv merged_sequencing_summary.txt "$pathToFinalSummary"
-    mv merged_sequencing_telemetry.js "$pathToFinalTelemetry"
+            # Append the merged sequencing summary/telemetry and the final one into the tmp sequencing summary
+            awk 'FNR==1 && NR!=1 {next} {print}' $logs_dir/merged_sequencing_summary.txt $pathToFinalSummary  > $output_dir/tmp_sequencing_summary.txt
+            jq -s 'add' $logs_dir/merged_sequencing_telemetry.js $pathToFinalTelemetry > $output_dir/tmp_sequencing_telemetry.js
+
+            # Rename the tmp to the final one
+            mv $output_dir/tmp_sequencing_summary.txt $pathToFinalSummary
+            mv $output_dir/tmp_sequencing_telemetry.js $pathToFinalTelemetry
+
+            # Cleanup
+            rm $log_dir/merged_sequencing_summary.txt
+            rm $log_dir/merged_sequencing_telemetry.js
+
+        else
+            echo "Directory not found: $log_dir"
+        fi
+    done
 
     send_telegram_message "No file was present. I successfully merged the .txt and .js file for $id and \
 moved them inside final output dir"
