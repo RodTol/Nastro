@@ -77,8 +77,8 @@ if check_ResultsFiles_in_directory "$output_dir"; then
             jq -s 'add' $log_dir/sequencing_telemetry_*.js > $log_dir/merged_sequencing_telemetry.js
 
             # Append the merged sequencing summary/telemetry and the final one into the tmp sequencing summary
-            awk 'FNR==1 && NR!=1 {next} {print}' $logs_dir/merged_sequencing_summary.txt $pathToFinalSummary  > $output_dir/tmp_sequencing_summary.txt
-            jq -s 'add' $logs_dir/merged_sequencing_telemetry.js $pathToFinalTelemetry > $output_dir/tmp_sequencing_telemetry.js
+            awk 'FNR==1 && NR!=1 {next} {print}' $log_dir/merged_sequencing_summary.txt $pathToFinalSummary  > $output_dir/tmp_sequencing_summary.txt
+            jq -s 'add' $log_dir/merged_sequencing_telemetry.js $pathToFinalTelemetry > $output_dir/tmp_sequencing_telemetry.js
 
             # Rename the tmp to the final one
             mv $output_dir/tmp_sequencing_summary.txt $pathToFinalSummary
@@ -102,7 +102,7 @@ else
     #Create empty file
     touch $pathToFinalSummary
     touch $pathToFinalTelemetry
-    
+
     # Iterate over each LOGOUTPUT_* directory
     for log_dir in "$output_dir/output/$id/LOGOUTPUT_"*; do
         if [ -d "$log_dir" ]; then
@@ -114,8 +114,8 @@ else
             jq -s 'add' $log_dir/sequencing_telemetry_*.js > $log_dir/merged_sequencing_telemetry.js
 
             # Append the merged sequencing summary/telemetry and the final one into the tmp sequencing summary
-            awk 'FNR==1 && NR!=1 {next} {print}' $logs_dir/merged_sequencing_summary.txt $pathToFinalSummary  > $output_dir/tmp_sequencing_summary.txt
-            jq -s 'add' $logs_dir/merged_sequencing_telemetry.js $pathToFinalTelemetry > $output_dir/tmp_sequencing_telemetry.js
+            awk 'FNR==1 && NR!=1 {next} {print}' $log_dir/merged_sequencing_summary.txt $pathToFinalSummary  > $output_dir/tmp_sequencing_summary.txt
+            jq -s 'add' $log_dir/merged_sequencing_telemetry.js $pathToFinalTelemetry > $output_dir/tmp_sequencing_telemetry.js
 
             # Rename the tmp to the final one
             mv $output_dir/tmp_sequencing_summary.txt $pathToFinalSummary
