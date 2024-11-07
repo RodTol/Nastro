@@ -69,7 +69,7 @@ if check_ResultsFiles_in_directory "$output_dir"; then
     # Iterate over each LOGOUTPUT_* directory
     for log_dir in "$output_dir/output/$id/LOGOUTPUT_"*; do
         if [ -d "$log_dir" ]; then
-            echo "Processing $log_dir"
+            echo "\n Processing $log_dir \n"
 
             # Merge the sequencing file inside the current LOGOUTPUT directory
             awk 'FNR==1 && NR!=1 {next} {print}' $log_dir/sequencing_summary_*.txt > $log_dir/merged_sequencing_summary.txt
@@ -99,6 +99,10 @@ if check_ResultsFiles_in_directory "$output_dir"; then
 else
     echo "First time creating Results file"
 
+    #Create empty file
+    touch $pathToFinalSummary
+    touch $pathToFinalTelemetry
+    
     # Iterate over each LOGOUTPUT_* directory
     for log_dir in "$output_dir/output/$id/LOGOUTPUT_"*; do
         if [ -d "$log_dir" ]; then
