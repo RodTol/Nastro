@@ -10,6 +10,7 @@
 
 import sys
 import os
+import socket
 import hashlib
 import datetime
 
@@ -21,6 +22,16 @@ from config_file_api import *
 from resource_profiler import *
 from subset_creator import Subsetter
 from pipelineInteract import Jenkins_trigger
+
+# Function to get an available network port
+# Creates a socket, binds it to a random port, gets the port number and closes the socket
+# Returns: int - The available port number
+def get_open_port():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(('', 0))
+    port = sock.getsockname()[1]
+    sock.close()
+    return port
 
 def create_dir(path):
     try: 
@@ -113,10 +124,11 @@ if __name__ == "__main__":
     #Basecalling
     home_dir = os.getenv('HOME')
     supervisor_script_path = os.path.join(home_dir, 'Nastro/Basecalling_pipeline/launch_run/supervisor.sh')
-
+    port = get_open_port()
+    
     # Assign the constructed path to your attribute
     run_config.basecalling = Basecalling(run_config, run_params.basecalling_model, run_params.input_dir,
-                                        run_params.output_dir, run_params.logs_dir, supervisor_script_path)
+                                        run_params.output_dir, run_params.logs_dir, supervisor_script_path, port)
     #Resources
     #Calculate resources and then update the config file
     run_config.computing_resources = ResourceTuning(run_params, run_config).compute_resources()
