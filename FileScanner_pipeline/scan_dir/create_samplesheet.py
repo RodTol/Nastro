@@ -109,51 +109,69 @@ def create_blank_samplesheet(dir, model, outputLocation):
     return file_path.resolve()
 
 def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
+    """
+    Updates a samplesheet by scanning for new pod5 files and adding them if not already present
+    
+    Args:
+        samplesheet: Samplesheet object to update
+        bar: Optional progress bar object
+        telegram_bar: Optional Telegram progress bar object
+    
+    Returns:
+        Number of new files added to the samplesheet
+    """
+    # Get directory from samplesheet metadata
     dir = samplesheet.get_metadata()["dir"]
+    # Get list of all pod5 files in directory
     all_scanned_pod5_files = list_pod5(dir)
     
     added_files = 0
-
+    
+    # Iterate through found pod5 files
     for i,scanned_file_path in enumerate(all_scanned_pod5_files):
+        # Check if file is already in samplesheet
         if samplesheet.file_belongs_to_samplesheet(scanned_file_path):
+            # Remove from list if already present
             all_scanned_pod5_files.pop(i)
-            #Increase beacuse already added
+            # Update progress bars for existing files
             if bar!=None:
                 bar.increase(1)
                 if i==len(all_scanned_pod5_files)-1:
                     telegram_bar.telegram_send_bar(bar.progress_bar)
         else: 
+            # For new files, prepare to inspect the pod5 file
             parser = prepare_pod5_inspect_argparser()
             args = parser.parse_args(['debug', scanned_file_path])
 
-            # Redirect stdout in order to have no prints
+            # Temporarily redirect stdout to suppress output
             sys.stdout = open(os.devnull, 'w')
             try :
-                # Check if it is closed
+                # Try to inspect the pod5 file to verify it's complete/valid
                 inspect_pod5(command=args.command, input_files=args.input_files)
             except Exception as exc:
-                # This is how we handle this exception THAT IS NOT RAISEED
+                # Handle case where file can't be opened (e.g. still being written)
                 sys.stdout = sys.__stdout__ 
                 print(f"Failed to open file {scanned_file_path} due to {exc}", flush=True) 
                 if bar!=None:
-                    #Increase beacuse file was read but not added
+                    # Update progress even for failed files
                     bar.increase(1)  
                     telegram_bar.telegram_send_bar(bar.progress_bar)              
             else:
-                # But we must reset stdout to its default value every time
+                # File inspection succeeded, reset stdout to its default value every time
                 sys.stdout = sys.__stdout__ 
-                print('Added ', scanned_file_path , ' to the list', flush=True)
-                # Let's get the latest version of samplesheet before updating
-                samplesheet.data = samplesheet.read_file()
+                print('Added ', scanned_file_path , ' to the list', flush=True)    
                 if bar!=None:
-                    #Increase beacuse new file
+                    # Update progress for new file
                     bar.increase(1)
-                    telegram_bar.telegram_send_bar(bar.progress_bar)
+                    telegram_bar.telegram_send_bar(bar.progress_bar)        
+                # Reload samplesheet data to get latest version
+                samplesheet.data = samplesheet.read_file()
+                # Create and add new entry to samplesheet
                 if samplesheet.add_file(create_samplesheet_entry(scanned_file_path)):
                     # Update the samplesheet since some operation my have been performed in this time
                     added_files = added_files + 1
                     samplesheet.update_json_file()
 
-    samplesheet.update_json_file()
+    # Final update of samplesheet file
+    #samplesheet.update_json_file()
     return added_files
-

@@ -71,7 +71,7 @@ I am going to scan `{dir}`
                 samplesheet_not_found = True
 
     if samplesheet_not_found :    
-        #Create a new samplesheet
+        #Create a new samplesheet for the new model since there are only one for different models
         samplesheet = Samplesheet(create_blank_samplesheet(dir, model, outputLocation))
         print(f"A {GREEN}new samplesheet{RESET} was created", flush=True)
         added_files = update_samplesheet(samplesheet, bar, telegram_bar)
