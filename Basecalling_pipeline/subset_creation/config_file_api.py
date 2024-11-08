@@ -108,15 +108,16 @@ class Basecalling:
     needs a ConfigFile object, whose data field will be 
     immediatly updated
     '''
-    def __init__(self, config, model: str, input_dir: str, output_dir: str, logs_dir: str, supervisor_script_path: str):
+    def __init__(self, config, model: str, input_dir: str, output_dir: str, logs_dir: str, supervisor_script_path: str, port: int):
         self.config = config
         self._model = model
         self._input_dir = input_dir
         self._output_dir = output_dir
         self._logs_dir = logs_dir
         self._supervisor_script_path = supervisor_script_path
+        self._port = port
 
-    @property
+        
     def model(self):
         return self._model
 
@@ -160,6 +161,15 @@ class Basecalling:
     def supervisor_script_path(self, value):
         self._supervisor_script_path = value
         self.config.data['Basecalling']['supervisor_script_path'] = value
+    
+    @property
+    def port(self):
+        return self._port
+
+    @port.setter 
+    def port(self, value):
+        self._port = value
+        self.config.data['Basecalling']['port'] = value
 
     def to_dict(self):
         '''
@@ -171,7 +181,8 @@ class Basecalling:
             "input_dir": self._input_dir,
             "output_dir": self._output_dir,
             "logs_dir": self._logs_dir,
-            "supervisor_script_path": self._supervisor_script_path
+            "supervisor_script_path": self._supervisor_script_path,
+            "port": self._port
         }            
 
 class ComputingResources:
@@ -436,6 +447,7 @@ def check_config_json_structure(path_to_json):
             "output_dir": str,
             "logs_dir": str,
             "supervisor_script_path": str,
+            "port": int
         },
         "ComputingResources": {
             "index_host": str,
