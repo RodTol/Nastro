@@ -15,6 +15,7 @@ import shutil
 import threading
 import time
 import hashlib
+import socket
 from flask import Flask, request, jsonify
 from collections import namedtuple
 from BCConfiguration import Conf
@@ -343,14 +344,16 @@ class BCManager:
             # NOTHING TO RETURN
             return json.dumps({"ok": True})                
             
+
 #Launching the flask server
 #app.run decide on which host (0.0.0.0 means all) and port to listen
 if __name__ == '__main__':
     json_file_path = sys.argv[1]
     node_index = int(sys.argv[2])
     samplesheet = sys.argv[3]
+    port = sys.argv[4]
     RESTFulAPI = BCManager(json_file_path, node_index, samplesheet)
-    RESTFulAPI.app.run(host='0.0.0.0', port=57967)
+    RESTFulAPI.app.run(host='0.0.0.0', port=port)
 
 
 

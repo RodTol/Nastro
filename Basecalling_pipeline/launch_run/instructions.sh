@@ -49,6 +49,7 @@ model=$(jq -r '.Basecalling.model' "$json_file")
 input_dir=$(jq -r '.Basecalling.input_dir' "$json_file")
 output_dir=$(jq -r '.Basecalling.output_dir' "$json_file") 
 logs_dir=$(jq -r '.Basecalling.logs_dir' "$json_file")
+BC_port=$(jq -r '.Basecalling.port' "$json_file")
 
 host_index=$(jq -r '.ComputingResources.index_host' "$json_file")
 dorado_port=$(jq -r '.ComputingResources.port' "$json_file")
@@ -129,7 +130,7 @@ if ((my_index == host_index)); then
   BC_manager_log_path=${logs_dir}/BCManager_log.txt
   echo -e "${RED}$(date +"%Y-%m-%d %H:%M:%S") BCM is launching. ${RESET}"
   echo "Samplesheet path:" $samplesheet
-  python3 ${HOME}/Nastro/Basecalling_pipeline/launch_run/ParaCall/BCManagement.py $json_file $my_index $samplesheet>> "$BC_manager_log_path" 2>&1 &
+  python3 ${HOME}/Nastro/Basecalling_pipeline/launch_run/ParaCall/BCManagement.py $json_file $my_index $samplesheet $BC_port>> "$BC_manager_log_path" 2>&1 &
   BC_MANAGER_PID=$!
   
   is_ready=$(python3 ${HOME}/Nastro/Basecalling_pipeline/launch_run/check_log_file.py $BC_manager_log_path "Press CTRL+C to quit")

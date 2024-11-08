@@ -54,11 +54,12 @@ class Conf:
         
         conf_instance.mngt_outputdir = config["Basecalling"]["output_dir"]
         conf_instance.mngt_inputdir = config["Basecalling"]["input_dir"]
+        BC_port = config["Basecalling"]["port"]
 
         if node_index != index_host:
-            conf_instance.request_work_url = f'http://{host_address}:57967/assignwork'
+            conf_instance.request_work_url = f'http://{host_address}:{BC_port}/assignwork'
         else:
-            conf_instance.request_work_url = f'http://127.0.0.1:57967/assignwork'
+            conf_instance.request_work_url = f'http://127.0.0.1:{BC_port}/assignwork'
         
         conf_instance.engine_external_script = config["Basecalling"]["supervisor_script_path"]
         conf_instance.engine_outputdir = config["Basecalling"]["output_dir"]
@@ -71,10 +72,10 @@ class Conf:
         conf_instance.engine_model = config["Basecalling"]["model"]
         
         if node_index != index_host:
-            conf_instance.keep_alive_terminate_url = f'http://{host_address}:57967/completed'
-            conf_instance.keep_alive_url = f'http://{host_address}:57967/keepalive'
+            conf_instance.keep_alive_terminate_url = f'http://{host_address}:{BC_port}/completed'
+            conf_instance.keep_alive_url = f'http://{host_address}:{BC_port}/keepalive'
         else:
-            conf_instance.keep_alive_terminate_url = f'http://127.0.0.1:57967/completed'
-            conf_instance.keep_alive_url = f'http://127.0.0.1:57967/keepalive'
+            conf_instance.keep_alive_terminate_url = f'http://127.0.0.1:{BC_port}/completed'
+            conf_instance.keep_alive_url = f'http://127.0.0.1:{BC_port}/keepalive'
 
         return conf_instance
