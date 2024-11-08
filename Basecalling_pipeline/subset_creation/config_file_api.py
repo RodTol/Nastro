@@ -117,7 +117,7 @@ class Basecalling:
         self._supervisor_script_path = supervisor_script_path
         self._port = port
 
-        
+    @property        
     def model(self):
         return self._model
 
