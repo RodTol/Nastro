@@ -218,8 +218,10 @@ class Samplesheet:
                     file_aligned = file_basecalled + 1                    
                 elif entry["basecalled"] == False and entry["aligned"] == False:
                     file_aligned = file_aligned + 1
-                else:
-                    return "Unknown"
+                elif entry["basecalled"] == "Failed" or entry["Failed"] == "True":
+                    file_basecalled = "X"
+                    file_aligned = "X"
+                    return [file_to_do, file_done, file_basecalled, file_aligned]
         return [file_to_do, file_done, file_basecalled, file_aligned]
     
     def list_files(self):
