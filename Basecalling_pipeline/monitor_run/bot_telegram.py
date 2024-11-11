@@ -63,29 +63,54 @@ class Telegram_bar:
         self.last_message_id = None  # Store message ID per instance
 
     def telegram_send_bar(self, message):
-        token = str(os.environ.get('BC_TOKEN_BOT'))
-        chat_id = "-4523992444"
-        
-        # Escape special characters for Telegram MarkdownV2
-        escape_chars = ['_', '*', '[', ']', '(', ')', '~', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
-        for char in escape_chars:
-            message = message.replace(char, '\\' + char)
-        
-        if self.last_message_id is None:
-            # Send new message
-            url_req = f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&text={message}&parse_mode=MarkdownV2"
-            results = requests.get(url_req)
+            token = str(os.environ.get('BC_TOKEN_BOT'))
+            chat_id = "-4523992444"
             
-            if results.status_code == 200:
-                self.last_message_id = results.json()['result']['message_id']
+            # Escape special characters for Telegram MarkdownV2
+            escape_chars = ['_', '*', '[', ']', '(', ')', '~', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+            for char in escape_chars:
+                message = message.replace(char, '\\' + char)
+            
+            if self.last_message_id is None:
+                # Send a new message
+                url = f"https://api.telegram.org/bot{token}/sendMessage"
+                data = {
+                    'chat_id': chat_id,
+                    'text': message,
+                    'parse_mode': 'MarkdownV2'
+                }
+                response = requests.post(url, data=data)
+                
+                if response.status_code == 200:
+                    self.last_message_id = response.json()['result']['message_id']
+                else:
+                    print(f'Failed to send message. Status code: {response.status_code}, Response: {response.text}')
             else:
-                error_message = f'Failed to send message. Status code: {results.status_code}, Response: {results.text}'
-                print(error_message)
-        else:
-            # Update existing message
-            url_req = f"https://api.telegram.org/bot{token}/editMessageText?chat_id={chat_id}&message_id={self.last_message_id}&text={message}&parse_mode=MarkdownV2"
-            results = requests.get(url_req)
-            
-            if results.status_code != 200:
-                error_message = f'Failed to update message. Status code: {results.status_code}, Response: {results.text}'
-                print(error_message)
+                # Try to update the existing message
+                url = f"https://api.telegram.org/bot{token}/editMessageText"
+                data = {
+                    'chat_id': chat_id,
+                    'message_id': self.last_message_id,
+                    'text': message,
+                    'parse_mode': 'MarkdownV2'
+                }
+                response = requests.post(url, data=data)
+                
+                if response.status_code != 200:
+                    # Failed to update the message, send a new one
+                    print(f'Failed to update message. Status code: {response.status_code}, Response: {response.text}')
+                    self.last_message_id = None  # Reset message ID to send a new message
+                    
+                    # Send a new message
+                    url = f"https://api.telegram.org/bot{token}/sendMessage"
+                    data = {
+                        'chat_id': chat_id,
+                        'text': message,
+                        'parse_mode': 'MarkdownV2'
+                    }
+                    response = requests.post(url, data=data)
+                    
+                    if response.status_code == 200:
+                        self.last_message_id = response.json()['result']['message_id']
+                    else:
+                        print(f'Failed to send new message after update failure. Status code: {response.status_code}, Response: {response.text}')
