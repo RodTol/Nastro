@@ -41,8 +41,8 @@ echo -e "${GREEN}Port: $port ${RESET}"
 python3 ${HOME}/Nastro/GPU_log/gpu_log_collector.py $log_path/gpu_utilization.csv &
 
 #Modify the Orfeo bot
-JSON_FILE="/u/area/jenkins_onpexp/LTS_tolloi/Orfeo_bot/config.json" 
-jq --arg path "$SAMPLESHEET" '.SAMPLESHEET_PATH = $path' "$JSON_FILE" > tmp.$$.json && mv tmp.$$.json "$JSON_FILE"
+#JSON_FILE="/u/area/jenkins_onpexp/LTS_tolloi/Orfeo_bot/config.json" 
+#jq --arg path "$SAMPLESHEET" '.SAMPLESHEET_PATH = $path' "$JSON_FILE" > tmp.$$.json && mv tmp.$$.json "$JSON_FILE"
 
 #Launching the dorado basecaller server
 dorado_basecall_server \
