@@ -120,6 +120,8 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
     Returns:
         Number of new files added to the samplesheet
     """
+    # Could lose updates if another program writes to the file between read_file() and update_json_file() calls
+    
     # Get directory from samplesheet metadata
     dir = samplesheet.get_metadata()["dir"]
     # Get list of all pod5 files in directory
@@ -164,7 +166,7 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
                     # Update progress for new file
                     bar.increase(1)
                     telegram_bar.telegram_send_bar(bar.progress_bar)        
-                # Reload samplesheet data to get latest version
+                # RACE CONDITION: Another program could modify the file between these operations
                 samplesheet.data = samplesheet.read_file()
                 # Create and add new entry to samplesheet
                 if samplesheet.add_file(create_samplesheet_entry(scanned_file_path)):
