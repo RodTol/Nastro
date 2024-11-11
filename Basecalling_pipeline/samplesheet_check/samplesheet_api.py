@@ -179,7 +179,10 @@ class Samplesheet:
         runs_id = []
         for entry in self.data["files"]:
             if entry["run_id"] not in runs_id:
-                runs_id.append(entry["run_id"])                
+                if entry["run_id"] == "":
+                    runs_id.append("To be assigned")
+                else:
+                    runs_id.append(entry["run_id"])                
 
         # Create a list to store our table rows
         table = []
@@ -209,11 +212,11 @@ class Samplesheet:
         for entry in self.data["files"]:
             if entry["run_id"] == run_id:
                 file_to_do = file_to_do + 1
-                if entry["basecalled"] == "True" and entry["aligned"] == "True":
+                if entry["basecalled"] == True and entry["aligned"] == True:
                     file_done = file_done + 1
-                elif entry["basecalled"] == "True" and entry["aligned"] == "False":
+                elif entry["basecalled"] == True and entry["aligned"] == False:
                     file_aligned = file_basecalled + 1                    
-                elif entry["basecalled"] == "False" and entry["aligned"] == "False":
+                elif entry["basecalled"] == False and entry["aligned"] == False:
                     file_aligned = file_aligned + 1
                 else:
                     return "Unknown"
