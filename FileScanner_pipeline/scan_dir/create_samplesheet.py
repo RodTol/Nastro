@@ -161,13 +161,13 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
             else:
                 # File inspection succeeded, reset stdout to its default value every time
                 sys.stdout = sys.__stdout__ 
+                # RACE CONDITION: Another program could modify the file between these operations
+                samplesheet.data = samplesheet.read_file()
                 print('Added ', scanned_file_path , ' to the list', flush=True)    
                 if bar!=None:
                     # Update progress for new file
                     bar.increase(1)
                     telegram_bar.telegram_send_bar(bar.progress_bar)        
-                # RACE CONDITION: Another program could modify the file between these operations
-                samplesheet.data = samplesheet.read_file()
                 # Create and add new entry to samplesheet
                 if samplesheet.add_file(create_samplesheet_entry(scanned_file_path)):
                     # Update the samplesheet since some operation my have been performed in this time

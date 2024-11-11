@@ -10,6 +10,7 @@
 
 import json
 import sys 
+import time
 import os
 
 class Samplesheet:
@@ -22,26 +23,32 @@ class Samplesheet:
         self.file_path = file_path
         self.data = self.read_file()
     
-    def read_file(self):
+    def read_file(self, retries=3, delay=2):
         '''
         Given a path to the samplesheet.json file, return it as data. Check if 
-        all the parameters are correct also. THIS DOES NOT UPDATE self.data
+        all the parameters are correct also. THIS DOES NOT UPDATE self.data.
+        Retries in case of JSON decoding errors.
         '''
-        try:
-            with open(self.file_path, 'r') as file:
-                data = json.load(file)
-        except FileNotFoundError: #Does it exist ?
-            print(f"File not found: {self.file_path}") 
-            sys.exit(1)
-        except json.JSONDecodeError: #Is it a json ?
-            print(f"Error decoding JSON from file: {self.file_path}")
-            sys.exit(1)
-
-        if self._verify_samplesheet(data):
-            return data
-        else:
-            print("Something went wrong. See above for the exception")
-            sys.exit(1)
+        attempt = 0
+        while attempt < retries:
+            try:
+                with open(self.file_path, 'r') as file:
+                    data = json.load(file)
+                # Verify the samplesheet data
+                if self._verify_samplesheet(data):
+                    return data
+                else:
+                    print("Samplesheet verification failed. See above for details.")
+                    sys.exit(1)
+            except FileNotFoundError:  # Does it exist?
+                print(f"File not found: {self.file_path}")
+                sys.exit(1)
+            except json.JSONDecodeError:  # Is it a JSON file?
+                attempt += 1
+                print(f"Error decoding JSON from file: {self.file_path}. Retrying (attempt #{attempt}) in {delay} seconds...")
+                time.sleep(delay)
+        print("Failed to read valid JSON data after multiple attempts.")
+        sys.exit(1)
 
     def _verify_samplesheet(self, json_data):
         '''
@@ -259,3 +266,12 @@ def create_samplesheet_entry(file_path):
         print(f"An error occurred while creating samplesheet entry: {e}")
         return None
 
+if __name__ == "__main__":
+    # Parse command-line arguments
+    if len(sys.argv) != 2:
+        print("Usage: python samplesheet_api.py <path_to_samplesheet.json>")
+        sys.exit(1)
+
+    file_path = sys.argv[1]
+    samplesheet = Samplesheet(file_path)
+    samplesheet.summary()
