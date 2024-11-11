@@ -179,8 +179,10 @@ Alignment_pipeline/setupRun/merge_fastcat.out
 Analysis_pipeline/mergeFiles/merge_*
 Analysis_pipeline/mergeFiles/tmp.fastq
 Analysis_pipeline/mergeSummaryTelemetry/merge_*
-Analysis_pipeline/basecalling_report/basecall_report_*
-Analysis_pipeline/alignment_report/al_report_*
+Analysis_pipeline/alignment_report/al_report.err
+Analysis_pipeline/alignment_report/al_report.out
+Analysis_pipeline/basecalling_report/basecall_report.err
+Analysis_pipeline/basecalling_report/basecall_report.out
 
 Nastro.json
 Nastro.sqlite
