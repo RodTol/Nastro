@@ -186,3 +186,6 @@ Analysis_pipeline/basecalling_report/basecall_report.out
 
 Nastro.json
 Nastro.sqlite
+
+docs/Gemfile.lock
+docs/_site/
