@@ -274,4 +274,4 @@ if __name__ == "__main__":
 
     file_path = sys.argv[1]
     samplesheet = Samplesheet(file_path)
-    samplesheet.summary()
+    print(samplesheet.summary_runs())
