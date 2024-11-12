@@ -216,19 +216,21 @@ class Samplesheet:
         file_done = 0
         file_basecalled = 0
         file_aligned = 0
+        
         for entry in self.data["files"]:
             if entry["run_id"] == run_id:
-                file_to_do = file_to_do + 1
-                if entry["basecalled"] == True and entry["aligned"] == True:
-                    file_done = file_done + 1
-                elif entry["basecalled"] == True and entry["aligned"] == False:
-                    file_aligned = file_basecalled + 1                    
-                elif entry["basecalled"] == False and entry["aligned"] == False:
-                    file_aligned = file_aligned + 1
-                elif entry["basecalled"] == "Failed" or entry["Failed"] == "True":
-                    file_basecalled = "X"
-                    file_aligned = "X"
+                file_to_do += 1  # Count all files for this run
+                if entry["basecalled"] and entry["aligned"]:
+                    file_done += 1  # Fully processed files
+                elif entry["basecalled"] and not entry["aligned"]:
+                    file_basecalled += 1  # Basecalled but not aligned
+                elif not entry["basecalled"] and not entry["aligned"]:
+                    file_aligned += 1  # Neither basecalled nor aligned
+                elif entry.get("basecalled") == "Failed" or entry.get("Failed") == "True":
+                    file_basecalled = "X"  # Mark failure
+                    file_aligned = "X"  # Mark failure
                     return [file_to_do, file_done, file_basecalled, file_aligned]
+
         return [file_to_do, file_done, file_basecalled, file_aligned]
     
     def list_files(self):
