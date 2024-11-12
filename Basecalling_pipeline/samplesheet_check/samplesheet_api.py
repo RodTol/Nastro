@@ -12,6 +12,7 @@ import json
 import sys 
 import time
 import os
+import portalocker
 
 class Samplesheet:
     '''
@@ -24,31 +25,28 @@ class Samplesheet:
         self.data = self.read_file()
     
     def read_file(self, retries=3, delay=2):
-        '''
-        Given a path to the samplesheet.json file, return it as data. Check if 
-        all the parameters are correct also. THIS DOES NOT UPDATE self.data.
-        Retries in case of JSON decoding errors.
-        '''
+        """
+        Reads the samplesheet JSON file with a lock to prevent concurrent access.
+        THIS DOES NOT UPDATE self.data.
+        """
         attempt = 0
         while attempt < retries:
             try:
                 with open(self.file_path, 'r') as file:
+                    portalocker.lock(file, portalocker.LOCK_SH)  # Shared lock for reading
                     data = json.load(file)
-                # Verify the samplesheet data
+                    portalocker.unlock(file)
                 if self._verify_samplesheet(data):
                     return data
                 else:
-                    print("Samplesheet verification failed. See above for details.")
-                    sys.exit(1)
-            except FileNotFoundError:  # Does it exist?
-                print(f"File not found: {self.file_path}")
-                sys.exit(1)
-            except json.JSONDecodeError:  # Is it a JSON file?
+                    print("Samplesheet verification failed.")
+                    return None
+            except (FileNotFoundError, json.JSONDecodeError):
                 attempt += 1
                 print(f"Error decoding JSON from file: {self.file_path}. Retrying (attempt #{attempt}) in {delay} seconds...")
                 time.sleep(delay)
-        print("Failed to read valid JSON data after multiple attempts.")
-        sys.exit(1)
+        print("Failed to read JSON data after multiple attempts.")
+        return None
 
     def _verify_samplesheet(self, json_data):
         '''
@@ -98,15 +96,15 @@ class Samplesheet:
         return True            
     
     def update_json_file(self):
-        '''
-        Update the actual JSON file with the current data object
-        '''
+        """Updates the JSON file with the current data and locks to prevent race conditions."""
         try:
             with open(self.file_path, 'w') as file:
+                portalocker.lock(file, portalocker.LOCK_EX)  # Exclusive lock for writing
                 json.dump(self.data, file, indent=4)
+                portalocker.unlock(file)
             print("Samplesheet JSON file updated successfully.")
         except Exception as e:
-            print(f"An error occurred while updating the JSON file: {e}")    
+            print(f"Error updating JSON file: {e}") 
 
     def print_json_format(self):
         '''
