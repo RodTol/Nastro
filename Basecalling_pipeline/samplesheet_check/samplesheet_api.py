@@ -185,7 +185,8 @@ class Samplesheet:
         for entry in self.data["files"]:
             if entry["run_id"] not in runs_id:
                 if entry["run_id"] == "":
-                    runs_id.append("To be assigned")
+                    if "To be assigned" not in runs_id:
+                        runs_id.append("To be assigned")
                 else:
                     runs_id.append(entry["run_id"])                
 
