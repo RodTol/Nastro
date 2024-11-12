@@ -198,15 +198,25 @@ class Samplesheet:
         table.append(f"{'Run ID':<10} {'Basecalled':<20} {'Aligned':<20}")
         table.append("-" * 50)  # Separator line
 
+        total_file = 0
+        total_basecalled = 0
+        total_aligned = 0
+
         for run in runs_id:
             status = self.status_run(run)
             file_to_do = status[0]
-            file_done = status[1]
-            file_basecalled = status[2]
-            file_aligned = status[3]
+            total_file += file_to_do
+            file_basecalled = status[1]
+            total_basecalled += file_basecalled if isinstance(file_basecalled, int) else 0
+            file_aligned = status[2]
+            total_aligned += file_aligned if isinstance(file_aligned, int) else 0
             
             # Add a row for each run
             table.append(f"{run:<10} {file_basecalled}/{file_to_do:<20} {file_aligned}/{file_to_do:<20}")
+
+        # Add totals row
+        table.append("-" * 50)  # Separator line
+        table.append(f"{'Total':<10} {total_basecalled}/{total_file:<20} {total_aligned}/{total_file:<20}")
 
         # Join all rows into a single string
         return "\n".join(table)
@@ -214,7 +224,6 @@ class Samplesheet:
     def status_run(self, run_id):
         self.data = self.read_file()
         file_to_do = 0
-        file_done = 0
         file_basecalled = 0
         file_aligned = 0
         
@@ -222,7 +231,6 @@ class Samplesheet:
             if entry["run_id"] == run_id:
                 file_to_do += 1  # Count all files for this run
                 if entry["basecalled"] and entry["aligned"]:
-                    file_done += 1  # Fully processed files  
                     file_basecalled += 1  
                     file_aligned += 1
                 elif entry["basecalled"] and not entry["aligned"]:
@@ -230,9 +238,9 @@ class Samplesheet:
                 elif entry["basecalled"] == "Failed":
                     file_basecalled = "X"  # Mark failure
                     file_aligned = "X"  # Mark failure
-                    return [file_to_do, file_done, file_basecalled, file_aligned]
+                    return [file_to_do, file_basecalled, file_aligned]
 
-        return [file_to_do, file_done, file_basecalled, file_aligned]
+        return [file_to_do, file_basecalled, file_aligned]
     
     def list_files(self):
         self.data = self.read_file()
