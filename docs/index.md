@@ -1,19 +1,26 @@
-# Project Documentation
+---
+layout: single
+title: "Nastro documentation"
+permalink: /
+author_profile: true # Displays your profile info on the side
+toc: true
+toc_label: "In this page" # Optional: custom label for TOC
+toc_sticky: true # Optional: makes the TOC sticky as you scroll
+---
 
 Welcome to the project documentation. This guide will help you understand and use the project effectively.
 
 ## Table of Contents
 
-- [Project Documentation](#project-documentation)
-  - [Table of Contents](#table-of-contents)
-  - [Introduction](#introduction)
-  - [Getting Started](#getting-started)
-  - [Features](#features)
-  - [Usage](#usage)
-  - [Configuration](#configuration)
-  - [FAQ](#faq)
-  - [Contributing](#contributing)
-  - [License](#license)
+- [Table of Contents](#table-of-contents)
+- [Introduction](#introduction)
+- [Getting Started](#getting-started)
+- [Features](#features)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [FAQ](#faq)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Introduction
 

@@ -1,5 +1,5 @@
 # Site settings
-title: "Nastro"
+title: "Nastro  🧬"
 description: "Documentation for the Nastro project."
 baseurl: "/Nastro" # Leave empty if this is the main GitHub Pages site; if it's a project page, use '/project-name'
 url: "https://rodtol.github.io" # Your GitHub Pages URL
@@ -22,13 +22,36 @@ defaults:
 
 # Theme-specific settings
 minimal_mistakes_skin: "neon" # Skin options include default, dark, solarized, etc.
+
+include:
+  - assets/css/custom.scss # Custom styles
+
 author:
   name: "Rodolfo Tolloi"
-  avatar: "/docs/assets/logo-area.png" # Optional avatar image
+  avatar: "/assets/logoNastro.png" # Optional avatar image
   bio: "A short bio about yourself."
   location: "Trieste"
   email: "rodolfo.tolloi@areasciencepark.it"
+  links:
+      - label: "GitHub"
+        icon: "fab fa-github"
+        url: "https://github.com/RodTol"
+      - label: "LinkedIn"
+        icon: "fab fa-linkedin"
+        url: "https://www.linkedin.com/in/rodolfo-tolloi-b0b65a217/"
 
+footer:
+  links:
+      - label: "GitHub"
+        icon: "fab fa-github"
+        url: "https://github.com/RodTol"
+      - label: "LinkedIn"
+        icon: "fab fa-linkedin"
+        url: "https://www.linkedin.com/in/rodolfo-tolloi-b0b65a217/"
+      - label: "Jenkins"
+        icon: "fab fa-jenkins"
+        url: "http://localhost:8888/job/tolloi/job/Pipeline_long_reads/"        
+      
 # Exclude unnecessary files from the site
 exclude:
   - Gemfile

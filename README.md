@@ -1,6 +1,9 @@
 <p align="center">
-  <img src="docs/assets/logo-area.png" alt="Area logo" width="200"/>
+  <img src="docs/assets/logoNastro.png" alt="Logo" width="35%"/>
+  <br/>
+  <img src="docs/assets/logo-area.png" alt="Area logo" width="8%"/>
 </p>
+
 
 # Nastro (NAnopore STream Optimized) 🧬
 
