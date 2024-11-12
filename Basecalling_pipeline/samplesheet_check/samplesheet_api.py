@@ -201,6 +201,7 @@ class Samplesheet:
         for run in runs_id:
             status = self.status_run(run)
             file_to_do = status[0]
+            file_done = status[1]
             file_basecalled = status[2]
             file_aligned = status[3]
             
@@ -221,12 +222,12 @@ class Samplesheet:
             if entry["run_id"] == run_id:
                 file_to_do += 1  # Count all files for this run
                 if entry["basecalled"] and entry["aligned"]:
-                    file_done += 1  # Fully processed files
+                    file_done += 1  # Fully processed files  
+                    file_basecalled += 1  
+                    file_aligned += 1
                 elif entry["basecalled"] and not entry["aligned"]:
                     file_basecalled += 1  # Basecalled but not aligned
-                elif not entry["basecalled"] and not entry["aligned"]:
-                    file_aligned += 1  # Neither basecalled nor aligned
-                elif entry.get("basecalled") == "Failed" or entry.get("Failed") == "True":
+                elif entry["basecalled"] == "Failed":
                     file_basecalled = "X"  # Mark failure
                     file_aligned = "X"  # Mark failure
                     return [file_to_do, file_done, file_basecalled, file_aligned]
