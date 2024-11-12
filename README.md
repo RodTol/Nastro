@@ -20,6 +20,10 @@ While ONT's MinKnow software provides a comprehensive solution for sequencing, b
 ### Performance Benchmarks
 Nastro’s efficiency was demonstrated using **2 Nvidia DGX nodes** from [**Area Science Park's Orfeo cluster**](https://orfeo-doc.areasciencepark.it/), where a 16x reduction in basecalling time was achieved compared to the standard ONT computational unit equipped with 4 Nvidia V100 GPUs.
 
+<p align="center">
+  <img src="docs/assets/ParaCallSpeed.png" alt="Area logo" width="600"/>
+</p>
+
 ## Pipeline Workflow
 1. **Data Acquisition**: Automatically detects and integrates new data from the sequencing process.
 2. **Parallel Basecalling**: Using **ParallelCall**, the pipeline distributes the basecalling workload across multiple computational nodes.
@@ -33,3 +37,4 @@ Nastro supports an asynchronous flow, where each processing step runs independen
 The pipeline was developed with flexibility and customization at its core. The personalized samplesheet and metadata collection process simplify integration into data management systems, promoting FAIR data handling principles by design.
 
 ## Get Started
+See the Documentation
