@@ -175,5 +175,5 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
                     samplesheet.update_json_file()
 
     # Final update of samplesheet file
-    #samplesheet.update_json_file()
+    samplesheet.update_json_file()
     return added_files

@@ -22,7 +22,6 @@ if __name__ == "__main__":
     id = sys.argv[2]
     status = sys.argv[3]
     path_to_report = sys.argv[4]
-    #TODO: maybe here I need to update and read each time?
     if status=="Correct":
         telegram_send_bar(f"Run {id} has succesfully completed the alignment")
         for entry in samplesheet.get_files():
@@ -39,4 +38,3 @@ if __name__ == "__main__":
     samplesheet.update_json_file()
 
     telegram_send_file(samplesheet.file_path, "This is the updated samplesheet")
-    #if path_to_report: telegram_send_file(path_to_report, "and a basic report on the alignment")
