@@ -1,0 +1,12 @@
+title: Nastro
+description: an ultra-rapid, open-source computing pipeline for Nanopore data
+baseurl: "/Nastro" # the subpath of your site, e.g. /blog
+url: "https://yourusername.github.io" # the base hostname & protocol for your site
+
+theme: minimal-mistakes-jekyll
+
+# Minimal Mistakes theme settings
+minimal_mistakes_skin: "neon"
+
+# Build settings
+markdown: kramdown
