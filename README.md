@@ -40,4 +40,4 @@ Nastro supports an asynchronous flow, where each processing step runs independen
 The pipeline was developed with flexibility and customization at its core. The personalized samplesheet and metadata collection process simplify integration into data management systems, promoting FAIR data handling principles by design.
 
 ## Get Started
-See the Documentation
+See the [Documentation](https://rodtol.github.io/Nastro/)

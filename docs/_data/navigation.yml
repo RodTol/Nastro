@@ -1,0 +1,41 @@
+main:
+  - title: Structure
+    url: /structure
+  - title: Getting started
+    url: /getting-started
+  - title: Usage
+    url: /usage
+  - title: Configuration
+    url: /configuration
+  - title: Faq  
+    url: /faq
+  - title: License and Contributing
+    url: /General-info
+
+docs:
+  - title: Home Page    
+    url: /
+  - title: Introduction & Structure
+    children:
+      - title: What is Nastro ?
+        url: /introduction
+      - title: The architecture of Nastro
+        url: /structure
+  - title: Getting Started 
+    children:
+      - title: How to get started
+        url: /getting-started
+  - title: Usage and Configuration
+    children:
+      - title: How to use Nastro
+        url: /usage
+      - title: How to configure Nastro
+        url: /configuration        
+  - title: FAQ
+    children:
+      - title: Frequently Asked Questions
+        url: /faq
+  - title: License and Contributing
+    children:
+      - title: Overview
+        url: /General-info

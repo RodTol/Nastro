@@ -2,54 +2,39 @@
 layout: single
 title: "Nastro documentation"
 permalink: /
-author_profile: true # Displays your profile info on the side
+sidebar:
+    nav: "docs"
 toc: true
 toc_label: "In this page" # Optional: custom label for TOC
 toc_sticky: true # Optional: makes the TOC sticky as you scroll
 ---
 
-Welcome to the project documentation. This guide will help you understand and use the project effectively.
-
-## Table of Contents
-
-- [Table of Contents](#table-of-contents)
-- [Introduction](#introduction)
-- [Getting Started](#getting-started)
-- [Features](#features)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [FAQ](#faq)
-- [Contributing](#contributing)
-- [License](#license)
+Welcome to Nastro documentation. This guide will help you understand and use the pipeline.
 
 ## Introduction
 
-Provide a brief overview of the project, its purpose, and its main features.
+A brief overview of the Nastro project, its purpose, and its main features can be found [here](./introduction.md).
 
 ## Getting Started
 
-Instructions on how to set up the project, including prerequisites, installation steps, and initial configuration.
+Instructions on how to set up the project, including prerequisites, installation steps, and initial configuration can be found [here](./getting-started.md).
 
 ## Features
 
-List and describe the main features of the project.
+Details about the main features of the project can be found [here](./features.md).
 
 ## Usage
 
-Detailed instructions on how to use the project, including examples and common use cases.
+Detailed instructions on how to use the project, including examples and common use cases can be found [here](./usage.md).
 
 ## Configuration
 
-Explain how to configure the project, including any configuration files and environment variables.
+Information on how to configure the project can be found [here](./configuration.md).
 
 ## FAQ
 
-Frequently Asked Questions about the project.
+Frequently Asked Questions about the project can be found [here](./faq.md).
 
-## Contributing
+## License and Contributing
 
-Guidelines for contributing to the project, including how to report issues and submit pull requests.
-
-## License
-
-Information about the project's license.
+Information about the project's license and how to contribute to the project can be found [here](./general-info.md).
