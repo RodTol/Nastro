@@ -26,13 +26,13 @@ def profile_resources(slurm_mem, slurm_cpu_number, csv_path, tag):
         with open(filename, mode="w", newline="") as file:
             writer = csv.writer(file)
             writer.writerow(["Timestamp", "Max CPU Usage (%)", "Max Memory Usage (%)", "SLURM Memory", "SLURM CPU Number", "Tag"])
-            writer.writerow([timestamp, max_cpu, max_mem, slurm_mem, slurm_cpu_number, tag])
+            writer.writerow([timestamp, max_cpu, max_mem, float(slurm_mem), float(slurm_cpu_number), tag])
         print(f"Resource usage data saved to {filename}")
 
 def main():
     parser = argparse.ArgumentParser(description="Profile resource usage.")
     parser.add_argument("slurm_mem", type=str, help="SLURM memory allocation")
-    parser.add_argument("slurm_cpu_number", type=int, help="SLURM CPU number allocation")
+    parser.add_argument("slurm_cpu_number", type=str, help="SLURM CPU number allocation")
     parser.add_argument("csv_path", type=str, help="Path to save the CSV file")
     parser.add_argument("tag", type=str, help="Tag for the job")
 
