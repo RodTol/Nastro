@@ -2,7 +2,7 @@ import psutil
 import time
 import csv
 from datetime import datetime
-import argparse
+import sys
 
 def profile_resources(slurm_mem, slurm_cpu_number, csv_path, tag):
     max_cpu = 0.0
@@ -29,27 +29,14 @@ def profile_resources(slurm_mem, slurm_cpu_number, csv_path, tag):
             writer.writerow([timestamp, max_cpu, max_mem, float(slurm_mem), float(slurm_cpu_number), tag])
         print(f"Resource usage data saved to {filename}")
 
-def main():
-    parser = argparse.ArgumentParser(description="Profile resource usage.")
-    parser.add_argument("slurm_mem", type=str, help="SLURM memory allocation")
-    parser.add_argument("slurm_cpu_number", type=str, help="SLURM CPU number allocation")
-    parser.add_argument("csv_path", type=str, help="Path to save the CSV file")
-    parser.add_argument("tag", type=str, help="Tag for the job")
-
-    args = parser.parse_args()
-
-    # Debug prints
-    print(f"SLURM Memory: {args.slurm_mem}")
-    print(f"SLURM CPU Number: {args.slurm_cpu_number}")
-    print(f"CSV Path: {args.csv_path}")
-    print(f"Tag: {args.tag}")
-
-    profile_resources(
-        slurm_mem=args.slurm_mem,
-        slurm_cpu_number=args.slurm_cpu_number,
-        csv_path=args.csv_path,
-        tag=args.tag
-    )
-
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) < 5:
+        print("Usage: python3 resource_profiling.py <SLURM_MEM> <SLURM_CPU_NUMBER> <CSV_PATH> <TAG>")
+        sys.exit(1)
+
+    slurm_mem = sys.argv[1]
+    slurm_cpu_number = sys.argv[2]
+    csv_path = sys.argv[3]
+    tag = sys.argv[4]
+
+    profile_resources(slurm_mem, slurm_cpu_number, csv_path, tag)
