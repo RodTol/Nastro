@@ -10,14 +10,14 @@
 #__status__      ="Development"
 
 #SBATCH --job-name=mergeFiles
-#SBATCH --time=02:00:00
+#SBATCH --time=03:00:00
 #SBATCH --output=merge_%j.out
 #SBATCH --error=merge_%j.err
 #SBATCH -A lage
 #SBATCH -p EPYC
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=16
+#SBATCH --cpus-per-task=24
 #SBATCH --mem=60GB
 
 # Function to check for specific files in a directory
@@ -77,25 +77,34 @@ if check_ResultsFiles_in_directory "$output_dir"; then
 
     cat_command="fastcat --histograms=$output_dir/histograms $output_dir/output/$id/run_${id}_merged.fastq $pathToFinalBasecalling > $output_dir/tmp.fastq"
     #TODO make samtools command use a dynamic value for the number of threads
-    samtools_command="samtools merge -f -@ $SLURM_CPUS_PER_TASK -o $output_dir/tmp.bam $pathToFinalAlignment $output_dir/output/$id/run_${id}.bam"
+    samtools_command="samtools merge -f -@ $((SLURM_CPUS_PER_TASK / 2)) -o $output_dir/tmp.bam $pathToFinalAlignment $output_dir/output/$id/run_${id}.bam"
 
-    # TODO maybe run in parallel the 2 commands ?
-    # Execute the cat command
-    if eval "$cat_command"; then
+    # Run the cat command and samtools command in parallel
+    eval "$cat_command" &
+    cat_pid=$!
+
+    eval "$samtools_command" &
+    samtools_pid=$!
+
+    # Wait for both commands to finish
+    wait $cat_pid
+    cat_status=$?
+
+    wait $samtools_pid
+    samtools_status=$?
+
+    # Check the status of the cat command
+    if [ $cat_status -eq 0 ]; then
         echo "Successfully concatenated fastq files"
-        #Rename
-        #rsync -a --info=progress2 --remove-source-files $output_dir/tmp.fastq $pathToFinalBasecalling
         mv $output_dir/tmp.fastq $pathToFinalBasecalling
     else
         echo "Error concatenating fastq files"
         exit 1
     fi
 
-    # Execute the samtools merge command
-    if eval "$samtools_command"; then
+    # Check the status of the samtools command
+    if [ $samtools_status -eq 0 ]; then
         echo "Successfully merged BAM files"
-        #Rename
-        #rsync -a --info=progress2 --remove-source-files $output_dir/tmp.bam $pathToFinalAlignment
         mv $output_dir/tmp.bam $pathToFinalAlignment
     else
         echo "Error merging BAM files"

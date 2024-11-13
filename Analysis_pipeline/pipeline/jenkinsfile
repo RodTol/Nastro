@@ -56,7 +56,7 @@ pipeline {
                     sh '''                         
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                             cd ${HOME}/Nastro/Analysis_pipeline/basecalling_report
-                            sbatch main.sh '${pathToSamplesheet}' '${RunId}'
+                            sbatch --wait main.sh '${pathToSamplesheet}' '${RunId}'
                         ' 
                     '''
                 }    
@@ -68,7 +68,7 @@ pipeline {
                     sh '''                         
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                             cd ${HOME}/Nastro/Analysis_pipeline/alignment_report
-                            sbatch main.sh '${pathToSamplesheet}' '${RunId}'
+                            sbatch --wait main.sh '${pathToSamplesheet}' '${RunId}'
                         ' 
                     '''
                 }    
