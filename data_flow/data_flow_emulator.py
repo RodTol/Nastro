@@ -8,12 +8,10 @@
 #__maintainer__  =
 #__status__      ="Development"
 
-
 import os
 import sys
 import shutil
 import time
-
 
 def list_all_pod5_files(input_dir) :
     all_files= os.listdir(input_dir)
@@ -22,6 +20,7 @@ def list_all_pod5_files(input_dir) :
 
 def mimic_live_writing(src_dir, dest_dir, interval_seconds=10):
     files = list_all_pod5_files(src_dir)
+    files.sort()  # Sort files to ensure they are copied in order
     files_set = set(files)  # Set to keep track of copied files
 
     for file in files_set:    
@@ -34,7 +33,6 @@ def mimic_live_writing(src_dir, dest_dir, interval_seconds=10):
 
         time.sleep(interval_seconds)
         
-
 def mimic_live_writing_groups(src_dir, dest_dir, interval_seconds=10, n_files=4):
     files = list_all_pod5_files(src_dir)
     files_set = set(files)  # Set to keep track of copied files
@@ -65,4 +63,3 @@ if __name__ == "__main__":
         os.makedirs(dest_dir)
 
     mimic_live_writing(src_dir, dest_dir)
-    #mimic_live_writing_groups(src_dir, dest_dir)
