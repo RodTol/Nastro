@@ -48,6 +48,10 @@ send_telegram_message() {
         -d "parse_mode=Markdown"
 }
 
+#Start resource profiling
+python3 ${HOME}/Nastro/GPU_log/resource_profiling.py $SLURM_MEM_PER_NODE $SLURM_CPUS_ON_NODE ${HOME}/Nastro.csv BCREP &
+profiling_pid=$!
+
 samplesheet=$1
 id="$2"
 output_dir=$(jq -r '.metadata.outputLocation' "$samplesheet")
@@ -74,3 +78,5 @@ basecalling_report="${output_dir}/report_basecalling.html"
 
 # Send the reports
 send_files "$basecalling_report" "Basecalling report generated at $current_time, for run $id"
+
+kill $profiling_pid
