@@ -49,8 +49,8 @@ send_telegram_message() {
 }
 
 #Start resource profiling
-python3 ${HOME}/Nastro/GPU_log/resource_profiling.py $SLURM_MEM_PER_NODE $SLURM_CPUS_PER_TASK /orfeo/cephfs/home/area/jenkins_onpexp/Nastro.csv BCREP &
-profiling_pid=$!
+#python3 ${HOME}/Nastro/GPU_log/resource_profiling.py $SLURM_MEM_PER_NODE $SLURM_CPUS_PER_TASK /orfeo/cephfs/home/area/jenkins_onpexp/Nastro.csv BCREP &
+#profiling_pid=$!
 
 samplesheet=$1
 id="$2"
@@ -79,4 +79,4 @@ basecalling_report="${output_dir}/report_basecalling.html"
 # Send the reports
 send_files "$basecalling_report" "Basecalling report generated at $current_time, for run $id"
 
-kill $profiling_pid
+#kill $profiling_pid
