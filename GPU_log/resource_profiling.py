@@ -27,7 +27,7 @@ def profile_resources(slurm_mem, slurm_cpu_number, csv_path, tag):
         filename = csv_path if csv_path else "resource_usage.csv"
         with open(filename, mode="w", newline="") as file:
             writer = csv.writer(file)
-            writer.writerow(["Timestamp", "Max CPU Usage (%)", "Max Memory Usage (%)", "SLURM Memory", "SLURM CPU Number", "Tag"])
+            writer.writerow(["Timestamp", "Max CPU Usage (%)", "Max Memory Usage (GB)", "SLURM Memory (GB)", "SLURM CPU Number", "Tag"])
             writer.writerow([timestamp, max_cpu, max_mem, float(slurm_mem_gb), float(slurm_cpu_number), tag])
         print(f"Resource usage data saved to {filename}")
 
