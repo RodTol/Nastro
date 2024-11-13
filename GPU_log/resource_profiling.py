@@ -12,12 +12,14 @@ def profile_resources(slurm_mem, slurm_cpu_number, csv_path, tag):
         while True:
             # Measure current usage
             cpu_usage = psutil.cpu_percent(interval=1)
-            mem_usage = psutil.virtual_memory().percent
+            mem_usage = psutil.virtual_memory().used / (1024 ** 3)  # Convert bytes to GB
 
             # Update max values if current values are higher
             max_cpu = max(max_cpu, cpu_usage)
             max_mem = max(max_mem, mem_usage)
             time.sleep(2)
+
+            slurm_mem_gb = float(slurm_mem) / 1024
 
     except KeyboardInterrupt:
         # Save the data upon job completion
@@ -26,7 +28,7 @@ def profile_resources(slurm_mem, slurm_cpu_number, csv_path, tag):
         with open(filename, mode="w", newline="") as file:
             writer = csv.writer(file)
             writer.writerow(["Timestamp", "Max CPU Usage (%)", "Max Memory Usage (%)", "SLURM Memory", "SLURM CPU Number", "Tag"])
-            writer.writerow([timestamp, max_cpu, max_mem, float(slurm_mem), float(slurm_cpu_number), tag])
+            writer.writerow([timestamp, max_cpu, max_mem, float(slurm_mem_gb), float(slurm_cpu_number), tag])
         print(f"Resource usage data saved to {filename}")
 
 if __name__ == "__main__":

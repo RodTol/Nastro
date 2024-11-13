@@ -51,7 +51,7 @@ send_telegram_message() {
 }
 
 #Start resource profiling
-python3 ${HOME}/Nastro/GPU_log/resource_profiling.py $SLURM_MEM_PER_NODE $SLURM_CPUS_ON_NODE /orfeo/cephfs/home/area/jenkins_onpexp/Nastro.csv SUMRG &
+python3 ${HOME}/Nastro/GPU_log/resource_profiling.py $SLURM_MEM_PER_NODE $SLURM_CPUS_PER_TASK /orfeo/cephfs/home/area/jenkins_onpexp/Nastro.csv SUMRG &
 profiling_pid=$!
 
 # Get samplesheet path and id from arguments
