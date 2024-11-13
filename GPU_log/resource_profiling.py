@@ -38,6 +38,12 @@ def main():
 
     args = parser.parse_args()
 
+    # Debug prints
+    print(f"SLURM Memory: {args.slurm_mem}")
+    print(f"SLURM CPU Number: {args.slurm_cpu_number}")
+    print(f"CSV Path: {args.csv_path}")
+    print(f"Tag: {args.tag}")
+
     profile_resources(
         slurm_mem=args.slurm_mem,
         slurm_cpu_number=args.slurm_cpu_number,
