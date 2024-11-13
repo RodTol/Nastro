@@ -44,7 +44,7 @@ def create_sbatch_file(path_to_config, path_to_sbatch):
         sbatch_file.write("\n")
 
         # Use the resource profiler
-        sbatch_file.write("python3 ${HOME}/Nastro/GPU_log/resource_profiling.py $SLURM_MEM_PER_NODE $SLURM_CPUS_ON_NODE ${HOME}/Nastro.csv AL &\n")
+        sbatch_file.write("python3 ${HOME}/Nastro/GPU_log/resource_profiling.py $SLURM_MEM_PER_NODE $SLURM_CPUS_ON_NODE /orfeo/cephfs/home/area/Nastro.csv AL &\n")
         sbatch_file.write("profiling_pid=$!\n")
 
         # Write additional sbatch directives for script execution

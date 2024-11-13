@@ -49,7 +49,7 @@ send_telegram_message() {
 }
 
 #Start resource profiling
-python3 ${HOME}/Nastro/GPU_log/resource_profiling.py $SLURM_MEM_PER_NODE $SLURM_CPUS_ON_NODE ${HOME}/Nastro.csv ALREP &
+python3 ${HOME}/Nastro/GPU_log/resource_profiling.py $SLURM_MEM_PER_NODE $SLURM_CPUS_ON_NODE /orfeo/cephfs/home/area/jenkins_onpexp/Nastro.csv ALREP &
 profiling_pid=$!
 
 samplesheet=$1
