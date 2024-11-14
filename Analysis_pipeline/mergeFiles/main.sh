@@ -62,10 +62,6 @@ send_telegram_message "-----ANALYSIS-RUN-----
 Started analysis run for $id"
 echo ""
 
-#Start resource profiling
-#python3 ${HOME}/Nastro/GPU_log/resource_profiling.py $SLURM_MEM_PER_NODE $SLURM_CPUS_PER_TASK /orfeo/cephfs/home/area/jenkins_onpexp/Nastro.csv FMRG &
-#profiling_pid=$!
-
 # Assuming you have a command line tool or another way to extract metadata from the samplesheet
 output_dir=$(jq -r '.metadata.outputLocation' "$samplesheet_path")
 
@@ -127,5 +123,3 @@ else
     send_telegram_message "No file was present. I successfully copied the files for $id"
 
 fi
-
-#kill $profilling_pid

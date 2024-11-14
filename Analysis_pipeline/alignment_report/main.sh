@@ -48,9 +48,6 @@ send_telegram_message() {
         -d "parse_mode=Markdown"
 }
 
-#Start resource profiling
-#python3 ${HOME}/Nastro/GPU_log/resource_profiling.py $SLURM_MEM_PER_NODE $SLURM_CPUS_PER_TASK /orfeo/cephfs/home/area/jenkins_onpexp/Nastro.csv ALREP &
-#profiling_pid=$!
 
 samplesheet=$1
 id="$2"
@@ -84,5 +81,3 @@ alignment_report="${output_dir}/report_alignment.html"
 # Send the report
 send_files "$alignment_report" "Alignment report generated at $current_time, for run $id"
 send_telegram_message "---- run $id FINISHED ----"
-
-#kill $profiling_pid
