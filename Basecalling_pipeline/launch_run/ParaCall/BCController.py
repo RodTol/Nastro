@@ -145,14 +145,24 @@ class BCController:
             "pathToRunParams": self.run_params_path
         }
         print(jenkins_parameter, flush=True)
-        self.jenkins.start_job("tolloi/Pipeline_long_reads/alignment_pipeline", "incal", jenkins_parameter)        
+        self.jenkins.start_job("tolloi/Pipeline_long_reads/alignment_pipeline", "incal", jenkins_parameter)  
+
+    def _launching_analysis_pipeline(self):
+        jenkins_parameter =  {
+            "pathToSamplesheet": self.samplesheet_path,
+            "RunId": self.run_name
+        }
+        print(jenkins_parameter, flush=True)
+        self.jenkins.start_job('tolloi/Pipeline_long_reads/analysis_pipeline', 'manwe', jenkins_parameter)     
 
     def _shutdown_BCsoftware(self):
         print("Shutting down\n", flush=True)
         if self.BCM_pid != 'NULL':
             self._kill_process(self.BCM_pid) # BCM
 
-            self._launching_alignment_pipeline()
+            #TODO: to be parametrized
+            #self._launching_alignment_pipeline()
+            self._launching_analysis_pipeline()
             print("-----------------")
             self._launching_basecalling_pipeline()
 
