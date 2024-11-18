@@ -65,6 +65,16 @@ def list_pod5(dir):
 
     return pod5_files
 
+def list_fast5(dir):
+    dir_path = Path(dir)
+    all_files = os.listdir(dir)
+    fast5_files = [Path(file) for file in all_files if file.endswith('.fast5')]
+    # Get absolute paths for each .fast5 file
+    fast5_files = [dir_path / file for file in fast5_files]
+    fast5_files = [str(file.resolve()) for file in fast5_files]
+
+    return fast5_files    
+
 def list_json(dir):
     all_files= os.listdir(dir)
     json_files = [file for file in all_files if file.endswith('.json')]
@@ -173,6 +183,57 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
                     # Update the samplesheet since some operation my have been performed in this time
                     added_files = added_files + 1
                     samplesheet.update_json_file()
+
+    # Final update of samplesheet file
+    samplesheet.update_json_file()
+    return added_files
+
+
+def update_samplesheet_fast5(samplesheet: Samplesheet, bar=None, telegram_bar=None):
+    """
+    Updates a samplesheet by scanning for new fast5 files and adding them if not already present
+    
+    Args:
+        samplesheet: Samplesheet object to update
+        bar: Optional progress bar object
+        telegram_bar: Optional Telegram progress bar object
+    
+    Returns:
+        Number of new files added to the samplesheet
+    """
+    # Could lose updates if another program writes to the file between read_file() and update_json_file() calls
+    
+    # Get directory from samplesheet metadata
+    dir = samplesheet.get_metadata()["dir"]
+    # Get list of all fast5 files in directory
+    all_scanned_fast5_files = list_fast5(dir)
+    
+    added_files = 0
+    
+    # Iterate through found fast5 files
+    for i,scanned_file_path in enumerate(all_scanned_fast5_files):
+        # Check if file is already in samplesheet
+        if samplesheet.file_belongs_to_samplesheet(scanned_file_path):
+            # Remove from list if already present
+            all_scanned_fast5_files.pop(i)
+            # Update progress bars for existing files
+            if bar!=None:
+                bar.increase(1)
+                if i==len(all_scanned_fast5_files)-1:
+                    telegram_bar.telegram_send_bar(bar.progress_bar)
+        else: 
+            # RACE CONDITION: Another program could modify the file between these operations
+            samplesheet.data = samplesheet.read_file()
+            print('Added ', scanned_file_path , ' to the list', flush=True)    
+            if bar!=None:
+                # Update progress for new file
+                bar.increase(1)
+                telegram_bar.telegram_send_bar(bar.progress_bar)        
+            # Create and add new entry to samplesheet
+            if samplesheet.add_file(create_samplesheet_entry(scanned_file_path)):
+                # Update the samplesheet since some operation my have been performed in this time
+                added_files = added_files + 1
+                samplesheet.update_json_file()
 
     # Final update of samplesheet file
     samplesheet.update_json_file()

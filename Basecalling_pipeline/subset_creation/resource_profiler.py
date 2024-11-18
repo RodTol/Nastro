@@ -57,7 +57,7 @@ def choose_ideal_size(model):
 def count_pod5_files(directory):
     count = 0
     for filename in os.listdir(directory):
-        if filename.endswith(".pod5") and os.path.isfile(os.path.join(directory, filename)):
+        if filename.endswith(".fast5") and os.path.isfile(os.path.join(directory, filename)):
             count += 1
     return count
 

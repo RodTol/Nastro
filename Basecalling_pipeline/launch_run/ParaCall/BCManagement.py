@@ -121,13 +121,13 @@ class BCWorkloadState:
                         if assignment.is_symlink():
                             # check it ends with .pod5
                             str_assignment = assignment.name
-                            if len(str_assignment)>5 & (str_assignment[-5:].lower() == ".pod5"):
+                            if len(str_assignment)>5 & (str_assignment[-5:].lower() == ".fast5"):
                                 # add it to the list
                                 assigned_files.append(str_assignment[:-5])
             elif entry.is_file():
                 # It's a file: it should be a pod5 file that potentially needs to be processed unless already assigned
                 str_name = entry.name
-                if len(str_name)>5 & (str_name[-5:].lower() == ".pod5"):
+                if len(str_name)>5 & (str_name[-5:].lower() == ".fast5"):
                     str_name = str_name[:-5]
                     if str_name not in fastq_files:
                         potential_files.append(str_name)
@@ -135,7 +135,7 @@ class BCWorkloadState:
         final_list = []
         for entry in potential_files:
             if entry not in assigned_files:
-                final_list.append(entry+".pod5")
+                final_list.append(entry+".fast5")
         # update this instance
         self.unassigned_bc = final_list
         #TO DO: reconstruct assigned_batches after crash?

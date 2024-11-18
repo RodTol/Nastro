@@ -39,7 +39,7 @@ I am going to scan `{dir}`
     samplesheet_not_found = False
     added_files = 0
 
-    all_pod5_files_in_dir = list_pod5(dir)
+    all_fast5_files_in_dir = list_fast5(dir)
     bar = CustomPercentProgressBar(length=20,
                             left_limit='[',
                             right_limit=']',
@@ -48,7 +48,7 @@ I am going to scan `{dir}`
                             filled_repr='=',
                             start=0,
                             scale_start=0,
-                            scale_end=len(all_pod5_files_in_dir))
+                            scale_end=len(all_fast5_files_in_dir))
     telegram_bar = Telegram_bar()
 
     #Look for existing samplesheet
