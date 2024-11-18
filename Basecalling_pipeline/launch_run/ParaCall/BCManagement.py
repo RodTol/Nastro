@@ -135,7 +135,7 @@ class BCWorkloadState:
         final_list = []
         for entry in potential_files:
             if entry not in assigned_files:
-                final_list.append(entry+".fast5")
+                final_list.append(entry+"fast5")
         # update this instance
         self.unassigned_bc = final_list
         #TO DO: reconstruct assigned_batches after crash?
