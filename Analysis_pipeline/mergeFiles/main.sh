@@ -62,8 +62,21 @@ send_telegram_message "-----ANALYSIS-RUN-----
 Started analysis run for $id"
 echo ""
 
-# Assuming you have a command line tool or another way to extract metadata from the samplesheet
 output_dir=$(jq -r '.metadata.outputLocation' "$samplesheet_path")
+
+#Optional: performing merging of the fastq files if the 
+#aligment stage was skipped:
+output_dir_run="$output_dir/output/$id"
+merged_fastq_path="$output_dir_run/run_${id}_merged.fastq"
+fastq_pass_dir="$output_dir_run/pass"
+
+if [ -f "$merged_fastq_path" ]; then
+    echo "File exists: $merged_fastq_path"
+else
+    echo "File does not exist: $merged_fastq_path"
+    fastcat --histograms=${output_dir_run}/fastcat_histograms $fastq_pass_dir > $merged_fastq_path
+    echo "Merging fastq files completed"
+fi
 
 pathToFinalBasecalling="$output_dir/BasecallingResults.fastq"
 pathToFinalAlignment="$output_dir/AlignmentResults.bam"
