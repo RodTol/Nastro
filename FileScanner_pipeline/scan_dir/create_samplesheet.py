@@ -102,7 +102,10 @@ def create_blank_samplesheet(dir, model, outputLocation, performAlign):
     # Define the file name
     path = Path(dir)
     dir_name = path.name if path.is_dir() else path.parent.name
-    file_name = f"run_{dir_name}_{model.replace('.cfg', '').replace('.', '-')}.json"
+    if performAlign:
+        file_name = f"run_{dir_name}_aligned_{model.replace('.cfg', '').replace('.', '-')}.json"
+    else:
+        file_name = f"run_{dir_name}_{model.replace('.cfg', '').replace('.', '-')}.json"
 
     # Write the JSON data to the file
     file_path = path / file_name
