@@ -160,7 +160,7 @@ class BCController:
         if self.BCM_pid != 'NULL':
             self._kill_process(self.BCM_pid) # BCM
 
-            if self.samplesheet.get_metadata()["performAlign"]:
+            if self.samplesheet.get_metadata()["performAlign"]==True:
                 self._launching_alignment_pipeline()
             else:
                 self._launching_analysis_pipeline()
