@@ -71,8 +71,7 @@ def list_json(dir):
     json_files = [os.path.join(dir, file) for file in json_files]
     return json_files    
 
-#TODO: should I not check also the "outputLocation" ?
-def is_same_samplesheet(path_to_samplesheet, dir, model, outputLocation):
+def is_same_samplesheet(path_to_samplesheet, dir, model, outputLocation, performAlign):
     samplesheet = Samplesheet(path_to_samplesheet)
     if Path(samplesheet.get_metadata()["dir"]).resolve() != Path(dir).resolve():
         print(f"{path_to_samplesheet} has a different dir")
@@ -83,15 +82,19 @@ def is_same_samplesheet(path_to_samplesheet, dir, model, outputLocation):
     if samplesheet.get_metadata()["outputLocation"] != outputLocation:
         print(f"{path_to_samplesheet} has a different outputLocation")
         return False    
+    if samplesheet.get_metadata()["performAlign"] != performAlign:
+        print(f"{path_to_samplesheet} has a different outputLocation")
+        return False    
     return True
 
-def create_blank_samplesheet(dir, model, outputLocation):
+def create_blank_samplesheet(dir, model, outputLocation, performAlign):
     # Define the structure of the JSON data
     data = {
         "metadata": {
             "dir": dir,
             "model": model,
-            "outputLocation": outputLocation
+            "outputLocation": outputLocation,
+            "performAlign": performAlign
         },
         "files": []
     }

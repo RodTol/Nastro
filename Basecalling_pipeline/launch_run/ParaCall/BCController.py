@@ -160,9 +160,10 @@ class BCController:
         if self.BCM_pid != 'NULL':
             self._kill_process(self.BCM_pid) # BCM
 
-            #TODO: to be parametrized
-            #self._launching_alignment_pipeline()
-            self._launching_analysis_pipeline()
+            if self.samplesheet.get_metadata()["performAlign"]:
+                self._launching_alignment_pipeline()
+            else:
+                self._launching_analysis_pipeline()
             print("-----------------")
             self._launching_basecalling_pipeline()
 
