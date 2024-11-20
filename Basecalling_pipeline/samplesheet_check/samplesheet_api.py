@@ -89,7 +89,7 @@ class Samplesheet:
         '''
         Verify the metadata section
         '''
-        required_keys = {"dir", "model", "outputLocation"}
+        required_keys = {"dir", "model", "outputLocation", "performAlign"}
         if not required_keys.issubset(metadata.keys()):
             print("Wrong metadata")
             return False
