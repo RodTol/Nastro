@@ -79,7 +79,7 @@ def is_same_samplesheet(path_to_samplesheet, dir, model, outputLocation, perform
     if samplesheet.get_metadata()["model"] != model:
         print(f"{path_to_samplesheet} has a different model")
         return False
-    if samplesheet.get_metadata()["outputLocation"] != outputLocation:
+    if Path(samplesheet.get_metadata()["outputLocation"]).resolve() != Path(outputLocation).resolve():
         print(f"{path_to_samplesheet} has a different outputLocation")
         return False    
     if samplesheet.get_metadata()["performAlign"] != performAlign:
@@ -102,6 +102,7 @@ def create_blank_samplesheet(dir, model, outputLocation, performAlign):
     # Define the file name
     path = Path(dir)
     dir_name = path.name if path.is_dir() else path.parent.name
+    print(performAlign, " ", type(performAlign), flush=True) 
     if performAlign==True:
         file_name = f"run_{dir_name}_aligned_{model.replace('.cfg', '').replace('.', '-')}.json"
     else:

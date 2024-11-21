@@ -75,7 +75,8 @@ if __name__ == "__main__":
         jenkins_parameter =  {
              "pathToDir": samplesheet.get_metadata()["dir"],
              "basecallingModel" : samplesheet.get_metadata()["model"],
-             "outputLocation": samplesheet.get_metadata()["outputLocation"]
+             "outputLocation": samplesheet.get_metadata()["outputLocation"],
+             "performAlign": samplesheet.get_metadata()["performAlign"]
          }
 
         jenkins = Jenkins_trigger()
