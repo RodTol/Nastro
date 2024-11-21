@@ -29,7 +29,7 @@ if __name__ == "__main__":
     dir = sys.argv[1]
     model = sys.argv[2]
     outputLocation = sys.argv[3]
-    performAlign = sys.argv[4]
+    performAlign = bool(sys.argv[4])
     os.makedirs(outputLocation, exist_ok=True)
 
     message = f"""-----SCAN-RUN-----
