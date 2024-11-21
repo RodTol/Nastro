@@ -29,7 +29,7 @@ if __name__ == "__main__":
     dir = sys.argv[1]
     model = sys.argv[2]
     outputLocation = sys.argv[3]
-    performAlign = bool(sys.argv[4])
+    performAlign = sys.argv[4].lower() == "true"
     os.makedirs(outputLocation, exist_ok=True)
 
     message = f"""-----SCAN-RUN-----
@@ -72,7 +72,7 @@ I am going to scan `{dir}`
                 samplesheet_not_found = True
 
     if samplesheet_not_found :    
-        #Create a new samplesheet for the new model since there are only one for different models
+        #Create a new samplesheet for the new model/aligned since there are only one for different models
         samplesheet = Samplesheet(create_blank_samplesheet(dir, model, outputLocation, performAlign))
         print(f"A {GREEN}new samplesheet{RESET} was created", flush=True)
         added_files = update_samplesheet(samplesheet, bar, telegram_bar)
