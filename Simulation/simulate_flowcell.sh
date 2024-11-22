@@ -5,8 +5,10 @@ INPUT_FOLDER=$1/*_${3}
 OUTPUT_FOLDER=$2/*_${3}
 RUNTIME=$4
 
-NUM_POD5=$(ls $INPUT_FOLDER/*.pod5 | wc -l)
-NUM_FAST5=$(ls $INPUT_FOLDER/*.fast5 | wc -l)
+echo "Runtime is: $RUNTIME seconds"
+
+NUM_POD5=$(ls $INPUT_FOLDER/*.pod5 2>/dev/null | wc -l)
+NUM_FAST5=$(ls $INPUT_FOLDER/*.fast5 2>/dev/null | wc -l)
 
 echo "Found $NUM_POD5 .pod5 files and $NUM_FAST5 .fast5 files in $INPUT_FOLDER"
 
