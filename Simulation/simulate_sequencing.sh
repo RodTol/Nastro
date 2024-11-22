@@ -27,7 +27,7 @@ if [ $# -eq 3 ] && [ -n ${1//[0-9]/} ] && [ -d "$2" ] && [ -d "$3" ]; then
     # based on the total number of files in each folder,
     # can vary from flowcell to flowcell
 	time parallel -j $FLOWCELLS \
-		/orfeo/cephfs/scratch/area/jenkins_onpexp/experiment/simulate_flowcell.sh ::: \
+		${HOME}/Nastro/Simulation/simulate_flowcell.sh ::: \
 		$SRC_DIR ::: \
 		$DST_DIR ::: \
 		{1..$FLOWCELLS}C ::: \  #each flowcell is called flowcell_1C, flowcell_2C, etc

@@ -1,0 +1,61 @@
+pipeline {
+    agent { 
+        node {
+            label 'docker'
+            }
+    }
+    parameters {
+        string(name: 'sourceDir', defaultValue: '/orfeo/LTS/LADE/LT_storage/tolloi/Scolorina/PD06/pod5', description: 'Path to the source .pod5 files')
+        string(name: 'inputDir', defaultValue: '/orfeo/LTS/LADE/LT_storage/tolloi/Scolorina/test_input', description: 'Path that will be scanned for the .pod5 and where I will copy the source dataset')
+        string(name: 'basecallingModel', defaultValue: 'dna_r10.4.1_e8.2_400bps_hac.cfg', description: 'Basecalling model for the samplesheet')
+        string(name: 'outputLocation', defaultValue: '/orfeo/LTS/LADE/LT_storage/tolloi/Scolorina/test_output', description: 'Path to the BASE dir where results will be saved.')
+    }
+    stages {
+        stage('Clean old test_location') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
+                    sh '''
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
+                            /*Clean output dir*/
+                            rm -rf '${outputLocation}'/*
+                            /*Clean data dir*/
+                            rm -rf '${pathToDir}'/*
+                            ' 
+                    '''
+                }                   
+            } 
+        }  
+        stage('Launch the data flow') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
+                    sh '''
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
+                            cd Nastro/data_flow
+                            sbatch script_data_flow.sh '${sourceDir}' '${pathToDir}'
+                            ' 
+                    '''
+                }                 
+            }
+        }        
+        stage('Wait for 5 Minutes') {
+            steps {
+                script {
+                    echo "Waiting for 5 minutes..."
+                    sleep time: 5, unit: 'MINUTES'
+                }
+            }
+        }
+        stage('Trigger FileScanner') {
+            steps {
+                script {
+                    build job: 'FileScanner', wait: false, 
+                          parameters: [
+                              string(name: 'pathToDir', value: params.pathToDir),
+                              string(name: 'basecallingModel', value: params.basecallingModel),
+                              string(name: 'outputLocation', value: params.outputLocation)
+                          ]
+                }
+            }
+        }     
+    }
+}

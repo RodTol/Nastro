@@ -55,6 +55,7 @@ for file in "${FILES_SORTED[@]}"; do
     
     # Copy the file to the selected flowcell
     cp "$file" "${DESTINATION_DIR}/${SMALLEST_FLOWCELL}/"
+    echo "Copied '$file' to '${DESTINATION_DIR}/${SMALLEST_FLOWCELL}/'"
     
     # Update the size of the selected flowcell
     FLOWCELL_SIZES["$SMALLEST_FLOWCELL"]=$((FLOWCELL_SIZES["$SMALLEST_FLOWCELL"] + FILE_SIZES["$file"]))

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #Expected structure as in HG002_sample_data
-INPUT_FOLDER=$1/no_sample/*_${3}
-OUTPUT_FOLDER=$2/no_sample/*_${3}
+INPUT_FOLDER=$1/*_${3}
+OUTPUT_FOLDER=$2/*_${3}
 RUNTIME=$4
 
 NUM_POD5=$(ls $INPUT_FOLDER/*.pod5 | wc -l)
