@@ -30,7 +30,7 @@ if [ $# -eq 3 ] && [ -n ${1//[0-9]/} ] && [ -d "$2" ] && [ -d "$3" ]; then
 		${HOME}/Nastro/Simulation/simulate_flowcell.sh ::: \
 		$SRC_DIR ::: \
 		$DST_DIR ::: \
-        {1..$FLOWCELLS}C ::: \  #each flowcell is called flowcell_1C, flowcell_2C, etc
+        {1..2}C ::: \  #each flowcell is called flowcell_1C, flowcell_2C, etc
 		$PERIOD
     
     # Uncomment below if you want to simulate all 48 flow cells
