@@ -7,7 +7,7 @@
 #SBATCH -p EPYC
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=8
 #SBATCH --mem=10GB
 
 #SRC _DIR needs to be structured as in HG002_sample_data: so 
@@ -41,11 +41,11 @@ if [ $# -eq 3 ]; then
     # from the source to the destination folder at a uniform rate
     # based on the total number of files in each folder,
     # can vary from flowcell to flowcell
-    time parallel -j 3 \
+    time parallel -j $FLOWCELLS \
         "${HOME}/Nastro/Simulation/simulate_flowcell.sh" ::: \
         "$SRC_DIR" ::: \
         "$DST_DIR" ::: \
-        {1..3}C ::: \
+        {1..$FLOWCELLS}C ::: \
         "$PERIOD"
 
     # Uncomment below if you want to simulate all 48 flow cells
