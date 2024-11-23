@@ -45,7 +45,7 @@ if [ $# -eq 3 ]; then
         "${HOME}/Nastro/Simulation/simulate_flowcell.sh" ::: \
         "$SRC_DIR" ::: \
         "$DST_DIR" ::: \
-        {1..$FLOWCELLS}C ::: \
+        {1..${FLOWCELLS}}C ::: \
         "$PERIOD"
 
     # Uncomment below if you want to simulate all 48 flow cells
