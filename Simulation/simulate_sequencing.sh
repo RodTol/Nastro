@@ -14,8 +14,8 @@
 # SRC_DIR/no_sample/*_{index}C 
 #where index is a value that goes from 1 to the N flowcell sets 
 
-# CHECK FLOWECELLS, cpus_per_task and PARALLEL -j command
-# to have same argument!!!
+# FIXME CHECK FLOWECELLS, cpus_per_task, PARALLEL -j command and index range
+# for flowcell in {1..3}C to have same argument!!!
 
 # Check if 3 arguments are passed
 if [ $# -eq 3 ]; then
@@ -45,7 +45,7 @@ if [ $# -eq 3 ]; then
         "${HOME}/Nastro/Simulation/simulate_flowcell.sh" ::: \
         "$SRC_DIR" ::: \
         "$DST_DIR" ::: \
-        {1..2}C ::: \
+        {1..3}C ::: \
         "$PERIOD"
 
     # Uncomment below if you want to simulate all 48 flow cells
