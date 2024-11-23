@@ -13,6 +13,8 @@ if [ $# -eq 3 ] && [ -n "${1//[0-9]/}" ] && [ -d "$2" ] && [ -d "$3" ]; then
 	#Number of simulated flowcells
 	FLOWCELLS=2
 
+    echo "Simulation duration: $PERIOD seconds with $FLOWCELLS flowcells"
+
     # Create destination directory if it doesn't exist
     mkdir -p $DST_DIR
     
@@ -20,6 +22,7 @@ if [ $# -eq 3 ] && [ -n "${1//[0-9]/}" ] && [ -d "$2" ] && [ -d "$3" ]; then
     # (before copying the individual files)
     rsync -av -f"+ */" -f"- *" $SRC_DIR/ $DST_DIR/
     
+
     echo "Started sequencing at "$(date +%T)
     
     # Parallel processes, one for each flowcell to copy the files
