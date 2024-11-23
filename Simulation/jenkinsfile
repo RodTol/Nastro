@@ -30,7 +30,7 @@ pipeline {
                     sh '''
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                             cd ~/Nastro/Simulation
-                            sbatch simulate_sequencing.sh '{time}' '${sourceDir}' '${inputDir}'
+                            sbatch simulate_sequencing.sh '${time}' '${sourceDir}' '${inputDir}'
                             ' 
                     '''
                 }                 
