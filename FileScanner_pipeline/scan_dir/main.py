@@ -41,16 +41,16 @@ I am going to scan `{dir}`
     added_files = 0
 
     all_pod5_files_in_dir = list_pod5(dir)
-    bar = CustomPercentProgressBar(length=20,
-                            left_limit='[',
-                            right_limit=']',
-                            head_repr='>',
-                            empty_repr=' ',
-                            filled_repr='=',
-                            start=0,
-                            scale_start=0,
-                            scale_end=len(all_pod5_files_in_dir))
-    telegram_bar = Telegram_bar()
+    # bar = CustomPercentProgressBar(length=20,
+    #                         left_limit='[',
+    #                         right_limit=']',
+    #                         head_repr='>',
+    #                         empty_repr=' ',
+    #                         filled_repr='=',
+    #                         start=0,
+    #                         scale_start=0,
+    #                         scale_end=len(all_pod5_files_in_dir))
+    #telegram_bar = Telegram_bar()
 
     #Look for existing samplesheet
     existing_samplesheet = list_json(dir)
@@ -59,13 +59,15 @@ I am going to scan `{dir}`
         #Create a new samplesheet
         samplesheet = Samplesheet(create_blank_samplesheet(dir, model, outputLocation, performAlign))
         print(f"A {GREEN}new samplesheet was created{RESET}", flush=True)
-        added_files = update_samplesheet(samplesheet, bar, telegram_bar)
+        #added_files = update_samplesheet(samplesheet, bar, telegram_bar)
+        added_files = update_samplesheet(samplesheet)
     else: 
         for sheet in existing_samplesheet:
             if is_same_samplesheet(sheet, dir, model, outputLocation, performAlign):
                 print(f"An EXISTING samplesheet for {GREEN}{model}{GREEN} was found inside {GREEN}{dir}{RESET}", flush=True)
                 samplesheet = Samplesheet(sheet)
-                added_files = update_samplesheet(samplesheet, bar, telegram_bar)
+                #added_files = update_samplesheet(samplesheet, bar, telegram_bar)
+                added_files = update_samplesheet(samplesheet)
                 samplesheet_not_found = False
                 break
             else:
@@ -75,7 +77,8 @@ I am going to scan `{dir}`
         #Create a new samplesheet for the new model/aligned since there are only one for different models
         samplesheet = Samplesheet(create_blank_samplesheet(dir, model, outputLocation, performAlign))
         print(f"A {GREEN}new samplesheet{RESET} was created", flush=True)
-        added_files = update_samplesheet(samplesheet, bar, telegram_bar)
+        #added_files = update_samplesheet(samplesheet, bar, telegram_bar)
+        added_files = update_samplesheet(samplesheet)
 
     # Get the current date and time
     current_datetime = datetime.now()
