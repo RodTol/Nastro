@@ -12,6 +12,17 @@ pipeline {
         string(name: 'time', defaultValue: '180', description: 'How long will the sequencing take')
     }
     stages {
+        stage('Pull project repository on the Cluster') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
+                    sh '''
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
+                                cd ${HOME}/Nastro/Simulation && git pull
+                            '
+                    '''
+                }    
+            }
+        }          
         stage('Clean old test_location') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
@@ -51,7 +62,7 @@ pipeline {
                         ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
                             source ~/python_venvs/login_venv_jenkins/bin/activate
                             cd ~/Nastro/Simulation
-                            python3 launcher_file_scanner '${inputDir}' '${basecallingModel}' '${outputDir}'
+                            python3 launcher_file_scanner.py '${inputDir}' '${basecallingModel}' '${outputDir}'
                             ' 
                     '''
                 }    
