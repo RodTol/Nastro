@@ -55,7 +55,7 @@ if __name__ == "__main__":
     al_run_config.slurm = Slurm(al_run_config, run_slurm_output , run_slurm_error, supervisor_script_path)
 
     #TODO should ref_genome be a pipeline parameters, maybe even part of the samplesheet as it is the model ?
-    ref_genome = '/orfeo/cephfs/scratch/area/jenkins_onpexp/GRCh38.p14_genomic.fna'
+    ref_genome = '/orfeo/cephfs/scratch/area/jenkins_onpexp/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna'
     output_file = f"{bc_run_config.basecalling.output_dir}/run_{run_params.id}.bam"
 
     al_run_config.alignment = Alignment(al_run_config, merged_file, output_file,

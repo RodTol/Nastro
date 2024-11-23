@@ -1,0 +1,72 @@
+pipeline {
+    agent { 
+        node {
+            label 'docker'
+            }
+    }
+    parameters {
+        string(name: 'sourceDir', defaultValue: '/orfeo/cephfs/scratch/area/jenkins_onpexp/Test_Nastro', description: 'Path to the source .pod5 files')
+        string(name: 'inputDir', defaultValue: '/orfeo/cephfs/scratch/area/jenkins_onpexp/Test_Nastro/test_input', description: 'Path that will be scanned for the .pod5 and where I will copy the source dataset')
+        string(name: 'outputDir', defaultValue: '/orfeo/cephfs/scratch/area/jenkins_onpexp/Test_Nastro/test_output', description: 'Path to the BASE dir where results will be saved.')
+        string(name: 'basecallingModel', defaultValue: 'dna_r10.4.1_e8.2_400bps_hac.cfg', description: 'Basecalling model for the samplesheet')
+        string(name: 'time', defaultValue: '180', description: 'How long will the sequencing take')
+    }
+    stages {
+        stage('Pull project repository on the Cluster') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
+                    sh '''
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
+                                cd ${HOME}/Nastro/Simulation && git pull
+                            '
+                    '''
+                }    
+            }
+        }          
+        stage('Clean old test_location') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
+                    sh '''
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
+                            rm -rf '${outputDir}'/*
+                            rm -rf '${inputDir}'/*
+                            ' 
+                    '''
+                }                   
+            } 
+        }          
+        stage('Launch the sequencing simulation') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
+                    sh '''
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
+                            cd ~/Nastro/Simulation
+                            sbatch simulate_sequencing.sh '${time}' '${sourceDir}' '${inputDir}'
+                            ' 
+                    '''
+                }                 
+            }
+        }        
+        stage('Wait for 5 Minutes') {
+            steps {
+                script {
+                    echo "Waiting for 5 minutes..."
+                    sleep time: 5, unit: 'MINUTES'
+                }
+            }
+        }
+        stage('Trigger FileScanner') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'orfeo_jenkins_onpexp', keyFileVariable: 'SSH_ONPEXP_KEY', passphraseVariable: '', usernameVariable: 'SSH_ONPEXP_USER')]) {
+                    sh '''
+                        ssh -i ${SSH_ONPEXP_KEY} ${SSH_ONPEXP_USER}@10.128.2.81 '
+                            source ~/python_venvs/login_venv_jenkins/bin/activate
+                            cd ~/Nastro/Simulation
+                            python3 launcher_file_scanner.py '${inputDir}' '${basecallingModel}' '${outputDir}'
+                            ' 
+                    '''
+                }    
+            }
+        }     
+    }
+}

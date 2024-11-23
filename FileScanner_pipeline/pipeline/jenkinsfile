@@ -8,6 +8,7 @@ pipeline {
         string(name: 'pathToDir', defaultValue: '/orfeo/LTS/LADE/LT_storage/tolloi/Scolorina/PD06/pod5', description: 'Path where the pipeline will look for the .pod5')
         string(name: 'basecallingModel', defaultValue: 'dna_r10.4.1_e8.2_400bps_hac.cfg', description: 'Basecalling model for the samplesheet')
         string(name: 'outputLocation', defaultValue: '/orfeo/LTS/LADE/LT_storage/tolloi/Scolorina/output_test', description: 'Path to the BASE dir where results will be saved.')
+        booleanParam(name: 'performAlign', defaultValue: true, description: 'The pipeline will perform the alignment stage')
     }
     stages {
         stage('Pull project repository on the Cluster') {
@@ -31,7 +32,7 @@ pipeline {
                             cd ${HOME}/Nastro/FileScanner_pipeline/scan_dir
                             mkdir -p '${outputLocation}'/scan_logs
                             srun -p EPYC -N 1 -n 1 -c 1 --time=2:0:0 --output='${outputLocation}'/scan_logs/$(date +%Y%m%d_%H%M%S)_scan.log \
-                            --job-name=dir_scanning python3 main.py '${pathToDir}' '${basecallingModel}' '${outputLocation}'
+                            --job-name=dir_scanning python3 main.py '${pathToDir}' '${basecallingModel}' '${outputLocation}' '${performAlign}'
                             deactivate
                         ' 
                     '''
