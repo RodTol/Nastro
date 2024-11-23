@@ -5,7 +5,7 @@
 #where index is a value that goes from 1 to the N flowcell sets 
 
 # Check if 3 arguments are passed
-if [ $# -eq 3 ] && [ -n "${1//[0-9]/}" ] && [ -d "$2" ] && [ -d "$3" ]; then
+if [ $# -eq 3 ]; then
     PERIOD=$1
     SRC_DIR=$2
     DST_DIR=$3
