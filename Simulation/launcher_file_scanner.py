@@ -6,7 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from Basecalling_pipeline.subset_creation.pipelineInteract import Jenkins_trigger
 
 def count_and_list_flowcells(directory):
-    flowcells = [d for d in os.listdir(directory) if os.path.isdir(os.path.join(directory, d)) and d.startswith('flowcells_')]
+    flowcells = [d for d in os.listdir(directory) if os.path.isdir(os.path.join(directory, d)) and d.startswith('flowcell_')]
     return flowcells
 
 def launch_file_scanner_run(input_path, model, output_path):
