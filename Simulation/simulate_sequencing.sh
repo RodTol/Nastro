@@ -21,7 +21,6 @@ if [ $# -eq 3 ]; then
     # Copy the directory structure to the destination folder 
     # (before copying the individual files)
     rsync -av -f"+ */" -f"- *" $SRC_DIR/ $DST_DIR/
-    
 
     echo "Started sequencing at "$(date +%T)
     
@@ -33,7 +32,7 @@ if [ $# -eq 3 ]; then
 		${HOME}/Nastro/Simulation/simulate_flowcell.sh ::: \
 		$SRC_DIR ::: \
 		$DST_DIR ::: \
-        {1..2}C ::: \  #each flowcell is called flowcell_1C, flowcell_2C, etc
+        {1..2}C ::: \
 		$PERIOD
     
     # Uncomment below if you want to simulate all 48 flow cells
