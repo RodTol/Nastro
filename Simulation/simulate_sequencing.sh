@@ -24,7 +24,7 @@ if [ $# -eq 3 ]; then
     DST_DIR=$3
     
     # Number of simulated flowcells
-    FLOWCELLS=3
+    FLOWCELLS=4
 
     echo "Simulation duration: $PERIOD seconds with $FLOWCELLS flowcells"
 
@@ -41,11 +41,14 @@ if [ $# -eq 3 ]; then
     # from the source to the destination folder at a uniform rate
     # based on the total number of files in each folder,
     # can vary from flowcell to flowcell
+    # Generate the sequence for flowcells
+    FLOWCELL_SEQ=$(seq -f "%gC" 1 $FLOWCELLS)
+
     time parallel -j $FLOWCELLS \
         "${HOME}/Nastro/Simulation/simulate_flowcell.sh" ::: \
         "$SRC_DIR" ::: \
         "$DST_DIR" ::: \
-        {1..$FLOWCELLS}C ::: \
+        $FLOWCELL_SEQ ::: \
         "$PERIOD"
 
     # Uncomment below if you want to simulate all 48 flow cells
