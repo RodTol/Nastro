@@ -2,6 +2,7 @@ import os
 import sys
 from time import sleep
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from Basecalling_pipeline.subset_creation.pipelineInteract import Jenkins_trigger
 
 def count_and_list_flowcells(directory):
