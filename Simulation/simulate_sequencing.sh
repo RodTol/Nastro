@@ -24,7 +24,7 @@ if [ $# -eq 3 ]; then
     DST_DIR=$3
     
     # Number of simulated flowcells
-    FLOWCELLS=1
+    FLOWCELLS=6
 
     echo "Simulation duration: $PERIOD seconds with $FLOWCELLS flowcells"
 

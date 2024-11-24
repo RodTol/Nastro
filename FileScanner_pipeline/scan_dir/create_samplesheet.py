@@ -57,12 +57,10 @@ def inspect_pod5(
 
 def list_pod5(dir):
     dir_path = Path(dir)
-    all_files = os.listdir(dir)
-    pod5_files = [Path(file) for file in all_files if file.endswith('.pod5')]
-    # Get absolute paths for each .pod5 file
-    pod5_files = [dir_path / file for file in pod5_files]
-    pod5_files = [str(file.resolve()) for file in pod5_files]
-
+    if not dir_path.is_dir():
+        raise ValueError(f"The provided path '{dir}' is not a directory or does not exist.")
+    
+    pod5_files = [str(file.resolve()) for file in dir_path.iterdir() if file.is_file() and file.suffix == '.pod5']
     return pod5_files
 
 def list_json(dir):
