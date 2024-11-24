@@ -61,8 +61,8 @@ else
     module purge
     python3 ${HOME}/Nastro/Alignment_pipeline/launch_run/update_samplesheet.py $samplesheet $id "Correct" $logs_dir/al_basic_report_${id}.txt
 
-    echo "Launching the analysis pipeline"
-    python3 ${HOME}/Nastro/Alignment_pipeline/launch_run/launch_analysis_pipeline.py $samplesheet $id
+    #echo "Launching the analysis pipeline"
+    #python3 ${HOME}/Nastro/Alignment_pipeline/launch_run/launch_analysis_pipeline.py $samplesheet $id
 fi
 
 
