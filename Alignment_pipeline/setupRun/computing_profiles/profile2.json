@@ -1,5 +1,5 @@
 {
-    "node_queue": "EPYC",
+    "node_queue": "DGX",
     "node_name": "",
     "node_cpus": "16",
     "node_mem": "250GB"
