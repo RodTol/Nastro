@@ -137,7 +137,7 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
     already_scanned_files = 0
     
     # Iterate through found pod5 files
-    for i,scanned_file_path in enumerate(all_scanned_pod5_files):
+    for i,scanned_file_path in enumerate(all_scanned_pod5_files[:]):
         # Check if file is already in samplesheet
         if samplesheet.file_belongs_to_samplesheet(scanned_file_path):
             # Remove from list if already present
