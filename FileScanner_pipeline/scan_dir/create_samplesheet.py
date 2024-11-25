@@ -131,8 +131,10 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
     dir = samplesheet.get_metadata()["dir"]
     # Get list of all pod5 files in directory
     all_scanned_pod5_files = list_pod5(dir)
-    
+    print(f"I found {len(all_scanned_pod5_files)} pod5 files in {dir}", flush=True)
+
     added_files = 0
+    already_scanned_files = 0
     
     # Iterate through found pod5 files
     for i,scanned_file_path in enumerate(all_scanned_pod5_files):
@@ -140,6 +142,8 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
         if samplesheet.file_belongs_to_samplesheet(scanned_file_path):
             # Remove from list if already present
             all_scanned_pod5_files.pop(i)
+            print(f"File {scanned_file_path} is already in the list", flush=True)
+            already_scanned_files = already_scanned_files + 1
             # Update progress bars for existing files
             if bar!=None:
                 bar.increase(1)
@@ -180,5 +184,7 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
                     samplesheet.update_json_file()
 
     # Final update of samplesheet file
+    print(f"Added {added_files} new files to the samplesheet", flush=True)
+    print(f"Already scanned {already_scanned_files} files", flush=True)
     samplesheet.update_json_file()
     return added_files

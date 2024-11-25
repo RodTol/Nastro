@@ -41,6 +41,7 @@ I am going to scan `{dir}`
     added_files = 0
 
     all_pod5_files_in_dir = list_pod5(dir)
+    print(f"I found {len(all_pod5_files_in_dir)} pod5 files in {dir}", flush=True)
     # bar = CustomPercentProgressBar(length=20,
     #                         left_limit='[',
     #                         right_limit=']',
