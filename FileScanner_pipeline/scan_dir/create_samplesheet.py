@@ -140,8 +140,6 @@ def update_samplesheet(samplesheet: Samplesheet, bar=None, telegram_bar=None):
     for i,scanned_file_path in enumerate(all_scanned_pod5_files[:]):
         # Check if file is already in samplesheet
         if samplesheet.file_belongs_to_samplesheet(scanned_file_path):
-            # Remove from list if already present
-            all_scanned_pod5_files.pop(i)
             print(f"File {scanned_file_path} is already in the list", flush=True)
             already_scanned_files = already_scanned_files + 1
             # Update progress bars for existing files
