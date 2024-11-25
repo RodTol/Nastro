@@ -47,6 +47,7 @@ bam_file=$(jq -r '.Alignment.output_file' "$al_config")
 ref_genome=$(jq -r '.Alignment.reference_genome' "$al_config")
 logs_dir=$(jq -r '.Alignment.logs_dir' "$al_config")
 
+source ~/python_venvs/DGX_dorado_venv/bin/activate
 dorado aligner $ref_genome $fastq_file > $bam_file
 
 if [ $? -ne 0 ]; then
@@ -55,7 +56,7 @@ if [ $? -ne 0 ]; then
     exit 1
 else
     echo "The command ran successfully."
-    module load samtools
+    #module load samtools
     cd $logs_dir
     #samtools flagstat $bam_file > al_basic_report_${id}.txt
     module purge
