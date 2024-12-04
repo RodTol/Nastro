@@ -95,38 +95,60 @@ class ResourceTuning:
         return count_pod5_files(dir)
 
 
+    # def compute_resources(self):
+    #     '''
+    #     For the given run_params, return a ComputingResources object. profile 1 is the weakest profile
+    #     while 4_4 is the strongest profile. The profiles are based on the number of nodes and the number of
+    #     gpus assigned to it
+    #     '''
+    #     subset_length = self._length_of_subset()
+    #     base_profile_path = '/u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/subset_creation/computing_profiles'
+
+    #     #TODO maybe add DGX status to be sure what profile is better ?
+    #     profiles = [
+    #         (self.run_params.ideal_size, f'{base_profile_path}/profile4_4.json'),
+    #         (self.run_params.ideal_size/1.5, f'{base_profile_path}/profile4.json'),
+    #         (self.run_params.ideal_size/2, f'{base_profile_path}/profile2_2.json'),
+    #         (self.run_params.ideal_size/4, f'{base_profile_path}/profile2.json'),
+    #         (0, f'{base_profile_path}/profile1.json'),
+    #     ]
+
+    #     for size_threshold, profile_path in profiles:
+    #         if self.run_params.actual_size >= size_threshold:
+    #             print(f"Using profile {profile_path}")
+    #             with open(profile_path, 'r') as file:
+    #                 profile = json.load(file)
+
+    #             if len(profile["nodes_queue"]) >= 2:
+    #                 size1, size2 = split_number(subset_length)                
+    #                 profile["batch_size_list"] = [size1, size2]
+    #             else:
+    #                 profile["batch_size_list"] = [subset_length]
+
+    #             return ComputingResources(
+    #                 self.run_config, profile["index_host"], profile["port"], profile["nodes_queue"],
+    #                 profile["nodes_list"], profile["nodes_ip"], profile["nodes_cpus"], profile["nodes_mem"],
+    #                 profile["nodes_gpus"], profile["gpus"], profile["batch_size_list"]
+    #            )
+            
     def compute_resources(self):
         '''
-        For the given run_params, return a ComputingResources object. profile 1 is the weakest profile
-        while 4_4 is the strongest profile. The profiles are based on the number of nodes and the number of
-        gpus assigned to it
+        BENCHMARK VERSION of the function for fixed profile 
         '''
         subset_length = self._length_of_subset()
-        base_profile_path = '/u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/subset_creation/computing_profiles'
+        profile_path = '/u/area/jenkins_onpexp/Nastro/Basecalling_pipeline/subset_creation/computing_profiles/profile1.json'
 
-        #TODO maybe add DGX status to be sure what profile is better ?
-        profiles = [
-            (self.run_params.ideal_size, f'{base_profile_path}/profile4_4.json'),
-            (self.run_params.ideal_size/1.5, f'{base_profile_path}/profile4.json'),
-            (self.run_params.ideal_size/2, f'{base_profile_path}/profile2_2.json'),
-            (self.run_params.ideal_size/4, f'{base_profile_path}/profile2.json'),
-            (0, f'{base_profile_path}/profile1.json'),
-        ]
+        with open(profile_path, 'r') as file:
+            profile = json.load(file)
 
-        for size_threshold, profile_path in profiles:
-            if self.run_params.actual_size >= size_threshold:
-                print(f"Using profile {profile_path}")
-                with open(profile_path, 'r') as file:
-                    profile = json.load(file)
+        if len(profile["nodes_queue"]) >= 2:
+            size1, size2 = split_number(subset_length)                
+            profile["batch_size_list"] = [size1, size2]
+        else:
+            profile["batch_size_list"] = [subset_length]
 
-                if len(profile["nodes_queue"]) >= 2:
-                    size1, size2 = split_number(subset_length)                
-                    profile["batch_size_list"] = [size1, size2]
-                else:
-                    profile["batch_size_list"] = [subset_length]
-
-                return ComputingResources(
-                    self.run_config, profile["index_host"], profile["port"], profile["nodes_queue"],
-                    profile["nodes_list"], profile["nodes_ip"], profile["nodes_cpus"], profile["nodes_mem"],
-                    profile["nodes_gpus"], profile["gpus"], profile["batch_size_list"]
-                )
+        return ComputingResources(
+            self.run_config, profile["index_host"], profile["port"], profile["nodes_queue"],
+            profile["nodes_list"], profile["nodes_ip"], profile["nodes_cpus"], profile["nodes_mem"],
+            profile["nodes_gpus"], profile["gpus"], profile["batch_size_list"]
+        )
