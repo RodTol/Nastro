@@ -17,7 +17,7 @@
         "100GB"
     ],
     "nodes_gpus": [
-        "1"
+        "2"
     ],
     "gpus": [
         "cuda:all"
