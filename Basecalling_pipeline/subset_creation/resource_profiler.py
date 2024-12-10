@@ -49,7 +49,8 @@ def choose_ideal_size(model):
         return HAC_IDEAL_SIZE_GB
     elif 'sup' in model.lower():
         print('Target size for SUP model')
-        return SUP_IDEAL_SIZE_GB
+        #return SUP_IDEAL_SIZE_GB
+        return 500 #Just for benchmarking purpouse
     else:
         print(f"Using default size! {model} was not recognized\n Using HAC SIZE")
         return HAC_IDEAL_SIZE_GB  
